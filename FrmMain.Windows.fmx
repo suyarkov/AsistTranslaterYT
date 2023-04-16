@@ -1,0 +1,29 @@
+inherited FormMain_Windows: TFormMain_Windows
+  ClientWidth = 650
+  DesignerMasterStyle = 1
+  inherited Panel1: TPanel
+    Position.X = 24.000000000000000000
+    Position.Y = 78.000000000000000000
+    Size.Width = 601.000000000000000000
+    Size.Height = 321.000000000000000000
+    Size.PlatformDefault = False
+  end
+  inherited Button1: TButton
+    Position.X = 120.000000000000000000
+    Position.Y = 8.000000000000000000
+    OnClick = Button1Click
+  end
+  inherited Label1: TLabel
+    Position.X = 24.000000000000000000
+    Position.Y = 16.000000000000000000
+    Text = '950 '#1093' 730'
+  end
+  inherited Panel2: TPanel
+    Align = Bottom
+    Position.Y = 416.000000000000000000
+    Size.Width = 650.000000000000000000
+    Size.Height = 64.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'pushpanel'
+  end
+end
