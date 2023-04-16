@@ -1,4 +1,4 @@
-program AsistTranslaterYT;
+program AsistTranslater;
 
 uses
   System.StartUpCopy,

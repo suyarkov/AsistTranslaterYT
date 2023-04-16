@@ -1,9 +1,11 @@
-object Form1: TForm1
+object FormMaon: TFormMaon
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  BorderIcons = [biSystemMenu, biMinimize]
+  Caption = 'AsistTranslaterYT'
   ClientHeight = 480
   ClientWidth = 640
+  Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
