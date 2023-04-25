@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject>
-  <Transactions>
-    <Transaction>2023.04.16 05:55:55.755,=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2023.04.16 05:59:26.605,D:\GitClicker\AsistTranslaterYT\FrmMain.pas=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2023.04.16 05:59:26.605,D:\GitClicker\AsistTranslaterYT\FrmMain.fmx=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
-    <Transaction>2023.04.16 05:59:39.285,D:\GitClicker\AsistTranslaterYT\AsistTranslaterYT.dproj=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
-  </Transactions>
-</BorlandProject>

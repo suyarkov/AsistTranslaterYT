@@ -1,3 +1,0 @@
-inherited FormMain_Macintosh: TFormMain_Macintosh
-  DesignerMasterStyle = 1
-end
