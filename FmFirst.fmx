@@ -1,0 +1,47 @@
+object FrameFirst: TFrameFirst
+  Size.Width = 320.000000000000000000
+  Size.Height = 240.000000000000000000
+  Size.PlatformDefault = False
+  object LabelName: TLabel
+    Position.X = 56.000000000000000000
+    Position.Y = 32.000000000000000000
+    Text = 'Login'
+    TabOrder = 1
+  end
+  object LabelPas: TLabel
+    Position.X = 56.000000000000000000
+    Position.Y = 104.000000000000000000
+    Text = 'Password'
+    TabOrder = 0
+  end
+  object EditName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 76.000000000000000000
+    Position.Y = 57.000000000000000000
+    Size.Width = 173.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object EditPas: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 2
+    Position.X = 76.000000000000000000
+    Position.Y = 129.000000000000000000
+    Size.Width = 173.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object ButtonReg: TButton
+    Position.X = 36.000000000000000000
+    Position.Y = 192.000000000000000000
+    TabOrder = 5
+    Text = 'ButtonReg'
+  end
+  object ButtonLog: TButton
+    Position.X = 212.000000000000000000
+    Position.Y = 192.000000000000000000
+    TabOrder = 4
+    Text = 'ButtonReg'
+  end
+end
