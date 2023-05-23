@@ -1,0 +1,35 @@
+object FrameChannels: TFrameChannels
+  Size.Width = 482.000000000000000000
+  Size.Height = 512.000000000000000000
+  Size.PlatformDefault = False
+  object LabelChannels: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Your Channels'
+    TabOrder = 0
+  end
+  object ButtonAddChannel: TButton
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 304.000000000000000000
+    Position.Y = 3.000000000000000000
+    Size.Width = 170.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Text = 'Add Channels with Google'
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+  end
+  object ImageAddChannel: TImage
+    MultiResBitmap = <
+      item
+      end>
+    Position.X = 263.000000000000000000
+    Position.Y = 3.000000000000000000
+    Size.Width = 33.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    OnClick = ImageAddChannelClick
+  end
+end

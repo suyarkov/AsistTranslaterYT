@@ -1,24 +1,33 @@
 object FrameFirst: TFrameFirst
-  Size.Width = 320.000000000000000000
-  Size.Height = 240.000000000000000000
+  Size.Width = 224.000000000000000000
+  Size.Height = 233.000000000000000000
   Size.PlatformDefault = False
+  OnCanFocus = FrameCanFocus
   object LabelName: TLabel
-    Position.X = 56.000000000000000000
-    Position.Y = 32.000000000000000000
-    Text = 'Login'
-    TabOrder = 1
+    Position.X = 24.000000000000000000
+    Position.Y = 8.000000000000000000
+    Text = 'Enter your email'
+    TabOrder = 5
   end
   object LabelPas: TLabel
-    Position.X = 56.000000000000000000
-    Position.Y = 104.000000000000000000
-    Text = 'Password'
+    Position.X = 24.000000000000000000
+    Position.Y = 63.000000000000000000
+    Text = 'Enter password'
     TabOrder = 0
+    object LabelError: TLabel
+      StyledSettings = [Family, Size, Style]
+      Position.X = 112.000000000000000000
+      TextSettings.FontColor = claRed
+      Text = '... incorrect'
+      Visible = False
+      TabOrder = 4
+    end
   end
   object EditName: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 3
-    Position.X = 76.000000000000000000
-    Position.Y = 57.000000000000000000
+    TabOrder = 1
+    Position.X = 24.000000000000000000
+    Position.Y = 33.000000000000000000
     Size.Width = 173.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
@@ -26,22 +35,42 @@ object FrameFirst: TFrameFirst
   object EditPas: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     TabOrder = 2
-    Position.X = 76.000000000000000000
-    Position.Y = 129.000000000000000000
+    Position.X = 24.000000000000000000
+    Position.Y = 88.000000000000000000
     Size.Width = 173.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
   end
   object ButtonReg: TButton
-    Position.X = 36.000000000000000000
+    StyledSettings = [Family, Size, Style]
+    Position.X = 24.000000000000000000
     Position.Y = 192.000000000000000000
-    TabOrder = 5
-    Text = 'ButtonReg'
+    Size.Width = 173.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'Create login'
+    TextSettings.FontColorForState.Hot = claCrimson
   end
   object ButtonLog: TButton
-    Position.X = 212.000000000000000000
-    Position.Y = 192.000000000000000000
-    TabOrder = 4
-    Text = 'ButtonReg'
+    Position.X = 24.000000000000000000
+    Position.Y = 143.000000000000000000
+    Size.Width = 173.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Log in'
+  end
+  object LabelForgot: TLabel
+    StyledSettings = [Family, Size, Style]
+    Position.X = 24.000000000000000000
+    Position.Y = 118.000000000000000000
+    Size.Width = 153.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.FontColor = claBlue
+    Text = 'Forgot your password?'
+    Visible = False
+    TabOrder = 6
   end
 end
