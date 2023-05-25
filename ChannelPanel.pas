@@ -10,7 +10,7 @@ uses
   FMX.Controls.Presentation;
 
 type
-  TMyPanel = class(TPanel)
+  TChannelPanel = class(TPanel)
 //    ChImage: TImage;
     ChName: TLabel;
     ChLang: TLabel;
@@ -27,7 +27,7 @@ type
 
 implementation
 
-constructor TMyPanel.Create(AOwner: TComponent);
+constructor TChannelPanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 //  Parent := AOwner;
@@ -41,7 +41,7 @@ begin
   //Top := 8;
 end;
 
-constructor TMyPanel.Create(AOwner: TComponent;  pPos, pN: integer;
+constructor TChannelPanel.Create(AOwner: TComponent;  pPos, pN: integer;
       pChId, pChToken, pChName, pChLang : string);
 begin
   Create(AOwner);

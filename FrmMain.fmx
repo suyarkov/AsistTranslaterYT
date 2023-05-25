@@ -3,7 +3,7 @@ object fMain: TfMain
   Top = 0
   Caption = 'AsistYou'
   ClientHeight = 612
-  ClientWidth = 871
+  ClientWidth = 627
   Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -11,7 +11,8 @@ object fMain: TfMain
   OnCreate = FormCreate
   DesignerMasterStyle = 1
   object Panel1: TPanel
-    Size.Width = 646.000000000000000000
+    Align = Top
+    Size.Width = 627.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
@@ -55,14 +56,15 @@ object fMain: TfMain
     end
   end
   object Panel2: TPanel
+    Align = Bottom
     Position.Y = 587.000000000000000000
-    Size.Width = 646.000000000000000000
+    Size.Width = 627.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
     object LabelCopyrigth: TLabel
+      Align = Center
       StyledSettings = [Family, Style, Other]
-      Position.X = 176.000000000000000000
       Size.Width = 289.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
