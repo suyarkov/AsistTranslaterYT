@@ -4,17 +4,13 @@ interface
 
 uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
-  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
-  FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.UI.Intf,
-  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.SQLite,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.FMXUI.Wait,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Dialogs, FMX.Graphics,
+  IdTCPClient, System.Net.HTTPClient, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait, Data.DB,
-  FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  Vcl.Dialogs, Vcl.Graphics, Vcl.ImgList,
-  IdTCPClient, System.Net.HTTPClient,
-  System.NetEncoding,
-  System.Types, System.UITypes,
-  Vcl.Imaging.jpeg, Vcl.ExtCtrls;
+  FireDAC.Phys.SQLiteWrapper.Stat;
 
 type
   TShortChannel = record
@@ -66,7 +62,7 @@ var
 
 implementation
 
-{%CLASSGROUP 'Vcl.Controls.TControl'}
+{%CLASSGROUP 'FMX.Controls.TControl'}
 {$R *.dfm}
 
 function TSQLiteModule.SelRefreshToken(): tDataSet;
@@ -187,7 +183,7 @@ var
   AResponce: IHTTPResponse;
   FHTTPClient: THTTPClient;
   AAPIUrl: String;
-  jpegimg: TJPEGImage;
+  //jpegimg: TJPEGImage;
   s: string;
   Ss: TStringStream;
 begin

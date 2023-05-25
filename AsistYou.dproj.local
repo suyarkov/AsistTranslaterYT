@@ -1,20 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.569,C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\GitClicker\AsistYou\AsistYou.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.161,D:\GitClicker\AsistTranslaterYT\FmChannels.pas=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.723,=D:\GitClicker\AsistYou\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.075,C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.fmx=D:\GitClicker\AsistYou\FrmMain.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.002,D:\GitClicker\AsistYou\FmFirst.fmx=D:\GitClicker\AsistYou\Unit1.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.902,=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.161,D:\GitClicker\AsistTranslaterYT\FmChannels.fmx=D:\GitClicker\AsistTranslaterYT\Unit1.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.002,D:\GitClicker\AsistYou\FmFirst.pas=D:\GitClicker\AsistYou\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.075,C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas=D:\GitClicker\AsistYou\FrmMain.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.161,D:\GitClicker\AsistTranslaterYT\FmChannels.pas=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.569,C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\GitClicker\AsistYou\AsistYou.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.299,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.575,=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.902,=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.002,D:\GitClicker\AsistYou\FmFirst.pas=D:\GitClicker\AsistYou\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.092,D:\GitClicker\AsistTranslaterYT\Unit1.pas=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.299,D:\GitClicker\AsistTranslaterYT\Unit1.pas=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.747,=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.287,=D:\GitClicker\AsistTranslaterYT\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.630,=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2023.05.23 19:31:03.805,=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas</Transaction>
-    <Transaction>2023.05.23 20:34:26.893,=D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas</Transaction>
-    <Transaction>2023.05.23 20:40:50.909,D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.092,D:\GitClicker\AsistTranslaterYT\Unit1.dfm=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.805,=D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.346,D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.470,D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.002,D:\GitClicker\AsistYou\FmFirst.fmx=D:\GitClicker\AsistYou\Unit1.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.723,=D:\GitClicker\AsistYou\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.075,C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas=D:\GitClicker\AsistYou\FrmMain.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.893,=D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.909,D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.161,D:\GitClicker\AsistTranslaterYT\FmChannels.fmx=D:\GitClicker\AsistTranslaterYT\Unit1.fmx</Transaction>
+    <Transaction>2023.05.25 18:20:16.059,=D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="annotation-1.2.0.dex.jar"/>
@@ -167,5 +176,6 @@
     <File Path="FmChannels.fmx"/>
     <File Path="FrmDataSQLite.pas"/>
     <File Path="FrmDataSQLite.dfm"/>
+    <File Path="ChannelPanel.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

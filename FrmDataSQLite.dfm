@@ -1,18 +1,16 @@
 object SQLiteModule: TSQLiteModule
-  OnCreate = DataModuleCreate
-  Height = 114
-  Width = 192
+  Height = 119
+  Width = 186
   object SQL: TFDConnection
     Params.Strings = (
-      'ConnectionDef=Click'
-      'Database=D:\GitClicker\AsistTranslater\libast.dll')
-    LoginPrompt = False
-    Left = 43
-    Top = 15
+      'Database=D:\GitClicker\AsistTranslaterYT\libast.dll'
+      'DriverID=SQLite')
+    Left = 16
+    Top = 8
   end
   object SQLQuery: TFDQuery
     Connection = SQL
-    Left = 104
-    Top = 16
+    Left = 72
+    Top = 8
   end
 end

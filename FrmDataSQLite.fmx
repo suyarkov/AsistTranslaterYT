@@ -1,0 +1,22 @@
+object SQLiteModule: TSQLiteModule
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 176
+  ClientWidth = 263
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object SQL: TFDConnection
+    Params.Strings = (
+      'Database=D:\GitClicker\AsistTranslaterYT\libast.dll')
+    Left = 56
+    Top = 32
+  end
+  object SQLQuery: TFDQuery
+    Connection = SQL
+    Left = 128
+    Top = 32
+  end
+end

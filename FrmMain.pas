@@ -6,8 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB, FrmDataSQLite,
-  ChannelPanel;
+  FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
+  ChannelPanel, FrmDataSQLite;
 
 type
   TfMain = class(TForm)
@@ -25,6 +25,10 @@ type
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ButtonSelChannelsClick(Sender: TObject);
+    procedure DinButtonDeleteChannelClick(Sender: TObject);
+    // procedure DinPanelClick(Sender: TObject);
+    // procedure DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
+    // X, Y: Integer);
   private
     { Private declarations }
   public
@@ -51,15 +55,16 @@ implementation
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
+  fMain.Width := 871;
   vState := 1; // пароль
   // по центру поместим форму
   fMain.FrameFirst1.Position.X :=
-    Round((fMain.width - fMain.FrameFirst1.width) / 2);
+    Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
   fMain.FrameFirst1.Position.Y := 56;
   // спрячем второй фрейм за границу видимости
-  fMain.FrameChannels.Position.X := Round(fMain.width + 1);
+  fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
-//  fMain.FrameChannels.Visible := false;
+  // fMain.FrameChannels.Visible := false;
 
 end;
 
@@ -80,7 +85,7 @@ procedure TNewThread.Execute;
 var
   i: integer;
 begin
-  for i := 0 to fMain.width do
+  for i := 0 to fMain.Width do
   begin
     // sleep(1);
     Progress := i;
@@ -90,38 +95,39 @@ end;
 
 procedure TNewThread.SetActualFrame;
 var
-  vLeftBorderFrame, vStepSize,
-  vLeftBorderFrame2: integer;
+  vLeftBorderFrame, vStepSize, vLeftBorderFrame2: integer;
 begin
   vStepSize := 10;
-  vLeftBorderFrame := Round((fMain.width - fMain.FrameFirst1.width) / 2);
-  vLeftBorderFrame2 := Round((fMain.width - fMain.FrameChannels.width) / 2);
+  vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
+  vLeftBorderFrame2 := Round((fMain.Width - fMain.FrameChannels.Width) / 2);
 
   // первая форма заменяется второй с каналами
   if vEventMove = 11 then
   begin
-    If fMain.FrameFirst1.Position.X < (fMain.width + 1) then
+    If fMain.FrameFirst1.Position.X < (fMain.Width + 1) then
     begin
       fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + vStepSize;
     end;
 
-    If fMain.FrameChannels.Position.X >= fMain.width  then
+    If fMain.FrameChannels.Position.X >= fMain.Width then
     begin
-      fMain.FrameChannels.Position.X := - fMain.FrameChannels.width - 1;
+      fMain.FrameChannels.Position.X := -fMain.FrameChannels.Width - 1;
     end;
 
     If fMain.FrameChannels.Position.X < (vLeftBorderFrame2) then
     begin
       // если сдвиг больше шага сдвига до левой границы помещения формы
-      if ABS(fMain.FrameChannels.Position.X - vLeftBorderFrame2) > vStepSize then
-        fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X + vStepSize
+      if ABS(fMain.FrameChannels.Position.X - vLeftBorderFrame2) > vStepSize
+      then
+        fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X +
+          vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
         fMain.FrameChannels.Position.X := vLeftBorderFrame2;
     end;
 
     If fMain.FrameChannels.Position.X = (vLeftBorderFrame2) then
     begin
-       fMain.FrameChannels.Visible := true;
+      fMain.FrameChannels.Visible := true;
     end;
 
   end;
@@ -138,9 +144,10 @@ begin
         fMain.FrameFirst1.Position.X := vLeftBorderFrame;
     end;
 
-    If fMain.FrameChannels.Position.X > - fMain.FrameChannels.width  then
+    If fMain.FrameChannels.Position.X > -fMain.FrameChannels.Width then
     begin
-      fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X - vStepSize;
+      fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X -
+        vStepSize;
     end;
 
   end;
@@ -148,9 +155,9 @@ begin
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
   // fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + 5;
-  fMain.Label1.Text := inttostr(round(fMain.FrameChannels.Position.X)) + ' : '
-    + inttostr(round(vLeftBorderFrame2)) + ', '
-    + inttostr(round(fMain.FrameChannels.Position.Y)) + ', ';
+  fMain.Label1.Text := inttostr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
+    inttostr(Round(vLeftBorderFrame2)) + ', ' +
+    inttostr(Round(fMain.FrameChannels.Position.Y)) + ', ';
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);
@@ -163,7 +170,7 @@ begin
     if vState = 1 then
       ButtonBack.Enabled := false;
     // что будем возвращать
-    vEventMove := vState * 10 ;
+    vEventMove := vState * 10;
   end;
 
   NewThread := TNewThread.Create(true);
@@ -175,13 +182,13 @@ end;
 procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
   //
-  i: Integer;
+  i: integer;
   results: TDataSet;
-//  g: TGraphic;
-  vPos: Integer;
+  // g: TGraphic;
+  vPos: integer;
 begin
   // g:=TJpegimage.Create;
-//  g := TPNGImage.Create;
+  // g := TPNGImage.Create;
   // g:=TBitmap.Create;
 
   i := 1;
@@ -196,19 +203,19 @@ begin
     while not results.Eof do
     begin
 
-      vPos := (i - 1) * 120;
-//      PanChannels[i] := TMyPanel.Create(FrameChannels, vPos, i,
-//        results.FieldByName('id_channel').AsString,
-//        results.FieldByName('refresh_token').AsString,
-//        results.FieldByName('name_channel').AsString,
-//        results.FieldByName('lang').AsString);
-//      PanChannels[i].Parent := FrameChannels;
-//      PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-//      PanChannels[i].OnMouseMove := DinPanelMouseMove;
-//      PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
-//      PanChannels[i].ChImage.OnClick := DinPanelClick;
-//      PanChannels[i].chName.OnClick := DinPanelClick;
-//      PanChannels[i].ChLang.OnClick := DinPanelClick;
+      vPos := 30 + (i - 1) * 120;
+      PanChannels[i] := TMyPanel.Create(FrameChannels, vPos, i,
+        results.FieldByName('id_channel').AsString,
+        results.FieldByName('refresh_token').AsString,
+        results.FieldByName('name_channel').AsString,
+        results.FieldByName('lang').AsString);
+      PanChannels[i].Parent := FrameChannels;
+      PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+      // PanChannels[i].OnMouseMove := DinPanelMouseMove;
+      // PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
+      // PanChannels[i].ChImage.OnClick := DinPanelClick;
+      // PanChannels[i].chName.OnClick := DinPanelClick;
+      // PanChannels[i].ChLang.OnClick := DinPanelClick;
       // это рабочий вариант прямо с поля взять, не из таблицы!!
       // g.Assign(results.FieldByName('img_channel'));
       // Image1.Picture.Assign(g);
@@ -216,6 +223,7 @@ begin
       results.Next;
     end;
   end;
+  Label1.Text := inttostr(i - 1);
 
 end;
 
@@ -226,8 +234,8 @@ var
   vLog, vPas: string;
 begin
   vOk := false;
-  vLog := fMain.FrameFirst1.EditName.text;
-  vPas := fMain.FrameFirst1.EditPas.text;
+  vLog := fMain.FrameFirst1.EditName.Text;
+  vPas := fMain.FrameFirst1.EditPas.Text;
 
   // проверка логина и пароля
   if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) then
@@ -245,11 +253,41 @@ begin
   else
   // идентификация успешна
   begin
-    LabelMail.text := fMain.FrameFirst1.EditName.text;
+    LabelMail.Text := fMain.FrameFirst1.EditName.Text;
     fMain.FrameFirst1.LabelError.Visible := false;
     fMain.FrameFirst1.LabelForgot.Visible := false;
     fMain.Button1Click(Sender);
   end;
+end;
+
+// удaление канала
+procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
+// Sender : TComponent;
+var
+  strQuestionDelete, vIdChannel, vNameChannel: string;
+  vNPanel: integer;
+  i: integer;
+begin
+  vNPanel := TButton(Sender).Tag;
+  vIdChannel := PanChannels[vNPanel].chId.Text;
+  vNameChannel := PanChannels[vNPanel].chName.Text;
+  strQuestionDelete := 'Delete ' + vNameChannel + ' ?';
+  if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
+    [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
+
+  then
+  begin
+    // SQLiteModule.DelChannel(vIdChannel);
+
+    try
+      for i := 1 to 20 do
+        PanChannels[i].Free;
+    finally
+      // lastPanel := nil;
+      ButtonSelChannelsClick(Sender);
+    end;
+  end;
+
 end;
 
 end.

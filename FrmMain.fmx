@@ -3,7 +3,7 @@ object fMain: TfMain
   Top = 0
   Caption = 'AsistYou'
   ClientHeight = 612
-  ClientWidth = 646
+  ClientWidth = 871
   Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -45,6 +45,11 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
+    inherited LabelPas: TLabel
+      inherited LabelError: TLabel
+        TabOrder = 3
+      end
+    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end

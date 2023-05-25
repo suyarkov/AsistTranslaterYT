@@ -32,7 +32,7 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 585;
+  Width := 485;
   Height := 105;
   Left := 8;
 //  ParentColor := false;
@@ -45,7 +45,8 @@ constructor TMyPanel.Create(AOwner: TComponent;  pPos, pN: integer;
       pChId, pChToken, pChName, pChLang : string);
 begin
   Create(AOwner);
-  Self.Top := 8 + pPos;
+  //Self.Top
+  Self.Position.y := 8 + pPos;
   //Self.Name := 'P' + IntToStr(pN);
   Self.tag :=  pN;
 
@@ -73,8 +74,8 @@ begin
     Parent := Self;
     Text := 'Delete';
     name := 'D' + IntToStr(pN);
-    Left := 500;
-    Top := 10;
+    Position.x := 400;
+    Position.y := 10;
     Width := 60;
     Visible := True;
     Tag :=  pN;
@@ -87,9 +88,9 @@ begin
     Text := pChName;
     Name := 'N' + IntToStr(pN);
     Width := 449;
-    Top:=  25;
+    Position.y:=  25;
     Height :=  21;
-    left := 120;
+    Position.x := 120;
     Font.Size := 12;
     //Font.Style := [fsBold];
     Tag :=  pN;
@@ -103,8 +104,8 @@ begin
     Text := pChLang;
     Name := 'L' + IntToStr(pN);
     Height := 17;
-    Left := 120;
-    Top := 64;
+    Position.x := 120;
+    Position.y := 64;
     Width := 449;
     Font.Size := 10;
     Tag :=  pN;

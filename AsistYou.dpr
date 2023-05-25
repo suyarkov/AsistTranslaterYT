@@ -5,8 +5,9 @@ uses
   FMX.Forms,
   FrmMain in 'FrmMain.pas' {fMain},
   FmFirst in 'FmFirst.pas' {FrameFirst: TFrame},
+  FmChannels in 'FmChannels.pas' {FrameChannels: TFrame},
   FrmDataSQLite in 'FrmDataSQLite.pas' {SQLiteModule: TDataModule},
-  FmChannels in 'FmChannels.pas' {FrameChannels: TFrame};
+  ChannelPanel in 'ChannelPanel.pas';
 
 {$R *.res}
 
