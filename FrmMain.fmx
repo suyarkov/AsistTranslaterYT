@@ -3,7 +3,7 @@ object fMain: TfMain
   Top = 0
   Caption = 'AsistYou'
   ClientHeight = 612
-  ClientWidth = 627
+  ClientWidth = 900
   Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -12,7 +12,7 @@ object fMain: TfMain
   DesignerMasterStyle = 1
   object Panel1: TPanel
     Align = Top
-    Size.Width = 627.000000000000000000
+    Size.Width = 900.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
@@ -46,11 +46,6 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
-    inherited LabelPas: TLabel
-      inherited LabelError: TLabel
-        TabOrder = 3
-      end
-    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end
@@ -58,7 +53,7 @@ object fMain: TfMain
   object Panel2: TPanel
     Align = Bottom
     Position.Y = 587.000000000000000000
-    Size.Width = 627.000000000000000000
+    Size.Width = 900.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
@@ -86,6 +81,7 @@ object fMain: TfMain
     Size.Width = 482.000000000000000000
     Size.Height = 512.000000000000000000
     Size.PlatformDefault = False
+    OnMouseMove = FrameChannelsMouseMove
     inherited LabelChannels: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
@@ -99,5 +95,15 @@ object fMain: TfMain
     TabOrder = 6
     Text = 'ButtonSelChannels'
     OnClick = ButtonSelChannelsClick
+  end
+  object Image1: TImage
+    MultiResBitmap = <
+      item
+      end>
+    Position.X = 32.000000000000000000
+    Position.Y = 240.000000000000000000
+    Size.Width = 65.000000000000000000
+    Size.Height = 97.000000000000000000
+    Size.PlatformDefault = False
   end
 end

@@ -7,7 +7,7 @@ uses
   FmFirst in 'FmFirst.pas' {FrameFirst: TFrame},
   FmChannels in 'FmChannels.pas' {FrameChannels: TFrame},
   FrmDataSQLite in 'FrmDataSQLite.pas' {SQLiteModule: TDataModule},
-  ChannelPanel in 'ChannelPanel.pas';
+  PnChannel in 'PnChannel.pas';
 
 {$R *.res}
 

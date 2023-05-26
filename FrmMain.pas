@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
-  ChannelPanel, FrmDataSQLite, FMX.Objects;
+  PnChannel, FrmDataSQLite, FMX.Objects;
 
 type
   TfMain = class(TForm)
@@ -20,6 +20,7 @@ type
     Label1: TLabel;
     FrameChannels: TFrameChannels;
     ButtonSelChannels: TButton;
+    Image1: TImage;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -27,8 +28,10 @@ type
     procedure ButtonSelChannelsClick(Sender: TObject);
     procedure DinButtonDeleteChannelClick(Sender: TObject);
     procedure DinPanelClick(Sender: TObject);
-    procedure DinPanelMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Single);
+    procedure DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Single);
+    procedure FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Single);
   private
     { Private declarations }
   public
@@ -48,31 +51,36 @@ var
   PanChannels: array [1 .. 20] of TChannelPanel;
   vEventMove: integer; // 10 - обратно, 11- вправо. первую форму
   vState: integer; // 1 - первая форма - пароль,
-//  PanVideos: array [1 .. 50] of TMyVideoPanel;
+  // PanVideos: array [1 .. 50] of TMyVideoPanel;
   lastPanel: TPanel;
+  vDefaultColor: TAlphaColor;
 
 implementation
 
 {$R *.fmx}
 
-procedure TfMain.DinPanelMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Single);
+procedure TfMain.DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Single);
 var
-  panel: TPanel;
+  panel: TChannelPanel;
 begin
-  panel := Sender as TPanel;
+  panel := Sender as TChannelPanel;
+  Label1.text := panel.ChName.text;
   if lastPanel <> nil then
     if lastPanel <> panel then
     begin
-      (lastPanel.Controls[0] as TShape).Fill.Color := TAlphaColorRec.Red;
-//      lastPanel. .Color := clBtnFace;
-//      lastPanel.Font.Color := clBlack;
+      (lastPanel.Controls[0] as TShape).Fill.Color := vDefaultColor;
+      // TAlphaColorRec.Darkgreen; //TAlphaColor($8B0000)
+      (lastPanel.Controls[0] as TRectangle).Stroke.Color := vDefaultColor;
+      // lastPanel. .Color := clBtnFace;
+      // lastPanel.Font.Color := clBlack;
       lastPanel := nil;
     end;
 
   begin
-//    panel.Color := clWhite; // clblack;
-//    (lastPanel.Controls[0] as TShape).Fill.Color := TAlphaColorRec.White;
+    (panel.Controls[0] as TShape).Fill.Color := TAlphaColors.White;
+    (panel.Controls[0] as TRectangle).Stroke.Color := TAlphaColors.White;
+    // panel.Color := clWhite; // clblack;
     // panel.Font.Color := clWhite;
     // запоминаем панельку, над которой изменили цвет,
     // чтобы когда произойдет движенье мышью над формой вернуть его обратно
@@ -85,6 +93,8 @@ begin
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // пароль
+  vDefaultColor := TAlphaColors.Gray;
+  // fMain.Fill.Color; // as TRectangle).Stroke.Color
   // по центру поместим форму
   fMain.FrameFirst1.Position.X :=
     Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
@@ -100,8 +110,8 @@ procedure TfMain.Button1Click(Sender: TObject);
 var
   NewThread: TNewThread;
 begin
-  vEventMove := vState * 10 + 1;
   vState := 2;
+  vEventMove := vState * 10 + 1;
   ButtonBack.Enabled := true;
   NewThread := TNewThread.Create(true);
   NewThread.FreeOnTerminate := true;
@@ -183,7 +193,7 @@ begin
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
   // fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + 5;
-  fMain.Label1.Text := inttostr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
+  fMain.Label1.text := inttostr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
     inttostr(Round(vLeftBorderFrame2)) + ', ' +
     inttostr(Round(fMain.FrameChannels.Position.Y)) + ', ';
 end;
@@ -214,6 +224,7 @@ var
   results: TDataSet;
   // g: TGraphic;
   vPos: integer;
+  vBitmap : TBitmap;
 begin
   // g:=TJpegimage.Create;
   // g := TPNGImage.Create;
@@ -228,6 +239,8 @@ begin
   if not results.IsEmpty then
   begin
     results.First;
+    vBitmap := TBitmap.Create;
+    vBitmap.LoadFromFile('d:/tete.jpg');
     while not results.Eof do
     begin
 
@@ -236,14 +249,15 @@ begin
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
-        results.FieldByName('lang').AsString);
+        results.FieldByName('lang').AsString,
+        vBitmap);
       PanChannels[i].Parent := FrameChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-       PanChannels[i].OnMouseMove := DinPanelMouseMove;
-       PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
-      // PanChannels[i].ChImage.OnClick := DinPanelClick;
-       PanChannels[i].chName.OnClick := DinPanelClick;
-       PanChannels[i].ChLang.OnClick := DinPanelClick;
+      PanChannels[i].OnMouseMove := DinPanelMouseMove;
+      PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
+      PanChannels[i].ChImage.OnClick := DinPanelClick;
+      PanChannels[i].ChName.OnClick := DinPanelClick;
+      PanChannels[i].ChLang.OnClick := DinPanelClick;
       // это рабочий вариант прямо с поля взять, не из таблицы!!
       // g.Assign(results.FieldByName('img_channel'));
       // Image1.Picture.Assign(g);
@@ -251,19 +265,33 @@ begin
       results.Next;
     end;
   end;
-  Label1.Text := inttostr(i - 1);
+  Label1.text := inttostr(i - 1);
 
 end;
 
 // обработка пароля
+procedure TfMain.FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Single);
+begin
+  if lastPanel <> nil then
+  begin
+    (lastPanel.Controls[0] as TShape).Fill.Color := vDefaultColor;
+    // TAlphaColorRec.Darkgreen; //TAlphaColor($8B0000)
+    (lastPanel.Controls[0] as TRectangle).Stroke.Color := vDefaultColor;
+    // lastPanel. .Color := clBtnFace;
+    // lastPanel.Font.Color := clBlack;
+    lastPanel := nil;
+  end; //
+end;
+
 procedure TfMain.FrameFirst1ButtonLogClick(Sender: TObject);
 var
   vOk: boolean;
   vLog, vPas: string;
 begin
   vOk := false;
-  vLog := fMain.FrameFirst1.EditName.Text;
-  vPas := fMain.FrameFirst1.EditPas.Text;
+  vLog := fMain.FrameFirst1.EditName.text;
+  vPas := fMain.FrameFirst1.EditPas.text;
 
   // проверка логина и пароля
   if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) then
@@ -281,14 +309,12 @@ begin
   else
   // идентификация успешна
   begin
-    LabelMail.Text := fMain.FrameFirst1.EditName.Text;
+    LabelMail.text := fMain.FrameFirst1.EditName.text;
     fMain.FrameFirst1.LabelError.Visible := false;
     fMain.FrameFirst1.LabelForgot.Visible := false;
     fMain.Button1Click(Sender);
   end;
 end;
-
-
 
 // удaление канала
 procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
@@ -300,8 +326,8 @@ var
 begin
   lastPanel := nil;
   vNPanel := TButton(Sender).Tag;
-  vIdChannel := PanChannels[vNPanel].chId.Text;
-  vNameChannel := PanChannels[vNPanel].chName.Text;
+  vIdChannel := PanChannels[vNPanel].chId.text;
+  vNameChannel := PanChannels[vNPanel].ChName.text;
   strQuestionDelete := 'Delete ' + vNameChannel + ' ?';
   if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
@@ -327,58 +353,58 @@ const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
 var
   vMessage, vIdChannel, vNameChannel: string;
-  vNPanel: Integer;
-{  Params: TDictionary<String, String>;
-  Response: string;
-  Access_token: string;
-  refresh_token: string;
+  vNPanel: integer;
+  { Params: TDictionary<String, String>;
+    Response: string;
+    Access_token: string;
+    refresh_token: string;
 
-  OAuth2: TOAuth;
-  vString: string;
+    OAuth2: TOAuth;
+    vString: string;
 
-  strQuestionDelete, vIdChannel, vNameChannel: string;
-  vNPanel: Integer;
-  vToken: string;
+    strQuestionDelete, vIdChannel, vNameChannel: string;
+    vNPanel: Integer;
+    vToken: string;
 
-  // vObj: Tvideo;
-  vObjVideo: Tchannel;
-  res, i: Integer;
-  urlget: string;
-  AJsonString: string;
+    // vObj: Tvideo;
+    vObjVideo: Tchannel;
+    res, i: Integer;
+    urlget: string;
+    AJsonString: string;
 
-  vImgUrl: string;
-  g: TGraphic;
-  ssimg: TStringStream;
-  vSS: TStringStream;
-  SS: TStringStream;
+    vImgUrl: string;
+    g: TGraphic;
+    ssimg: TStringStream;
+    vSS: TStringStream;
+    SS: TStringStream;
 
-  jpegimg: TJPEGImage;
-  S: string;
-  AAPIUrl: String;
-  FHTTPClient: THTTPClient;
-  AResponce: IHTTPResponse;
-  vVideo: TrVideo;
+    jpegimg: TJPEGImage;
+    S: string;
+    AAPIUrl: String;
+    FHTTPClient: THTTPClient;
+    AResponce: IHTTPResponse;
+    vVideo: TrVideo;
 
-  vPosX, vPosY: Integer;  }
+    vPosX, vPosY: Integer; }
 
 begin
-  lastPanel := nil;
-{
-  //Button4Click(Sender);
-  try
+  {
+    //Button4Click(Sender);
+    try
     for i := 1 to 50 do
-      PanVideos[i].Free;
-  finally
+    PanVideos[i].Free;
+    finally
     lastPanel := nil;
-  end;
-}
+    end;
+  }
   vNPanel := TButton(Sender).Tag;
-  vIdChannel := PanChannels[vNPanel].chId.Text;
-//  vToken := PanChannels[vNPanel].chToken.Caption;
-  vNameChannel := PanChannels[vNPanel].chName.Text;
+  vIdChannel := PanChannels[vNPanel].chId.text;
+  // vToken := PanChannels[vNPanel].chToken.Caption;
+  vNameChannel := PanChannels[vNPanel].ChName.text;
   // Для сообщения при отладке что нажали
-  vIdChannel := PanChannels[vNPanel].chId.Text;
-  vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel +' ' + IntToStr(vNPanel);
+  vIdChannel := PanChannels[vNPanel].chId.text;
+  vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
+    inttostr(vNPanel);
   showmessage(vMessage);
 
 end;
