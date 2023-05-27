@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
-  PnChannel, FrmDataSQLite, FMX.Objects;
+  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar;
 
 type
   TfMain = class(TForm)
@@ -24,6 +24,7 @@ type
     Button5: TButton;
     Label2: TLabel;
     Button6: TButton;
+    FrameProgressBar: TFrameProgressBar;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -37,6 +38,7 @@ type
       X, Y: Single);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure FrameProgressBarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -117,6 +119,7 @@ begin
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
   // fMain.FrameChannels.Visible := false;
+  FrameProgressBar.Visible := false;
 
 end;
 
@@ -141,8 +144,9 @@ var
 begin
   while not Terminated do
   begin
+    sleep(1);
     inc(vProgressBarStatus);
-    if vProgressBarStatus > 40000 then
+    if vProgressBarStatus > 4000 then
       vProgressBarStatus := 1;
     Synchronize(SetActualProgress);
   end;
@@ -156,6 +160,7 @@ end;
 procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
+  fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -289,6 +294,8 @@ begin
     // GlobalProgressThread.Priority := tpLower;
     GlobalProgressThread.Resume;
   end;
+
+  FrameProgressBar.Visible := true;
 end;
 
 procedure TfMain.Button6Click(Sender: TObject);
@@ -319,6 +326,7 @@ begin
   // GlobalProgressThread.DoTerminate;
   // GlobalProgressThread.Terminated := true;
 
+  FrameProgressBar.Visible := false;
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);
@@ -449,6 +457,11 @@ begin
     fMain.FrameFirst1.LabelForgot.Visible := false;
     fMain.Button1Click(Sender);
   end;
+end;
+
+procedure TfMain.FrameProgressBarClick(Sender: TObject);
+begin
+
 end;
 
 // удaление канала

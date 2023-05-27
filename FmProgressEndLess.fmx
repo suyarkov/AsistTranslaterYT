@@ -1,6 +1,6 @@
-object FrameProgressBar: TFrameProgressBar
-  Size.Width = 320.000000000000000000
-  Size.Height = 305.000000000000000000
+object FrameProgressEndLess: TFrameProgressEndLess
+  Size.Width = 377.000000000000000000
+  Size.Height = 369.000000000000000000
   Size.PlatformDefault = False
   object Layout1: TLayout
     Align = Center

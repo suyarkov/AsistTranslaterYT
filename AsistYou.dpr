@@ -8,7 +8,8 @@ uses
   FmChannels in 'FmChannels.pas' {FrameChannels: TFrame},
   FrmDataSQLite in 'FrmDataSQLite.pas' {SQLiteModule: TDataModule},
   PnChannel in 'PnChannel.pas',
-  FmProgressBar in 'FmProgressBar.pas' {FrameProgressBar: TFrame};
+  FmProgressBar in 'FmProgressBar.pas' {FrameProgressBar: TFrame},
+  FmProgressEndLess in 'FmProgressEndLess.pas' {FrameProgressEndLess: TFrame};
 
 {$R *.res}
 
