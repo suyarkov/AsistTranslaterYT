@@ -20,7 +20,7 @@ object FrameFirst: TFrameFirst
       TextSettings.FontColor = claRed
       Text = '... incorrect'
       Visible = False
-      TabOrder = 4
+      TabOrder = 3
     end
   end
   object EditName: TEdit

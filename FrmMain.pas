@@ -21,6 +21,9 @@ type
     FrameChannels: TFrameChannels;
     ButtonSelChannels: TButton;
     Image1: TImage;
+    Button5: TButton;
+    Label2: TLabel;
+    Button6: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -32,6 +35,8 @@ type
       X, Y: Single);
     procedure FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
       X, Y: Single);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -46,6 +51,13 @@ type
     procedure Execute; override;
   end;
 
+  TProgressThread = class(TThread)
+  private
+    procedure SetActualProgress;
+  protected
+    procedure Execute; override;
+  end;
+
 var
   fMain: TfMain;
   PanChannels: array [1 .. 20] of TChannelPanel;
@@ -54,6 +66,8 @@ var
   // PanVideos: array [1 .. 50] of TMyVideoPanel;
   lastPanel: TPanel;
   vDefaultColor: TAlphaColor;
+  vProgressBarStatus: integer;
+  GlobalProgressThread: TProgressThread;
 
 implementation
 
@@ -106,17 +120,42 @@ begin
 
 end;
 
+// смотри статус не снеси
 procedure TfMain.Button1Click(Sender: TObject);
 var
   NewThread: TNewThread;
 begin
-  vState := 2;
   vEventMove := vState * 10 + 1;
+  vState := 2;
   ButtonBack.Enabled := true;
   NewThread := TNewThread.Create(true);
   NewThread.FreeOnTerminate := true;
   NewThread.Priority := tpLower;
   NewThread.Resume;
+end;
+
+// поток для прогресс бара
+procedure TProgressThread.Execute;
+var
+  i: integer;
+begin
+  while not Terminated do
+  begin
+    inc(vProgressBarStatus);
+    if vProgressBarStatus > 40000 then
+      vProgressBarStatus := 1;
+    Synchronize(SetActualProgress);
+  end;
+  { for i := 0 to 2000 do
+    begin
+    inc(vProgressBarStatus);
+    Synchronize(SetActualProgress);
+    end; }
+end;
+
+procedure TProgressThread.SetActualProgress;
+begin
+  fMain.Label2.text := IntToStr(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -131,6 +170,7 @@ begin
   end;
 end;
 
+// установка актаульного фрейма
 procedure TNewThread.SetActualFrame;
 var
   vLeftBorderFrame, vStepSize, vLeftBorderFrame2: integer;
@@ -193,9 +233,92 @@ begin
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
   // fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + 5;
-  fMain.Label1.text := inttostr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
-    inttostr(Round(vLeftBorderFrame2)) + ', ' +
-    inttostr(Round(fMain.FrameChannels.Position.Y)) + ', ';
+  fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
+    IntToStr(Round(vLeftBorderFrame2)) + ', ' +
+    IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
+end;
+
+procedure TfMain.Button5Click(Sender: TObject);
+var
+  aShape: TShape;
+  r, x0, y0: integer;
+  ProgressThread: TProgressThread;
+begin
+  // r:=100;     // радиус
+  // x0:=300;   // координата центра
+  // y0:=200;   // координата центра
+  // image1.Canvas.(FMX.Objects.DrawEllipse(x0, y0, r)); //.Ellipse(x0-r,y0-r,x0+r,y0+r);
+  //
+  // image1.canvas.
+  if Assigned(GlobalProgressThread) then
+  begin
+    Label1.text := BoolToStr(GlobalProgressThread.Terminated);
+    if GlobalProgressThread.Terminated = false or
+      GlobalProgressThread.Terminated = true then
+    begin
+      if GlobalProgressThread.Terminated = true then
+      begin
+        Label1.text := Label1.text + ' true';
+        GlobalProgressThread.Free;
+      end
+      else
+      begin
+        if GlobalProgressThread.Terminated = false then
+          Label1.text := Label1.text + ' false'
+        else
+        if GlobalProgressThread.Terminated = null then
+          Label1.text := Label1.text + ' null'
+          else Label1.text := 'что да как';
+      end;
+    end
+  end
+  else
+    Label1.text := 'объекта нет созданного';
+
+  if not Assigned(GlobalProgressThread) then
+  begin
+      GlobalProgressThread := TProgressThread.Create(true);
+  end;
+      if BoolToStr(GlobalProgressThread.Terminated) = '-1' then
+      GlobalProgressThread := TProgressThread.Create(true);
+  if vProgressBarStatus = 0 then
+  begin
+    vProgressBarStatus := 0;
+
+    GlobalProgressThread.FreeOnTerminate := true;
+    // GlobalProgressThread.Priority := tpLower;
+    GlobalProgressThread.Resume;
+  end;
+end;
+
+procedure TfMain.Button6Click(Sender: TObject);
+begin
+  if Assigned(GlobalProgressThread) then
+  begin
+    Label1.text := BoolToStr(GlobalProgressThread.Terminated);
+    if GlobalProgressThread.Terminated = false then
+      GlobalProgressThread.Terminate;
+    Label1.text := Label1.text + '  ' + BoolToStr(GlobalProgressThread.Terminated);
+    {
+    if GlobalProgressThread.Terminated = true then
+    begin
+      Label1.text := 'true';
+      GlobalProgressThread.Free;
+    end
+    else if GlobalProgressThread.Terminated = false then
+      Label1.text := 'false'
+    else
+      Label1.text := 'null';
+      }
+    if GlobalProgressThread.Terminated = null then
+          Label1.text := Label1.text + ' null';
+    if GlobalProgressThread.Terminated = null then
+          Label1.text := Label1.text + ' null';
+  end;
+  vProgressBarStatus := 0;
+  // GlobalProgressThread.DoTerminate;
+  // GlobalProgressThread.Terminated := true;
+
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);
@@ -224,7 +347,8 @@ var
   results: TDataSet;
   // g: TGraphic;
   vPos: integer;
-  vBitmap : TBitmap;
+  vBitmap: TBitmap;
+  vDefaulBitmap: TBitmap;
 begin
   // g:=TJpegimage.Create;
   // g := TPNGImage.Create;
@@ -234,23 +358,34 @@ begin
 
   // загружаю данные из локальной таблицы
   results := SQLiteModule.SelRefreshToken();
-
+  vBitmap := TBitmap.Create;
+  vDefaulBitmap := TBitmap.Create;
+  vDefaulBitmap.LoadFromFile('d:/tete.jpg');
   // разбираю курсор в объект
   if not results.IsEmpty then
   begin
     results.First;
-    vBitmap := TBitmap.Create;
-    vBitmap.LoadFromFile('d:/tete.jpg');
+
+    // vBitmap.LoadFromFile('d:/tete.jpg');
     while not results.Eof do
     begin
+      if results.FieldByName('img_channel').SIZE > 100 then
+        try
+          vBitmap := TBitmap(results.FieldByName('img_channel'));
+        except
+          vBitmap := vDefaulBitmap;
+        end
+      else
+      begin
+        vBitmap := vDefaulBitmap;
+      end;
 
       vPos := 30 + (i - 1) * 120;
       PanChannels[i] := TChannelPanel.Create(FrameChannels, vPos, i,
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
-        results.FieldByName('lang').AsString,
-        vBitmap);
+        results.FieldByName('lang').AsString, vBitmap);
       PanChannels[i].Parent := FrameChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
       PanChannels[i].OnMouseMove := DinPanelMouseMove;
@@ -265,7 +400,7 @@ begin
       results.Next;
     end;
   end;
-  Label1.text := inttostr(i - 1);
+  Label1.text := IntToStr(i - 1);
 
 end;
 
@@ -404,7 +539,7 @@ begin
   // Для сообщения при отладке что нажали
   vIdChannel := PanChannels[vNPanel].chId.text;
   vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
-    inttostr(vNPanel);
+    IntToStr(vNPanel);
   showmessage(vMessage);
 
 end;

@@ -100,10 +100,30 @@ object fMain: TfMain
     MultiResBitmap = <
       item
       end>
-    Position.X = 32.000000000000000000
-    Position.Y = 240.000000000000000000
-    Size.Width = 65.000000000000000000
-    Size.Height = 97.000000000000000000
+    Position.X = 16.000000000000000000
+    Position.Y = 272.000000000000000000
+    Size.Width = 66.000000000000000000
+    Size.Height = 66.000000000000000000
     Size.PlatformDefault = False
+  end
+  object Button5: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 368.000000000000000000
+    TabOrder = 8
+    Text = 'Button5'
+    OnClick = Button5Click
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 224.000000000000000000
+    Text = 'Label2'
+    TabOrder = 9
+  end
+  object Button6: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 400.000000000000000000
+    TabOrder = 10
+    Text = 'Button6'
+    OnClick = Button6Click
   end
 end

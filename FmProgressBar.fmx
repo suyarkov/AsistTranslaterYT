@@ -1,0 +1,20 @@
+object FrameProgressBar: TFrameProgressBar
+  Size.Width = 320.000000000000000000
+  Size.Height = 93.000000000000000000
+  Size.PlatformDefault = False
+  object ProgressBar: TProgressBar
+    Orientation = Horizontal
+    Position.Y = 24.000000000000000000
+    Size.Width = 320.000000000000000000
+    Size.Height = 9.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'progressbarstyle'
+  end
+  object Button1: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 64.000000000000000000
+    TabOrder = 1
+    Text = 'Button1'
+    OnClick = Button1Click
+  end
+end

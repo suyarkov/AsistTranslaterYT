@@ -122,7 +122,11 @@ begin
     Height := 88;
     Width := 88;
     Tag :=  pN;
+    try
     ChImage.Bitmap := ABitmap;
+    except
+       null;
+    end;
     Visible := True;
   end;
 
