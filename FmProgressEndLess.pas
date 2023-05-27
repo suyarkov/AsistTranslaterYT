@@ -17,10 +17,28 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure SetProgress(const APos: integer);
   end;
 
 implementation
 
 {$R *.fmx}
+
+procedure TFrameProgressEndLess.SetProgress(const APos: integer);
+  var vSin : integer;
+begin
+  vSin := APos mod (200);
+  if vSin>100 then
+  begin
+  Pie1.StartAngle := ( 360 * (vSin - 100) / 100 ) - 90;
+  Pie1.EndAngle := +270;
+  end
+  else
+  begin
+  Pie1.StartAngle := - 90;
+  Pie1.EndAngle := ( 360 * (vSin) / 100 ) - 90;
+  end;
+  text1.Text := inttoStr(vSin);
+end;
 
 end.

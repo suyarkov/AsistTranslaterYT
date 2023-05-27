@@ -7,7 +7,7 @@ uses
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
-  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar;
+  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess;
 
 type
   TfMain = class(TForm)
@@ -25,6 +25,7 @@ type
     Label2: TLabel;
     Button6: TButton;
     FrameProgressBar: TFrameProgressBar;
+    FrameProgressEndLess: TFrameProgressEndLess;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -161,6 +162,8 @@ procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
   fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
+
+  fMain.FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -296,6 +299,7 @@ begin
   end;
 
   FrameProgressBar.Visible := true;
+  FrameProgressEndLess.Visible := true;
 end;
 
 procedure TfMain.Button6Click(Sender: TObject);
@@ -327,6 +331,7 @@ begin
   // GlobalProgressThread.Terminated := true;
 
   FrameProgressBar.Visible := false;
+  FrameProgressEndLess.Visible := false;
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);

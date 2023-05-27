@@ -127,8 +127,8 @@ object fMain: TfMain
     OnClick = Button6Click
   end
   inline FrameProgressBar: TFrameProgressBar
-    Position.X = 344.000000000000000000
-    Position.Y = 263.000000000000000000
+    Position.X = 560.000000000000000000
+    Position.Y = 282.000000000000000000
     Size.Width = 320.000000000000000000
     Size.Height = 305.000000000000000000
     Size.PlatformDefault = False
@@ -140,5 +140,12 @@ object fMain: TfMain
         end
       end
     end
+  end
+  inline FrameProgressEndLess: TFrameProgressEndLess
+    Position.X = 144.000000000000000000
+    Position.Y = 146.000000000000000000
+    Size.Width = 377.000000000000000000
+    Size.Height = 369.000000000000000000
+    Size.PlatformDefault = False
   end
 end
