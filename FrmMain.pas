@@ -214,12 +214,12 @@ end;
 
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
 procedure TfMain.BGetTokkensClick(Sender: TObject);
-const
-  tokenurl = 'https://accounts.google.com/o/oauth2/token';
-  redirect_uri1 = 'http://127.0.0.1:1904';
+//const
+//  tokenurl = 'https://accounts.google.com/o/oauth2/token';
+//  redirect_uri1 = 'http://127.0.0.1:1904';
 var
-  Access_token: string;
-  refresh_token: string;
+  Access_token: string;      // токен выполнения операций
+  refresh_token: string;     // токен получения следующего токена на выполнение
 
   OAuth2: TOAuth;
   vString: string;
@@ -234,7 +234,6 @@ begin
   refresh_token := OAuth2.refresh_token;
   EdRefresh_token := refresh_token;
   EdAccess_token := Access_token;
-//  edit1.Text := '2';
   // ответ с данными json по каналу
   vString := OAuth2.MyChannels;
   Memo1.Text := vString;
