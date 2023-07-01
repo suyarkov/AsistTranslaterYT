@@ -172,7 +172,7 @@ object fMain: TfMain
     Text = 'BGetTokkens'
     OnClick = BGetTokkensClick
   end
-  object BGetChennal: TButton
+  object BGetChannel: TButton
     Position.X = 55.000000000000000000
     Position.Y = 38.000000000000000000
     Size.Width = 27.000000000000000000
@@ -180,7 +180,7 @@ object fMain: TfMain
     Size.PlatformDefault = False
     TabOrder = 15
     Text = 'BTCPServer'
-    OnClick = BGetChennalClick
+    OnClick = BGetChannelClick
   end
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]

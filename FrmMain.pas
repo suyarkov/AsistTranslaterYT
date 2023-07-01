@@ -34,8 +34,8 @@ type
     FrameProgressBar: TFrameProgressBar;
     ButtonPaint: TButton;
     TCPServerYouTubeAnswers: TIdTCPServer;
-    BGetTokkens: TButton;  // кнопка должна оставаться так как её вызов идет по событию click
-    BGetChennal: TButton;
+    BGetTokkens: TButton;
+    BGetChannel: TButton;
     Memo1: TMemo;
     Edit4: TEdit;
     Image2: TImage;
@@ -57,7 +57,7 @@ type
     procedure FrameChannelsButtonAddChannelClick(Sender: TObject);
     procedure TCPServerYouTubeAnswersExecute(AContext: TIdContext);
     procedure BGetTokkensClick(Sender: TObject);
-    procedure BGetChennalClick(Sender: TObject);
+    procedure BGetChannelClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -156,7 +156,7 @@ end;
 
 // смотри статус не снеси
 // разбор ответа по каналу от сервера youtube и создание коротного описания каналов
-procedure TfMain.BGetChennalClick(Sender: TObject);
+procedure TfMain.BGetChannelClick(Sender: TObject);
 var
   vObj: Tchannel;
   res, i: Integer;
@@ -224,23 +224,27 @@ var
   OAuth2: TOAuth;
   vString: string;
 begin
+  Edit4.Text := '3';
   OAuth2 := TOAuth.Create;
   OAuth2.ClientID :=
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
   OAuth2.ClientSecret := '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';
   OAuth2.ResponseCode := Edit1.Text;//vAccessCode;//
-
+  Edit4.Text := '44';
   Access_token := OAuth2.GetAccessToken;
   refresh_token := OAuth2.refresh_token;
+  Edit4.Text := '5';
   EdRefresh_token := refresh_token;
+  Edit4.Text := '6';
   EdAccess_token := Access_token;
+  Edit4.Text := '7';
   // ответ с данными json по каналу
   vString := OAuth2.MyChannels;
   Memo1.Text := vString;
   OAuth2.Free;
-//  BTCPServer2.OnClick(Sender);
-  BGetChennalClick(Sender);
-  //RefreshCannelsClick(FormMain); // обновление
+
+//  BGetChannelClick(Sender);
+  //RefreshCannelsClick(FormMain); // обновление не забудь!!!
 end;
 
 procedure TfMain.Button1Click(Sender: TObject);
@@ -642,7 +646,7 @@ var
 
   msgFromClient: string;
   vPosBegin, vPosEnd: Integer;
-  vAccessCode: string;
+  vAccessCode: string;  // код доступа к каналу
 
   vPath: string;
   vFullNameFile: string;
@@ -686,7 +690,7 @@ begin
       AContext.Connection.IOHandler.
         write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
       AContext.Connection.IOHandler.
-        write('<title>"AsistTranslaterYT connected!</title>');
+        write('<title>"AssistIQ connected!</title>');
       AContext.Connection.IOHandler.write('</head>');
 
       AContext.Connection.IOHandler.write('<body bgcolor="white">');
@@ -699,7 +703,7 @@ begin
 
       AContext.Connection.IOHandler.write('</p>');
       AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AsistTranslaterYT "</h3>');
+        write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>');
       AContext.Connection.IOHandler.write('</body>');
 
       AContext.Connection.IOHandler.write('</html>');
@@ -719,7 +723,7 @@ begin
       AContext.Connection.IOHandler.
         write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
       AContext.Connection.IOHandler.
-        write('<title>AsistTranslater connected!</title>');
+        write('<title>AssistIQ connected!</title>');
       AContext.Connection.IOHandler.write('</head>');
 
       AContext.Connection.IOHandler.write('<body bgcolor="white">');
@@ -732,7 +736,7 @@ begin
 
       AContext.Connection.IOHandler.write('</p>');
       AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AsistTranslaterYT "</h3>');
+        write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>');
       AContext.Connection.IOHandler.write('</body>');
 
       AContext.Connection.IOHandler.write('</html>');
