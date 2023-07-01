@@ -46,6 +46,11 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
+    inherited LabelPas: TLabel
+      inherited LabelError: TLabel
+        TabOrder = 4
+      end
+    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end
@@ -87,14 +92,24 @@ object fMain: TfMain
     end
     inherited ButtonAddChannel: TButton
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+      OnClick = FrameChannelsButtonAddChannelClick
     end
   end
   object ButtonSelChannels: TButton
-    Position.X = 32.000000000000000000
+    Position.X = 24.000000000000000000
     Position.Y = 152.000000000000000000
     TabOrder = 6
     Text = 'ButtonSelChannels'
     OnClick = ButtonSelChannelsClick
+    object Image2: TImage
+      MultiResBitmap = <
+        item
+        end>
+      Position.Y = 24.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+    end
   end
   object Image1: TImage
     MultiResBitmap = <
@@ -114,8 +129,8 @@ object fMain: TfMain
     OnClick = Button5Click
   end
   object Label2: TLabel
-    Position.X = 16.000000000000000000
-    Position.Y = 224.000000000000000000
+    Position.X = 8.000000000000000000
+    Position.Y = 234.000000000000000000
     Text = 'Label2'
     TabOrder = 9
   end
@@ -127,12 +142,11 @@ object fMain: TfMain
     OnClick = Button6Click
   end
   inline FrameProgressBar: TFrameProgressBar
-    Position.X = 560.000000000000000000
+    Position.X = 554.000000000000000000
     Position.Y = 282.000000000000000000
     Size.Width = 320.000000000000000000
     Size.Height = 305.000000000000000000
     Size.PlatformDefault = False
-    OnClick = FrameProgressBarClick
     inherited Layout1: TLayout
       inherited Circle1: TCircle
         inherited Text1: TText
@@ -141,11 +155,65 @@ object fMain: TfMain
       end
     end
   end
-  inline FrameProgressEndLess: TFrameProgressEndLess
-    Position.X = 144.000000000000000000
-    Position.Y = 146.000000000000000000
-    Size.Width = 377.000000000000000000
-    Size.Height = 369.000000000000000000
+  object ButtonPaint: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 464.000000000000000000
+    TabOrder = 12
+    Text = 'ButtonPaint'
+    OnClick = ButtonPaintClick
+  end
+  object BGetTokkens: TButton
+    Position.X = 16.000000000000000000
+    Position.Y = 38.000000000000000000
+    Size.Width = 33.000000000000000000
+    Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
+    TabOrder = 16
+    Text = 'BGetTokkens'
+    OnClick = BGetTokkensClick
+  end
+  object BGetChennal: TButton
+    Position.X = 55.000000000000000000
+    Position.Y = 38.000000000000000000
+    Size.Width = 27.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 15
+    Text = 'BTCPServer'
+    OnClick = BGetChennalClick
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 8.000000000000000000
+    Position.Y = 524.000000000000000000
+    Size.Width = 884.000000000000000000
+    Size.Height = 59.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 18
+    Viewport.Width = 876.000000000000000000
+    Viewport.Height = 51.000000000000000000
+  end
+  object Edit4: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 19
+    Position.X = 8.000000000000000000
+    Position.Y = 494.000000000000000000
+    Size.Width = 449.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 20
+    Position.X = 32.000000000000000000
+    Position.Y = 440.000000000000000000
+  end
+  object TCPServerYouTubeAnswers: TIdTCPServer
+    Bindings = <>
+    DefaultPort = 1904
+    OnExecute = TCPServerYouTubeAnswersExecute
+    Left = 48
+    Top = 72
   end
 end

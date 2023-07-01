@@ -1,4 +1,4 @@
-program AsistYou;
+program AssistIQ;
 
 uses
   System.StartUpCopy,

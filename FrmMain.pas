@@ -5,9 +5,16 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
+  System.Net.HTTPClient,
+  System.NetEncoding,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
-  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess;
+  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess,
+  IdBaseComponent, IdComponent, IdCustomTCPServer, IdTCPServer,
+  Winapi.ShellAPI,
+  IdContext, OAuth2,
+  Classes.channel, Classes.video,
+  REST.JSON, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Edit;
 
 type
   TfMain = class(TForm)
@@ -25,7 +32,14 @@ type
     Label2: TLabel;
     Button6: TButton;
     FrameProgressBar: TFrameProgressBar;
-    FrameProgressEndLess: TFrameProgressEndLess;
+    ButtonPaint: TButton;
+    TCPServerYouTubeAnswers: TIdTCPServer;
+    BGetTokkens: TButton;  // кнопка должна оставаться так как её вызов идет по событию click
+    BGetChennal: TButton;
+    Memo1: TMemo;
+    Edit4: TEdit;
+    Image2: TImage;
+    Edit1: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -39,7 +53,11 @@ type
       X, Y: Single);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
-    procedure FrameProgressBarClick(Sender: TObject);
+    procedure ButtonPaintClick(Sender: TObject);
+    procedure FrameChannelsButtonAddChannelClick(Sender: TObject);
+    procedure TCPServerYouTubeAnswersExecute(AContext: TIdContext);
+    procedure BGetTokkensClick(Sender: TObject);
+    procedure BGetChennalClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -71,6 +89,10 @@ var
   vDefaultColor: TAlphaColor;
   vProgressBarStatus: integer;
   GlobalProgressThread: TProgressThread;
+  FrameProgressEndLess: TFrameProgressEndLess;
+
+  EdRefresh_token :string;
+  EdAccess_token :string;
 
 implementation
 
@@ -122,9 +144,106 @@ begin
   // fMain.FrameChannels.Visible := false;
   FrameProgressBar.Visible := false;
 
+  if not Assigned(FrameProgressEndLess) then
+  begin
+    FrameProgressEndLess := TFrameProgressEndLess.Create(Self);
+    FrameProgressEndLess.Visible := false;
+    FrameProgressEndLess.Parent := fMain;
+    FrameProgressEndLess.Align := TAlignLayout.Center;
+  end;
+
 end;
 
 // смотри статус не снеси
+// разбор ответа по каналу от сервера youtube и создание коротного описания каналов
+procedure TfMain.BGetChennalClick(Sender: TObject);
+var
+  vObj: Tchannel;
+  res, i: Integer;
+  urlget: string;
+  vChannel: TShortChannel;
+  vImgUrl: string;
+  // S: AnsiString;
+//  jpegimg: TJPEGImage;
+  S: string;
+  AAPIUrl: String;
+  FHTTPClient: THTTPClient;
+  AResponce: IHTTPResponse;
+begin
+  vObj.Create;
+  vObj := TJson.JsonToObject<Tchannel>(Memo1.Text);
+
+  for i := 0 to Length(vObj.Items) - 1 do
+  begin
+    vChannel.id_channel := vObj.Items[i].id;
+    vChannel.name_channel := vObj.Items[i].snippet.title;
+    vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
+    Edit4.Text := vImgUrl;
+    try
+
+      S := StringReplace(Edit4.Text, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+      FHTTPClient := THTTPClient.Create;
+      FHTTPClient.UserAgent :=
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+      try
+        AResponce := FHTTPClient.Get(AAPIUrl);
+      except
+        showmessage('нет подключения');
+      end;
+      if Not Assigned(AResponce) then
+      begin
+        showmessage('Пусто');
+      end;
+
+      //jpegimg := TJPEGImage.Create;
+//      jpegimg.LoadFromStream(AResponce.ContentStream);
+//      Image2.Picture.Assign(jpegimg);
+      // Image2.Picture.LoadFromStream(SQLiteModule.LoadAnyImage(vImgUrl));
+    except
+    end;
+
+    vChannel.refresh_token := EdRefresh_token;
+    vChannel.lang := vObj.Items[i].snippet.defaultLanguage;
+    // vChannel.sel_lang := vObj.;
+    vChannel.deleted := 0;
+    res := SQLiteModule.InsRefreshToken(vChannel);
+  end;
+end;
+
+
+// запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
+procedure TfMain.BGetTokkensClick(Sender: TObject);
+const
+  tokenurl = 'https://accounts.google.com/o/oauth2/token';
+  redirect_uri1 = 'http://127.0.0.1:1904';
+var
+  Access_token: string;
+  refresh_token: string;
+
+  OAuth2: TOAuth;
+  vString: string;
+begin
+  OAuth2 := TOAuth.Create;
+  OAuth2.ClientID :=
+    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  OAuth2.ClientSecret := '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';
+  OAuth2.ResponseCode := Edit1.Text;//vAccessCode;//
+
+  Access_token := OAuth2.GetAccessToken;
+  refresh_token := OAuth2.refresh_token;
+  EdRefresh_token := refresh_token;
+  EdAccess_token := Access_token;
+//  edit1.Text := '2';
+  // ответ с данными json по каналу
+  vString := OAuth2.MyChannels;
+  Memo1.Text := vString;
+  OAuth2.Free;
+//  BTCPServer2.OnClick(Sender);
+  BGetChennalClick(Sender);
+  //RefreshCannelsClick(FormMain); // обновление
+end;
+
 procedure TfMain.Button1Click(Sender: TObject);
 var
   NewThread: TNewThread;
@@ -163,7 +282,7 @@ begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
   fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
 
-  fMain.FrameProgressEndLess.SetProgress(vProgressBarStatus);
+  FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -273,10 +392,10 @@ begin
       begin
         if GlobalProgressThread.Terminated = false then
           Label1.text := Label1.text + ' false'
-        else
-        if GlobalProgressThread.Terminated = null then
+        else if GlobalProgressThread.Terminated = null then
           Label1.text := Label1.text + ' null'
-          else Label1.text := 'что да как';
+        else
+          Label1.text := 'НЕ НЕСУЩЕСТВУЕТ';
       end;
     end
   end
@@ -285,10 +404,10 @@ begin
 
   if not Assigned(GlobalProgressThread) then
   begin
-      GlobalProgressThread := TProgressThread.Create(true);
+    GlobalProgressThread := TProgressThread.Create(true);
   end;
-      if BoolToStr(GlobalProgressThread.Terminated) = '-1' then
-      GlobalProgressThread := TProgressThread.Create(true);
+  if BoolToStr(GlobalProgressThread.Terminated) = '-1' then
+    GlobalProgressThread := TProgressThread.Create(true);
   if vProgressBarStatus = 0 then
   begin
     vProgressBarStatus := 0;
@@ -309,22 +428,26 @@ begin
     Label1.text := BoolToStr(GlobalProgressThread.Terminated);
     if GlobalProgressThread.Terminated = false then
       GlobalProgressThread.Terminate;
-    Label1.text := Label1.text + '  ' + BoolToStr(GlobalProgressThread.Terminated);
+    Label1.text := Label1.text + '  ' +
+      BoolToStr(GlobalProgressThread.Terminated);
     {
-    if GlobalProgressThread.Terminated = true then
-    begin
+      if GlobalProgressThread.Terminated = true then
+      begin
       Label1.text := 'true';
       GlobalProgressThread.Free;
-    end
-    else if GlobalProgressThread.Terminated = false then
+      end
+      else if GlobalProgressThread.Terminated = false then
       Label1.text := 'false'
-    else
+      else
       Label1.text := 'null';
-      }
+    }
     if GlobalProgressThread.Terminated = null then
-          Label1.text := Label1.text + ' null';
-    if GlobalProgressThread.Terminated = null then
-          Label1.text := Label1.text + ' null';
+      Label1.text := Label1.text + ' null';
+
+  end;
+  if Assigned(GlobalProgressThread) then
+  begin
+    GlobalProgressThread.Free;
   end;
   vProgressBarStatus := 0;
   // GlobalProgressThread.DoTerminate;
@@ -352,6 +475,13 @@ begin
   NewThread.Priority := tpLower;
   NewThread.Resume;
 end;
+
+procedure TfMain.ButtonPaintClick(Sender: TObject);
+begin
+//      fMaim.
+end;
+
+
 
 procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
@@ -418,6 +548,43 @@ begin
 end;
 
 // обработка пароля
+procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
+var
+  {$IFDEF ANDROID}
+  Intent: JIntent;
+  {$ENDIF}
+  {$IFDEF IOS}
+  NSU: NSUrl;
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Res: HINST;
+  {$ENDIF}
+begin
+// подключение
+//  EditStatusConnect.Text := 'Waiting for connection ...';
+  // 1.Включить сервер
+
+  if TCPServerYouTubeAnswers.Active = false then
+  begin
+    TCPServerYouTubeAnswers.Bindings.Add.Port := 1904;
+    TCPServerYouTubeAnswers.Active := true;
+//    IdTCPServer1.OnExecute(true);
+//    AContext.Connection.Disconnect;
+//    AContext.Connection.IOHandler.Free;
+
+  end;
+  // 2. Открыть регистрацию
+    {$IFDEF MSWINDOWS}     // версия для винды
+  ShellExecute(0{Handle}, 'open',
+    PChar('https://accounts.google.com/o/oauth2/v2/auth?' +
+    'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
+    'access_type=offline&include_granted_scopes=true' + '&state=security_token'
+    + '&response_type=code' + '&redirect_uri=http://127.0.0.1:1904' +
+    '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com'
+    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil, 1{SW_SHOWNORMAL});
+    {$ENDIF}
+end;
+
 procedure TfMain.FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Single);
 begin
@@ -464,8 +631,120 @@ begin
   end;
 end;
 
-procedure TfMain.FrameProgressBarClick(Sender: TObject);
+
+// ОБРАБОТКА  поступление согласлования или не согласования выдачи прав на канал пользователем
+procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
+const
+  cNameFile: string = 'AccessCode';
+var
+  Port: Integer;
+  PeerPort: Integer;
+  PeerIP: string;
+
+  msgFromClient: string;
+  vPosBegin, vPosEnd: Integer;
+  vAccessCode: string;
+
+  vPath: string;
+  vFullNameFile: string;
+  vFileText: TStringList;
+
 begin
+  vAccessCode := '';
+  msgFromClient := AContext.Connection.IOHandler.ReadLn;
+
+  PeerIP := AContext.Binding.PeerIP;
+  PeerPort := AContext.Binding.PeerPort;
+
+  if Pos('GET', msgFromClient) > 0 then
+  begin
+    if Pos('error=', msgFromClient) = 0 then
+    begin
+      vPosBegin := Pos('code=', msgFromClient);
+      vPosEnd := Pos('scope=', msgFromClient);
+      if (vPosBegin > 0) and (vPosEnd > 0) then
+      begin
+        vPosBegin := vPosBegin + 5;
+        vAccessCode := copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
+        // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
+        Edit1.Text := vAccessCode;
+        if vAccessCode <> '' then
+        begin
+          vPath := GetCurrentDir();
+          vFullNameFile := vPath + '/' + cNameFile;
+          vFileText := TStringList.Create;
+          vFileText.Add(vAccessCode);
+          // сохраняем
+          vFileText.SaveToFile(vFullNameFile);
+        end;
+      end;
+      AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
+      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
+      AContext.Connection.IOHandler.WriteLn('Connection: close');
+      AContext.Connection.IOHandler.WriteLn;
+      AContext.Connection.IOHandler.write('<html>');
+      AContext.Connection.IOHandler.write('<head>');
+      AContext.Connection.IOHandler.
+        write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
+      AContext.Connection.IOHandler.
+        write('<title>"AsistTranslaterYT connected!</title>');
+      AContext.Connection.IOHandler.write('</head>');
+
+      AContext.Connection.IOHandler.write('<body bgcolor="white">');
+      AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
+      AContext.Connection.IOHandler.
+        write('<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>');
+      AContext.Connection.IOHandler.
+        write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
+      // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
+
+      AContext.Connection.IOHandler.write('</p>');
+      AContext.Connection.IOHandler.
+        write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AsistTranslaterYT "</h3>');
+      AContext.Connection.IOHandler.write('</body>');
+
+      AContext.Connection.IOHandler.write('</html>');
+      AContext.Connection.IOHandler.WriteLn;
+      // вызов процедуры запроса данных по каналу и их сохранение
+//      ButtonGetChannel.OnClick(FormMain);
+      BGetTokkens.OnClick(fMain);
+    end
+    else
+    begin
+      AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
+      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
+      AContext.Connection.IOHandler.WriteLn('Connection: close');
+      AContext.Connection.IOHandler.WriteLn;
+      AContext.Connection.IOHandler.write('<html>');
+      AContext.Connection.IOHandler.write('<head>');
+      AContext.Connection.IOHandler.
+        write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
+      AContext.Connection.IOHandler.
+        write('<title>AsistTranslater connected!</title>');
+      AContext.Connection.IOHandler.write('</head>');
+
+      AContext.Connection.IOHandler.write('<body bgcolor="white">');
+      AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
+      AContext.Connection.IOHandler.
+        write('<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>');
+      AContext.Connection.IOHandler.
+        write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
+      // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
+
+      AContext.Connection.IOHandler.write('</p>');
+      AContext.Connection.IOHandler.
+        write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AsistTranslaterYT "</h3>');
+      AContext.Connection.IOHandler.write('</body>');
+
+      AContext.Connection.IOHandler.write('</html>');
+      AContext.Connection.IOHandler.WriteLn;
+    end;
+    // IdTCPServer1.Active := false;
+  end;
+  // а вот тут танцы с бубнами как же прикрыть работу сервера
+  AContext.Connection.IOHandler.CloseGracefully;
+  AContext.Connection.Socket.CloseGracefully;
+  AContext.Connection.Socket.Close;
 
 end;
 
