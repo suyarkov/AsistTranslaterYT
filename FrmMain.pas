@@ -4,9 +4,7 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
-  System.Variants,
-  System.Net.HTTPClient,
-  System.NetEncoding,
+  System.Variants, System.Net.HTTPClient, System.NetEncoding,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
   PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess,
@@ -14,7 +12,10 @@ uses
   Winapi.ShellAPI,
   IdContext, OAuth2,
   Classes.channel, Classes.video,
-  REST.JSON, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Edit;
+  REST.JSON, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Edit, IdMessage,
+  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, //IdMessageClient,
+  //IdSMTPBase, IdSMTP,
+  uEmailSend, uQ;
 
 type
   TfMain = class(TForm)
@@ -40,6 +41,9 @@ type
     Edit4: TEdit;
     Image2: TImage;
     Edit1: TEdit;
+    Edit2: TEdit;
+    ButtonEmail2: TButton;
+    ButtonQ: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -58,6 +62,8 @@ type
     procedure TCPServerYouTubeAnswersExecute(AContext: TIdContext);
     procedure BGetTokkensClick(Sender: TObject);
     procedure BGetChannelClick(Sender: TObject);
+    procedure ButtonEmail2Click(Sender: TObject);
+    procedure ButtonQClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -152,6 +158,8 @@ begin
     FrameProgressEndLess.Align := TAlignLayout.Center;
   end;
 
+  fMain.FrameFirst1.EditName.Text := uQ.LoadReestr('Name');
+
 end;
 
 // смотри статус не снеси
@@ -219,7 +227,7 @@ procedure TfMain.BGetTokkensClick(Sender: TObject);
 //  redirect_uri1 = 'http://127.0.0.1:1904';
 var
   Access_token: string;      // токен выполнения операций
-  refresh_token: string;     // токен получения следующего токена на выполнение
+  Refresh_token: string;     // токен получения следующего токена на выполнение
 
   OAuth2: TOAuth;
   vString: string;
@@ -228,20 +236,19 @@ begin
   OAuth2 := TOAuth.Create;
   OAuth2.ClientID :=
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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';
+  OAuth2.ClientSecret := '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'; //key AIzaSyApGfcEMp2QK8Z_enQdbZnPGWCEI8TWAXY
+  //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
+  //  Edit1.Text :=  '4/0Adeu5BX2xn5jUnFllh5K9xt_FBwdXRl1yHkAi60rO1vEz1NqCPx2QMZa0O5WbDSNBI8MWg';
   OAuth2.ResponseCode := Edit1.Text;//vAccessCode;//
-  Edit4.Text := '44';
+
   Access_token := OAuth2.GetAccessToken;
-  refresh_token := OAuth2.refresh_token;
-  Edit4.Text := '5';
-  EdRefresh_token := refresh_token;
-  Edit4.Text := '6';
-  EdAccess_token := Access_token;
-  Edit4.Text := '7';
-  // ответ с данными json по каналу
-  vString := OAuth2.MyChannels;
-  Memo1.Text := vString;
+  Refresh_token := OAuth2.refresh_token;
+
+  Edit4.Text := Access_token + ' иии ' + refresh_token;
   OAuth2.Free;
+
+  EdAccess_token :=  Access_token;
+  EdRefresh_token := refresh_token;
 
 //  BGetChannelClick(Sender);
   //RefreshCannelsClick(FormMain); // обновление не забудь!!!
@@ -479,12 +486,37 @@ begin
   NewThread.Resume;
 end;
 
+procedure TfMain.ButtonEmail2Click(Sender: TObject);
+begin
+  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru',
+  '0wxKM9nE60HAwsvhGbN5', 'brest20133@mail.ru', 'aFromName',
+  'suyarkov@gmail.com', 'Тема пирога', 'Привет от асиста',
+  '', true);
+end;
+
 procedure TfMain.ButtonPaintClick(Sender: TObject);
 begin
 //      fMaim.
 end;
 
 
+
+procedure TfMain.ButtonQClick(Sender: TObject);
+var
+  vText : string;
+begin
+  vText := 'проба пера';
+  Code(vText, 'qwedfnkj123', true);
+  showmessage(vText);
+  Code(vText, 'qwedfnkj123', false);
+  showmessage(vText);
+
+  vText := StrToHex(vText);
+  showmessage(vText);
+  vText := HexToStr(vText);
+  showmessage(vText);
+
+end;
 
 procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
@@ -605,7 +637,8 @@ end;
 procedure TfMain.FrameFirst1ButtonLogClick(Sender: TObject);
 var
   vOk: boolean;
-  vLog, vPas: string;
+  vLog, vPas, vResponce: string;
+  OAuth2: TOAuth;
 begin
   vOk := false;
   vLog := fMain.FrameFirst1.EditName.text;
@@ -617,6 +650,12 @@ begin
   else
     vOk := false;
 
+  // проверка на сервере подлинность
+  OAuth2 := TOAuth.Create;
+  vResponce := OAuth2.UserGet('name='+vLog);
+  edit2.Text :=  vResponce;
+  OAuth2.Free;
+
   // рекация
   if vOk = false then
   // ошибка идентификации
@@ -627,6 +666,7 @@ begin
   else
   // идентификация успешна
   begin
+    uQ.SaveReestr('Name',vLog);
     LabelMail.text := fMain.FrameFirst1.EditName.text;
     fMain.FrameFirst1.LabelError.Visible := false;
     fMain.FrameFirst1.LabelForgot.Visible := false;
@@ -669,6 +709,7 @@ begin
       begin
         vPosBegin := vPosBegin + 5;
         vAccessCode := copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
+//        vAccessCode := msgFromClient;
         // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
         Edit1.Text := vAccessCode;
         if vAccessCode <> '' then
@@ -710,7 +751,7 @@ begin
       AContext.Connection.IOHandler.WriteLn;
       // вызов процедуры запроса данных по каналу и их сохранение
 //      ButtonGetChannel.OnClick(FormMain);
-      BGetTokkens.OnClick(fMain);
+//      BGetTokkens.OnClick(fMain);
     end
     else
     begin
@@ -743,11 +784,16 @@ begin
       AContext.Connection.IOHandler.WriteLn;
     end;
     // IdTCPServer1.Active := false;
+    Edit2.Text := 'чудо !!';
+  end
+  else
+  begin
+     Edit2.Text := msgFromClient;
   end;
   // а вот тут танцы с бубнами как же прикрыть работу сервера
-  AContext.Connection.IOHandler.CloseGracefully;
-  AContext.Connection.Socket.CloseGracefully;
-  AContext.Connection.Socket.Close;
+//  AContext.Connection.IOHandler.CloseGracefully;
+//  AContext.Connection.Socket.CloseGracefully;
+//  AContext.Connection.Socket.Close;
 
 end;
 
@@ -841,7 +887,6 @@ begin
   vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
     IntToStr(vNPanel);
   showmessage(vMessage);
-
 end;
 
 end.

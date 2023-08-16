@@ -27,7 +27,10 @@ uses
   Classes.video.item in 'Classes.video.item.pas',
   Classes.video in 'Classes.video.pas',
   Classes.video.snippet in 'Classes.video.snippet.pas',
-  Classes.video.thumbnails in 'Classes.video.thumbnails.pas';
+  Classes.video.thumbnails in 'Classes.video.thumbnails.pas',
+  uEmailSend in 'uEmailSend.pas',
+  uTranslate in 'uTranslate.pas',
+  uQ in 'uQ.pas';
 
 {$R *.res}
 

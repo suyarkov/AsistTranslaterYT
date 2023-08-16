@@ -321,6 +321,9 @@
         <DCCReference Include="Classes.video.pas"/>
         <DCCReference Include="Classes.video.snippet.pas"/>
         <DCCReference Include="Classes.video.thumbnails.pas"/>
+        <DCCReference Include="uEmailSend.pas"/>
+        <DCCReference Include="uTranslate.pas"/>
+        <DCCReference Include="uQ.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

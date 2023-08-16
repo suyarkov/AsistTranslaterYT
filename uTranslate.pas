@@ -11,7 +11,7 @@ uses
 function GoogleTranslate(const AValue, ConstSourceLang, ConstTargetLang
   : String): String;
 
-  function YoutubeGet(const AValue, ConstSourceLang, ConstTargetLang
+function YoutubeGet(const AValue, ConstSourceLang, ConstTargetLang
   : String): String;
 
 implementation

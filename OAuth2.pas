@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.StrUtils,
   //FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  JSON, Rest.Client, Rest.Types, Generics.Collections;
+  JSON, Rest.Client, Rest.Types, Generics.Collections,
+  FMX.Dialogs;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -17,10 +18,11 @@ type
     FClientSecret: string; // секретный ключ клиента приложения
     FScope: string;        // тип необходимых разрешения
     FExpires_in: TDateTime;
-    FRefresh_token: string; // токен подключения
-    FAccess_token: string;  // ключ доступа
+    FRefresh_token: string; // токен подключения -- токен обновлений
+    FAccess_token: string;  // ключ доступа  -- токен доступа
     FFireBaseToken: string; // токен для складывания
-    FResponseCode: string;  // точка доступа
+    FResponseCode: string;  // точка доступа     -- код авторизации, который
+                            //приложение может обменять на токен доступа и токен обновления.
 
     procedure SetClientID(const Value: string);
     procedure SetScope(const Value: string);
@@ -40,7 +42,7 @@ type
     function SubtitleInsert(JSON: string; FileName: String): string;
 
     function Language: string;
-    function GetTokenInfo: string;
+    function GetTokenInfo: string;  // информация о токене? а для чего она то нужна?
 
     function VideoInfo(AVideoID: string): string;   // об одном видео
     function VideoUpdate(JSON: string): string;
@@ -54,6 +56,8 @@ type
     function FireBaseGet(ACollection: string): string;
     function FireBaseUpdate(ACollection, JSON: string): string;
     function FireBaseInsert(ACollection, ADocID, JSON: string): string;
+
+    function UserGet(ACollection: string): string;
 
     constructor Create;
     destructor destroy; override;
@@ -186,7 +190,6 @@ begin
   end;
 
   try
-
     FRequest.Execute;
     case FResponse.StatusCode of
       200:
@@ -195,16 +198,20 @@ begin
           if Pos('captions/', URL) <> 0 then
             if Length(FResponse.RawBytes) <> 0 then
               ServerResponseToFile(FResponse, 'default.sbv');
-          Result := FResponse.JSONText;
+          Result := '200' + FResponse.JSONText + URL;
 
         end;
       403:
         begin
-          Result := FResponse.JSONText;
+          Result := '403' + FResponse.JSONText;
+        end;
+        else
+        begin
+          Result := IntToStr(FResponse.StatusCode) + FResponse.JSONText;
         end;
     end;
   finally
-
+//    Result := 'finally '  + Result;
   end;
 
 end;
@@ -226,18 +233,32 @@ end;
 function TOAuth.GetAccessToken: string;
 const
   tokenurl = 'https://oauth2.googleapis.com/token';
+//'https://accounts.google.com/o/oauth2/token';
+//  https://www.googleapis.com/oauth2/v4/token
+
 var
   Params: TDictionary<String, String>;
   Response: string;
 begin
   Params := TDictionary<String, String>.Create;
+
+
   Params.Add('client_id', ClientID);
   Params.Add('client_secret', ClientSecret);
   Params.Add('code', StringReplace(ResponseCode, '%2F', '/', [rfReplaceAll]));
+{  Params.Add('client_id','701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com');
+  Params.Add('client_secret','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');
+  //key AIzaSyApGfcEMp2QK8Z_enQdbZnPGWCEI8TWAXY
+  //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
+  Params.Add('code','4/0Adeu5BX2xn5jUnFllh5K9xt_FBwdXRl1yHkAi60rO1vEz1NqCPx2QMZa0O5WbDSNBI8MWg');}
   Params.Add('redirect_uri', redirect_uri);
-  Params.Add('grant_type', 'authorization_code');
+  Params.Add('grant_type', 'authorization_code'); //'authorization_code'
+
 
   Response := SendRequest(tokenurl, Params, nil, '', rmPost);
+
+  showmessage(Response);
+
   Access_token := TRIM(ParamValue('access_token', Response));
   Refresh_token := StringReplace(TRIM(ParamValue('refresh_token', Response)), '\', '', [rfReplaceAll]);
   Result := Access_token;
@@ -449,6 +470,7 @@ var
 begin
   Params := TDictionary<String, String>.Create;
   Params.Add('key', 'AIzaSyApGfcEMp2QK8Z_enQdbZnPGWCEI8TWAXY');// AIzaSyBGKt8Nd_XY6m-eEVdgHpZMNcG2WKwa6SA
+                 //  AIzaSyApGfcEMp2QK8Z_enQdbZnPGWCEI8TWAXY
 
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Content-Type', 'application/json');
@@ -543,11 +565,40 @@ begin
   Params.Add('client_id', ClientID);
   Params.Add('client_secret', ClientSecret);
   Params.Add('refresh_token', Refresh_token);
+
+
+
   Params.Add('grant_type', 'refresh_token');
 
   Response := SendRequest(tokenurl, Params, nil, '', rmPost);
   Access_token := TRIM(ParamValue('access_token', Response));
   Result := Access_token;
+end;
+
+
+
+// My insert
+function TOAuth.UserGet(ACollection: string): string;
+const
+  URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  JSON: string;
+begin
+  FireBaseAuth();
+
+  Params := TDictionary<String, String>.Create;
+//  Params.Add('name', ACollection);
+
+  Headers := TDictionary<String, String>.Create;
+//  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
+  Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'application/json');
+
+  StringReplace(JSON, '\', '', [rfReplaceAll]);
+
+  Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet); //rmPost
 end;
 
 end.
