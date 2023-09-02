@@ -12,6 +12,7 @@ type
     LabelChannels: TLabel;
     ButtonAddChannel: TButton;
     ImageAddChannel: TImage;
+    ScrollBar1: TScrollBar;
     procedure ImageAddChannelClick(Sender: TObject);
   private
     { Private declarations }

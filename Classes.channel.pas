@@ -4,6 +4,7 @@ interface
 
 uses Classes.shearche.pageInfo, Classes.channel.item;
 
+
 type
   Tchannel = class
   type TChItems = array of Tchannel_item;

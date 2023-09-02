@@ -32,4 +32,14 @@ object FrameChannels: TFrameChannels
     Size.PlatformDefault = False
     OnClick = ImageAddChannelClick
   end
+  object ScrollBar1: TScrollBar
+    Align = Right
+    SmallChange = 0.000000000000000000
+    Orientation = Vertical
+    Position.X = 464.000000000000000000
+    Size.Width = 18.000000000000000000
+    Size.Height = 512.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+  end
 end

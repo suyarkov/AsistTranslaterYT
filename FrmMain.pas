@@ -13,9 +13,11 @@ uses
   IdContext, OAuth2,
   Classes.channel, Classes.video,
   REST.JSON, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Edit, IdMessage,
-  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase, //IdMessageClient,
-  //IdSMTPBase, IdSMTP,
-  uEmailSend, uQ;
+  IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase,
+  //IdMessageClient, //IdSMTPBase, IdSMTP,
+  Classes.shearche.image,
+  uEmailSend, uQ,
+  Classes.channel.statistics;
 
 type
   TfMain = class(TForm)
@@ -28,7 +30,7 @@ type
     Label1: TLabel;
     FrameChannels: TFrameChannels;
     ButtonSelChannels: TButton;
-    Image1: TImage;
+    Image3: TImage;
     Button5: TButton;
     Label2: TLabel;
     Button6: TButton;
@@ -39,7 +41,6 @@ type
     BGetChannel: TButton;
     Memo1: TMemo;
     Edit4: TEdit;
-    Image2: TImage;
     Edit1: TEdit;
     Edit2: TEdit;
     ButtonEmail2: TButton;
@@ -96,7 +97,8 @@ var
   vProgressBarStatus: integer;
   GlobalProgressThread: TProgressThread;
   FrameProgressEndLess: TFrameProgressEndLess;
-
+  vResponceChannel : string;
+  EdAccessCode : string;
   EdRefresh_token :string;
   EdAccess_token :string;
 
@@ -147,6 +149,7 @@ begin
   // спрячем второй фрейм за границу видимости
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
+//  fMain.FrameChannels.
   // fMain.FrameChannels.Visible := false;
   FrameProgressBar.Visible := false;
 
@@ -163,32 +166,39 @@ begin
 end;
 
 // смотри статус не снеси
-// разбор ответа по каналу от сервера youtube и создание коротного описания каналов
+// разбор полученного ответа в vResponceChannel по каналу от сервера youtube и создание коротного описания каналов
 procedure TfMain.BGetChannelClick(Sender: TObject);
 var
-  vObj: Tchannel;
+  vObj: Tchannel;//Tchannel;
   res, i: Integer;
   urlget: string;
   vChannel: TShortChannel;
+//  vTest : Tshearche_image;
   vImgUrl: string;
   // S: AnsiString;
-//  jpegimg: TJPEGImage;
+  Bitimg: TBitmap;
   S: string;
   AAPIUrl: String;
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
+  Stream : TStream;
 begin
-  vObj.Create;
+  s := '0';
+  vObj:= Tchannel.Create;
+  // в мемо должен быть уже строка с канала
   vObj := TJson.JsonToObject<Tchannel>(Memo1.Text);
+//  showmessage('разобрали в объект, все ОК');
+//   vResponceChannel
 
   for i := 0 to Length(vObj.Items) - 1 do
   begin
     vChannel.id_channel := vObj.Items[i].id;
     vChannel.name_channel := vObj.Items[i].snippet.title;
+    vChannel.lang :=vObj.Items[i].snippet.country;
+//    vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
     vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
     Edit4.Text := vImgUrl;
     try
-
       S := StringReplace(Edit4.Text, #13, '', [rfReplaceAll, rfIgnoreCase]);
       AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
       FHTTPClient := THTTPClient.Create;
@@ -204,27 +214,59 @@ begin
         showmessage('Пусто');
       end;
 
-      //jpegimg := TJPEGImage.Create;
-//      jpegimg.LoadFromStream(AResponce.ContentStream);
+      Bitimg := TBitmap.Create;
+      Bitimg.LoadFromStream(AResponce.ContentStream);
+//      Image1. LoadFromStream(AResponce.ContentStream);
+//      Image1.Bitmap := Bitimg;
+//      vChannel.img_channel := TBlobType(Image1.Bitmap);
+//      showmessage('Что ОК4' + TString(vChannel.img_channel));
+//      Image2.Bitmap := TBitmap(vChannel.img_channel);
+      vChannel.img := TBitmap.Create;
+//      showmessage('Что ОК41');
+//      vChannel.img.Assign(Image1.Bitmap);
+//      showmessage('Что ОК5');
+      vChannel.img := Bitimg;
+//      showmessage('Что ОК2');
+//      Image2.Bitmap := vChannel.img;
+//      Image2.Bitmap := Bitimg;
+      vChannel.img_channel := TBlobType(Bitimg);
+
+{
+    jp.LoadFromFile('C:\Bilder1\PIC.jpg');
+    ads.SQL.Text := 'Insert into IMGBlob (ID,Blob,typ) Values (:ID,:BLOB,:typ)';
+    ads.Parameters[0].Value := 1;
+    ads.Parameters[1].Assign(jp);
+    ads.Parameters[2].Value := itJPG;
+    ads.ExecSQL;
+    }
+//      vChannel.img_channel := TBlobType(Bitimg);
+//      vChannel.img.Bitmap := TBitmap.Create;
+
+//      Image1.Bitmap := TBitmap(vChannel.img_channel);
+//      Image1.Bitmap.Assign( := vChannel.img.Bitmap;//TBitmap(vChannel.img_channel);
+//      Image1. ign(vChannel.img.Bitmap);//TBitmap(vChannel.img_channel);
 //      Image2.Picture.Assign(jpegimg);
-      // Image2.Picture.LoadFromStream(SQLiteModule.LoadAnyImage(vImgUrl));
+//      Image2.Picture.LoadFromStream(SQLiteModule.LoadAnyImage(vImgUrl));
     except
+       showmessage('Что except');
     end;
 
     vChannel.refresh_token := EdRefresh_token;
-    vChannel.lang := vObj.Items[i].snippet.defaultLanguage;
+    if vChannel.lang = '' then
+    begin
+      vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
+    end;
     // vChannel.sel_lang := vObj.;
     vChannel.deleted := 0;
     res := SQLiteModule.InsRefreshToken(vChannel);
   end;
+
 end;
 
 
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
 procedure TfMain.BGetTokkensClick(Sender: TObject);
-//const
-//  tokenurl = 'https://accounts.google.com/o/oauth2/token';
-//  redirect_uri1 = 'http://127.0.0.1:1904';
+
 var
   Access_token: string;      // токен выполнения операций
   Refresh_token: string;     // токен получения следующего токена на выполнение
@@ -232,26 +274,24 @@ var
   OAuth2: TOAuth;
   vString: string;
 begin
-  Edit4.Text := '3';
   OAuth2 := TOAuth.Create;
   OAuth2.ClientID :=
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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'; //key AIzaSyApGfcEMp2QK8Z_enQdbZnPGWCEI8TWAXY
-  //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
-  //  Edit1.Text :=  '4/0Adeu5BX2xn5jUnFllh5K9xt_FBwdXRl1yHkAi60rO1vEz1NqCPx2QMZa0O5WbDSNBI8MWg';
-  OAuth2.ResponseCode := Edit1.Text;//vAccessCode;//
+  OAuth2.ClientSecret := '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';
+  OAuth2.ResponseCode := EdAccessCode;// Edit1.Text;//
+  Edit1.Text := EdAccessCode;
 
   Access_token := OAuth2.GetAccessToken;
   Refresh_token := OAuth2.refresh_token;
 
   Edit4.Text := Access_token + ' иии ' + refresh_token;
+
+  vResponceChannel := OAuth2.MyChannels;
+  Memo1.Text := vResponceChannel;
   OAuth2.Free;
-
-  EdAccess_token :=  Access_token;
-  EdRefresh_token := refresh_token;
-
-//  BGetChannelClick(Sender);
-  //RefreshCannelsClick(FormMain); // обновление не забудь!!!
+  EdRefresh_token :=  Refresh_token;
+  BGetChannelClick(Sender);
+  ButtonSelChannelsClick(Sender); // обновление не забудь!!!
 end;
 
 procedure TfMain.Button1Click(Sender: TObject);
@@ -523,40 +563,25 @@ var
   //
   i: integer;
   results: TDataSet;
-  // g: TGraphic;
   vPos: integer;
   vBitmap: TBitmap;
   vDefaulBitmap: TBitmap;
 begin
-  // g:=TJpegimage.Create;
-  // g := TPNGImage.Create;
-  // g:=TBitmap.Create;
 
   i := 1;
-
   // загружаю данные из локальной таблицы
   results := SQLiteModule.SelRefreshToken();
-  vBitmap := TBitmap.Create;
-  vDefaulBitmap := TBitmap.Create;
-  vDefaulBitmap.LoadFromFile('d:/tete.jpg');
-  // разбираю курсор в объект
+  // разбираю курсор в объект - бордер
   if not results.IsEmpty then
   begin
     results.First;
-
-    // vBitmap.LoadFromFile('d:/tete.jpg');
     while not results.Eof do
     begin
-      if results.FieldByName('img_channel').SIZE > 100 then
         try
           vBitmap := TBitmap(results.FieldByName('img_channel'));
         except
-          vBitmap := vDefaulBitmap;
-        end
-      else
-      begin
-        vBitmap := vDefaulBitmap;
-      end;
+//          vBitmap := vDefaulBitmap;
+        end;
 
       vPos := 30 + (i - 1) * 120;
       PanChannels[i] := TChannelPanel.Create(FrameChannels, vPos, i,
@@ -671,6 +696,8 @@ begin
     fMain.FrameFirst1.LabelError.Visible := false;
     fMain.FrameFirst1.LabelForgot.Visible := false;
     fMain.Button1Click(Sender);
+    // загрузим видимость каналов
+    fMain.ButtonSelChannelsClick(Sender);
   end;
 end;
 
@@ -749,9 +776,10 @@ begin
 
       AContext.Connection.IOHandler.write('</html>');
       AContext.Connection.IOHandler.WriteLn;
+      EdAccessCode :=  vAccessCode;
       // вызов процедуры запроса данных по каналу и их сохранение
-//      ButtonGetChannel.OnClick(FormMain);
-//      BGetTokkens.OnClick(fMain);
+      //BGetTokkens.OnClick(fMain);
+      //BGetChannel.OnClick(fMain);
     end
     else
     begin
@@ -782,6 +810,7 @@ begin
 
       AContext.Connection.IOHandler.write('</html>');
       AContext.Connection.IOHandler.WriteLn;
+      EdAccessCode :=  '';
     end;
     // IdTCPServer1.Active := false;
     Edit2.Text := 'чудо !!';
@@ -809,13 +838,13 @@ begin
   vNPanel := TButton(Sender).Tag;
   vIdChannel := PanChannels[vNPanel].chId.text;
   vNameChannel := PanChannels[vNPanel].ChName.text;
-  strQuestionDelete := 'Delete ' + vNameChannel + ' ?';
+  strQuestionDelete := 'Delete 3' + vNameChannel + ' ?';
   if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
 
   then
   begin
-    // SQLiteModule.DelChannel(vIdChannel);
+     SQLiteModule.DelChannel(vIdChannel);
 
     try
       for i := 1 to 20 do

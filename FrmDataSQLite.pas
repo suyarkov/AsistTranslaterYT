@@ -10,13 +10,14 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Dialogs, FMX.Graphics,
   IdTCPClient, System.Net.HTTPClient, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat;
+  FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects;
 
 type
   TShortChannel = record
     id_channel: string;
     name_channel: string;
     img_channel: TBlobType;//tfGraphic;//TBlobType;
+    img: TBitmap;
     refresh_token: string;
     lang: string;
     sel_lang: string;
@@ -53,7 +54,7 @@ type
     function SelInfoChannels(): TShortChannels;
     function InsRefreshToken(pShortChanel: TShortChannel): integer;
     function LoadAnyImage(pUrl: string): TStream;
-    procedure SaveTestImage(pSS3: AnsiString);
+    procedure SaveTestImage(pSS3: TBitmap);
     procedure DelChannel(pId: String);
   end;
 
@@ -70,6 +71,7 @@ var
   i: integer;
   results: tDataSet;
   Channel: Array [1 .. 1000] of TShortChannel;
+  Bitimg: TBitmap;
 begin
   try
     SQLiteModule.SQL.ExecSQL('select * from refresh_token where deleted = 0', nil, results);
@@ -99,6 +101,8 @@ begin
   Result := results;
 end;
 
+
+// загрузка данных по каналу
 function TSQLiteModule.SelInfoChannels(): TShortChannels;
 var
   i: integer;
@@ -138,25 +142,46 @@ var
   i: integer;
   results: tDataSet;
 begin
+//  showmessage('Что save 1');
+  pShortChanel.sel_lang := 'az, ay, ak, sq, am, en, ar, hy, as, af, bm, eu, be, bn, my, bg, bs, cy, hu, vi,';
   try
     SQLiteModule.SQL.ExecSQL
       ('delete from refresh_token where id_channel = :id_channel',
       [pShortChanel.id_channel]);
+{ -- так не передать
     SQLiteModule.SQL.ExecSQL
       ('insert into refresh_token ( id_channel,name_channel,' +
-      'img_channel,refresh_token,lang, sel_lang, deleted )' +
-      'values(:id_channel, :name_channel,:img_channel,:refresh_token,:lang,:sel_lang,:deleted)',
+      'refresh_token,lang, sel_lang, deleted, timeadd, img_channel )' +
+      'values(:id_channel, :name_channel, :refresh_token,'+
+      ':lang,:sel_lang,:deleted, :timeadd, :img_channel)',
       [pShortChanel.id_channel, pShortChanel.name_channel,
-      pShortChanel.img_channel, pShortChanel.refresh_token, pShortChanel.lang,
-      pShortChanel.sel_lang, pShortChanel.deleted]);
+      pShortChanel.refresh_token, pShortChanel.lang,
+      pShortChanel.sel_lang, pShortChanel.deleted, DateToStr(Date) + ' ' + TimeToStr(Time),
+      TBlobType(pShortChanel.img)]);
+        showmessage('SAVE Finish');
+}
 
-    // проапдейтим рисунок
+    SQLQuery.SQL.Text :=
+      'insert into refresh_token ( id_channel,name_channel,' +
+      'refresh_token,lang, sel_lang, deleted, timeadd, img_channel )' +
+      'values(:id_channel, :name_channel, :refresh_token,'+
+      ':lang,:sel_lang,:deleted, :timeadd, :img_channel);';
+    SQLQuery.Params[0].AsString := pShortChanel.id_channel;
+    SQLQuery.Params[1].AsString := pShortChanel.name_channel;
+    SQLQuery.Params[2].AsString := pShortChanel.refresh_token;
+    SQLQuery.Params[3].AsString := pShortChanel.lang;
+    SQLQuery.Params[4].AsString := pShortChanel.sel_lang;
+    SQLQuery.Params[5].AsInteger := pShortChanel.deleted;
+    SQLQuery.Params[6].AsString := DateToStr(Date) + ' ' + TimeToStr(Time);
+    SQLQuery.Params[7].Assign(pShortChanel.img);
+    SQLQuery.ExecSQL;
+    SQLiteModule.SQL.Commit;
 
   except
     on E: Exception do
     begin
       SQLiteModule.SQL.Rollback;
-      showmessage('Exception raised with message: ' + E.Message);
+      showmessage('Exception insert with message: ' + E.Message);
     end;
   end;
 
@@ -219,12 +244,13 @@ begin
   Result := AResponce.ContentStream; // SS
 end;
 
-procedure TSQLiteModule.SaveTestImage(pSS3: AnsiString); // TPicture;
+procedure TSQLiteModule.SaveTestImage(pSS3: TBitmap);
 begin
   begin
     SQLQuery.SQL.Text :=
-      'update refresh_token set img_channel= :photo where id_channel = "UCcD7KQCDJBAJovCngaAdObA";';
-    SQLQuery.Params[0].AsBlob := pSS3;
+      'update refresh_token set img_channel= :photo where id_channel = "UCta8Fu2bQ9uVNr4VzARiwLA";';
+//    SQLQuery.Params[0].AsBlob := TBlobType(pSS3);
+    SQLQuery.Params[0].Assign(pSS3);
     SQLQuery.ExecSQL;
     SQLiteModule.SQL.Commit;
   end;

@@ -86,7 +86,7 @@ object fMain: TfMain
     Position.X = 112.000000000000000000
     Position.Y = 41.000000000000000000
     Size.Width = 482.000000000000000000
-    Size.Height = 512.000000000000000000
+    Size.Height = 280.000000000000000000
     Size.PlatformDefault = False
     OnMouseMove = FrameChannelsMouseMove
     inherited LabelChannels: TLabel
@@ -96,27 +96,21 @@ object fMain: TfMain
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       OnClick = FrameChannelsButtonAddChannelClick
     end
+    inherited ScrollBar1: TScrollBar
+      Size.Height = 280.000000000000000000
+    end
   end
   object ButtonSelChannels: TButton
-    Position.X = 24.000000000000000000
+    Position.X = 8.000000000000000000
     Position.Y = 152.000000000000000000
-    Size.Width = 97.000000000000000000
+    Size.Width = 113.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 6
     Text = 'ButtonSelChannels'
     OnClick = ButtonSelChannelsClick
-    object Image2: TImage
-      MultiResBitmap = <
-        item
-        end>
-      Position.Y = 24.000000000000000000
-      Size.Width = 65.000000000000000000
-      Size.Height = 50.000000000000000000
-      Size.PlatformDefault = False
-    end
   end
-  object Image1: TImage
+  object Image3: TImage
     MultiResBitmap = <
       item
       end>
@@ -179,12 +173,12 @@ object fMain: TfMain
   end
   object BGetChannel: TButton
     Position.X = 16.000000000000000000
-    Position.Y = 62.000000000000000000
+    Position.Y = 71.000000000000000000
     Size.Width = 88.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 15
-    Text = 'BTCPServer'
+    Text = 'BGetChannel'
     OnClick = BGetChannelClick
   end
   object Memo1: TMemo
@@ -212,7 +206,7 @@ object fMain: TfMain
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     TabOrder = 20
     Position.X = 32.000000000000000000
-    Position.Y = 440.000000000000000000
+    Position.Y = 449.000000000000000000
   end
   object Edit2: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -234,7 +228,7 @@ object fMain: TfMain
     Bindings = <>
     DefaultPort = 1904
     OnExecute = TCPServerYouTubeAnswersExecute
-    Left = 256
-    Top = 96
+    Left = 232
+    Top = 72
   end
 end

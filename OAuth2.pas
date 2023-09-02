@@ -194,11 +194,10 @@ begin
     case FResponse.StatusCode of
       200:
         begin
-
           if Pos('captions/', URL) <> 0 then
             if Length(FResponse.RawBytes) <> 0 then
               ServerResponseToFile(FResponse, 'default.sbv');
-          Result := '200' + FResponse.JSONText + URL;
+          Result := FResponse.JSONText; // '200' +  + URL
 
         end;
       403:
@@ -257,7 +256,7 @@ begin
 
   Response := SendRequest(tokenurl, Params, nil, '', rmPost);
 
-  showmessage(Response);
+//  showmessage(Response);
 
   Access_token := TRIM(ParamValue('access_token', Response));
   Refresh_token := StringReplace(TRIM(ParamValue('refresh_token', Response)), '\', '', [rfReplaceAll]);
