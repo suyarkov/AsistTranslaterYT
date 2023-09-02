@@ -30,7 +30,10 @@ uses
   Classes.video.thumbnails in 'Classes.video.thumbnails.pas',
   uEmailSend in 'uEmailSend.pas',
   uTranslate in 'uTranslate.pas',
-  uQ in 'uQ.pas';
+  uQ in 'uQ.pas',
+  FmVideos in 'FmVideos.pas' {FrameVideos: TFrame},
+  PnVideo in 'PnVideo.pas',
+  FmMainChannel in 'FmMainChannel.pas' {FrameMainChannel: TFrame};
 
 {$R *.res}
 

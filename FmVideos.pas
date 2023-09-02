@@ -1,4 +1,4 @@
-unit FmChannels;
+unit FmVideos;
 
 interface
 
@@ -8,11 +8,9 @@ uses
   FMX.Controls.Presentation, FMX.Objects, System.ImageList, FMX.ImgList;
 
 type
-  TFrameChannels = class(TFrame)
-    LabelChannels: TLabel;
-    ButtonAddChannel: TButton;
-    ImageAddChannel: TImage;
-    procedure ImageAddChannelClick(Sender: TObject);
+  TFrameVideos = class(TFrame)
+    LabelVideos: TLabel;
+    procedure ImageAddVideoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -23,9 +21,9 @@ implementation
 
 {$R *.fmx}
 
-procedure TFrameChannels.ImageAddChannelClick(Sender: TObject);
+procedure TFrameVideos.ImageAddVideoClick(Sender: TObject);
 begin
-//   ImageAddChannel.
+//   ImageAddVideo.
 end;
 
 end.

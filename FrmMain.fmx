@@ -46,6 +46,11 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
+    inherited LabelPas: TLabel
+      inherited LabelError: TLabel
+        TabOrder = 4
+      end
+    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end
@@ -86,7 +91,7 @@ object fMain: TfMain
     Position.X = 112.000000000000000000
     Position.Y = 41.000000000000000000
     Size.Width = 482.000000000000000000
-    Size.Height = 280.000000000000000000
+    Size.Height = 328.000000000000000000
     Size.PlatformDefault = False
     OnMouseMove = FrameChannelsMouseMove
     inherited LabelChannels: TLabel
@@ -95,9 +100,6 @@ object fMain: TfMain
     inherited ButtonAddChannel: TButton
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       OnClick = FrameChannelsButtonAddChannelClick
-    end
-    inherited ScrollBar1: TScrollBar
-      Size.Height = 280.000000000000000000
     end
   end
   object ButtonSelChannels: TButton
@@ -223,6 +225,23 @@ object fMain: TfMain
     TabOrder = 26
     Text = 'ButtonEmail'
     OnClick = ButtonEmail2Click
+  end
+  object Button100: TButton
+    Position.X = 24.000000000000000000
+    Position.Y = 208.000000000000000000
+    TabOrder = 28
+    Text = 'Button100'
+    OnClick = Button100Click
+  end
+  inline FrameMainChannel: TFrameMainChannel
+    Position.X = 280.000000000000000000
+    Position.Y = 146.000000000000000000
+    Size.Width = 191.000000000000000000
+    Size.Height = 340.000000000000000000
+    Size.PlatformDefault = False
+    inherited LabelNameChannel: TLabel
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer
     Bindings = <>

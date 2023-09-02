@@ -17,7 +17,7 @@ uses
   //IdMessageClient, //IdSMTPBase, IdSMTP,
   Classes.shearche.image,
   uEmailSend, uQ,
-  Classes.channel.statistics;
+  Classes.channel.statistics, FmMainChannel;
 
 type
   TfMain = class(TForm)
@@ -45,6 +45,8 @@ type
     Edit2: TEdit;
     ButtonEmail2: TButton;
     ButtonQ: TButton;
+    Button100: TButton;
+    FrameMainChannel: TFrameMainChannel;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -65,6 +67,7 @@ type
     procedure BGetChannelClick(Sender: TObject);
     procedure ButtonEmail2Click(Sender: TObject);
     procedure ButtonQClick(Sender: TObject);
+    procedure Button100Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -149,8 +152,11 @@ begin
   // спр€чем второй фрейм за границу видимости
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
-//  fMain.FrameChannels.
-  // fMain.FrameChannels.Visible := false;
+
+  // спр€чем третий фрейм за границу видимости
+  fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
+  fMain.FrameMainChannel.Position.Y := 56;
+
   FrameProgressBar.Visible := false;
 
   if not Assigned(FrameProgressEndLess) then
@@ -292,6 +298,12 @@ begin
   EdRefresh_token :=  Refresh_token;
   BGetChannelClick(Sender);
   ButtonSelChannelsClick(Sender); // обновление не забудь!!!
+end;
+
+procedure TfMain.Button100Click(Sender: TObject);
+begin
+  FrameChannels.Height := 280;
+  FrameChannels.Visible := not(FrameChannels.Visible);
 end;
 
 procedure TfMain.Button1Click(Sender: TObject);

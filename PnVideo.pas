@@ -1,18 +1,16 @@
-unit PnChannel;
+unit PnVideo;
 
 interface
 
 uses
 
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-//  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-//  FMX.Controls.Presentation, FMX.Objects, System.ImageList, FMX.ImgList;
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Objects;
 
 type
-//  TChannelPanel = class(TPanel)
-  TChannelPanel = class(TPanel)
+  TVideoPanel = class(TPanel)
     ChImage: TImage;
     ChName: TLabel;
     ChLang: TLabel;
@@ -25,12 +23,12 @@ type
                 pChId, pChToken, pChName, pChLang : string;
                 ABitmap : TBitmap); reintroduce;
       overload; virtual;
-//    procedure DinButtonDeleteChannelClick(Sender: TObject);
+//    procedure DinButtonDeleteVideoClick(Sender: TObject);
   end;
 
 implementation
 
-constructor TChannelPanel.Create(AOwner: TComponent);
+constructor TVideoPanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
 //  Parent := AOwner;
@@ -44,7 +42,7 @@ begin
   //Top := 8;
 end;
 
-constructor TChannelPanel.Create(AOwner: TComponent;  pPos, pN: integer;
+constructor TVideoPanel.Create(AOwner: TComponent;  pPos, pN: integer;
       pChId, pChToken, pChName, pChLang : string; ABitmap : TBitmap);
 begin
   Create(AOwner);
@@ -94,7 +92,7 @@ begin
     Height :=  21;
     Position.x := 120;
     Font.Size := 12;
-    Font.Style := [TFontStyle.fsBold];
+    //Font.Style := [fsBold];
     Tag :=  pN;
     Visible := True;
   end;
@@ -131,28 +129,28 @@ begin
     Visible := True;
   end;
 
-//  self.ButtonDel.OnClick := DinButtonDeleteChannelClick;
+//  self.ButtonDel.OnClick := DinButtonDeleteVideoClick;
 end;
 
 {
-procedure TChannelPanel.DinButtonDeleteChannelClick(Sender: TObject);
+procedure TVideoPanel.DinButtonDeleteVideoClick(Sender: TObject);
 // Sender : TComponent;
 var
-  strQuestionDelete, vIdChannel, vNameChannel: string;
+  strQuestionDelete, vIdVideo, vNameVideo: string;
   vNPanel: integer;
   i: integer;
 begin
   //  lastPanel := nil;
   vNPanel := Self.tag;
-  vIdChannel := Self.chId.Text;
-  vNameChannel := Self.chName.Text;
-  strQuestionDelete := 'Delete 2' + vNameChannel + ' ?';
+  vIdVideo := Self.chId.Text;
+  vNameVideo := Self.chName.Text;
+  strQuestionDelete := 'Delete 2' + vNameVideo + ' ?';
   if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
 
   then
   begin
-    // SQLiteModule.DelChannel(vIdChannel);
+    // SQLiteModule.DelVideo(vIdVideo);
 
   end;
 

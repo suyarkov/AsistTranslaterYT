@@ -28,7 +28,7 @@ type
   end;
 
 type
-  TrVideo = record
+  TVideo = record
     videoId: string;
     channelId: string;
     title: string;
@@ -40,6 +40,7 @@ type
 
 Type
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами
+  TVideos = Array [1 .. 1000] of TVideo; // ограничим 1000 видеороликами
 
 type
   TSQLiteModule = class(TDataModule)
@@ -56,6 +57,8 @@ type
     function LoadAnyImage(pUrl: string): TStream;
     procedure SaveTestImage(pSS3: TBitmap);
     procedure DelChannel(pId: String);
+
+    function LoadAddVideo(pIdChannel: string): TShortChannels;
   end;
 
 var
@@ -265,6 +268,41 @@ begin
     SQLQuery.ExecSQL;
     SQLiteModule.SQL.Commit;
   end;
+end;
+
+// загрузка данных по каналу
+function TSQLiteModule.LoadAddVideo(pIdChannel: string): TShortChannels;
+var
+  i: integer;
+  results: tDataSet;
+  Channels: TShortChannels;
+begin
+  try
+    SQLiteModule.SQL.ExecSQL('select * from refresh_token', nil, results);
+  except
+    on E: Exception do
+      showmessage('Exception raised with message: ' + E.Message);
+  end;
+  if not results.IsEmpty then
+  begin
+    results.First;
+    i := 0;
+    while not results.Eof do
+    begin
+      inc(i);
+
+      Channels[i].id_channel := results.FieldByName('id_channel').AsString;
+      Channels[i].name_channel := results.FieldByName('name_channel').AsString;
+      Channels[i].img_channel := TBlobType(results.FieldByName('img_channel'));
+      Channels[i].refresh_token := results.FieldByName('refresh_token').AsString;
+      Channels[i].lang := results.FieldByName('lang').AsString;
+      Channels[i].sel_lang := results.FieldByName('sel_lang').AsString;
+      Channels[i].deleted := results.FieldByName('deleted').AsInteger;
+      results.Next;
+    end;
+  end;
+
+  Result := Channels;
 end;
 
 end.

@@ -1,6 +1,6 @@
 object FrameChannels: TFrameChannels
   Size.Width = 482.000000000000000000
-  Size.Height = 512.000000000000000000
+  Size.Height = 383.000000000000000000
   Size.PlatformDefault = False
   object LabelChannels: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -31,15 +31,5 @@ object FrameChannels: TFrameChannels
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
     OnClick = ImageAddChannelClick
-  end
-  object ScrollBar1: TScrollBar
-    Align = Right
-    SmallChange = 0.000000000000000000
-    Orientation = Vertical
-    Position.X = 464.000000000000000000
-    Size.Width = 18.000000000000000000
-    Size.Height = 512.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 2
   end
 end
