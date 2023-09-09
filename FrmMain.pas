@@ -509,7 +509,7 @@ begin
       if fMain.FrameMainChannel.Position.X - vLeftBorderFrame3 > vStepSize then
         fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X - vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
-        fMain.FrameMainChannel.Position.X := vLeftBorderFrame2;
+        fMain.FrameMainChannel.Position.X := vLeftBorderFrame3;
     end;
 
     If fMain.FrameVideos.Position.X > -fMain.FrameVideos.Width then
@@ -519,13 +519,13 @@ begin
     end;
 
   end;
-
+  // только для отладки
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
   // fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + 5;
-  fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
-    IntToStr(Round(vLeftBorderFrame2)) + ', ' +
-    IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
+  //fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
+  //  IntToStr(Round(vLeftBorderFrame2)) + ', ' +
+  //  IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
 end;
 
 procedure TfMain.Button5Click(Sender: TObject);
@@ -691,7 +691,7 @@ begin
         results.FieldByName('lang').AsString, vBitmap);
       PanChannels[i].Parent := FrameChannels.BoxChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-      PanChannels[i].OnMouseMove := DinPanelMouseMove;
+//      PanChannels[i].OnMouseMove := DinPanelMouseMove;
       PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
       PanChannels[i].ChImage.OnClick := DinPanelClick;
       PanChannels[i].ChName.OnClick := DinPanelClick;
@@ -1095,8 +1095,8 @@ begin
 //  vToken := PanChannels[vNPanel].chToken.Text;
 
   // Для сообщения при отладке что нажали
-  vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
-  showmessage(vMessage);
+//  vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
+//  showmessage(vMessage);
 
 //  showmessage(vPanVideo[1].VdTitle.Text);
   FrameVideos.ImageVideo.Bitmap := PanVideos[vNPanel].VdImage.Bitmap;

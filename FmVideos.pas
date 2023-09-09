@@ -16,6 +16,8 @@ type
     CheckBox1: TCheckBox;
     ComboBox1: TComboBox;
     ImageVideo: TImage;
+    LabelTitle: TLabel;
+    LabelDescription: TLabel;
     procedure ImageAddVideoClick(Sender: TObject);
   private
     { Private declarations }

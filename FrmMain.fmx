@@ -249,19 +249,19 @@ object fMain: TfMain
   inline FrameVideos: TFrameVideos
     Position.X = 208.000000000000000000
     Position.Y = 144.000000000000000000
-    Size.Width = 754.000000000000000000
+    Size.Width = 791.000000000000000000
     Size.Height = 409.000000000000000000
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited MemoTitle: TMemo
-      Viewport.Width = 369.000000000000000000
-      Viewport.Height = 41.000000000000000000
+      Viewport.Width = 481.000000000000000000
+      Viewport.Height = 40.000000000000000000
     end
     inherited MemoDescription: TMemo
-      Viewport.Width = 361.000000000000000000
-      Viewport.Height = 193.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 255.000000000000000000
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer
