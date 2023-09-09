@@ -34,8 +34,13 @@ type
     title: string;
     description: string; //5000?
     urlDefault: string;
+    publishedAt: string;
+    publishTime: string;
+    img: TBitmap;
+    {
     publishedAt: TDateTime;//"2023-04-08T17:37:31Z"
     publishTime: TDateTime;//"2023-04-08T17:37:31Z"
+    }
   end;
 
 Type

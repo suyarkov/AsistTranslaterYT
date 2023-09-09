@@ -11,17 +11,17 @@ uses
 
 type
   TVideoPanel = class(TPanel)
-    ChImage: TImage;
-    ChName: TLabel;
-    ChLang: TLabel;
-    ButtonDel: TButton;
-    chId  : TLabel;
-    chToken  : TLabel;
+    VdImage: TImage;
+    VdId: TLabel;
+    VdToken: TLabel;
+    VdTitle: TLabel;
+    VdDescription  : TLabel;
+    VdLang  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; pPos, pN: integer;
-                pChId, pChToken, pChName, pChLang : string;
-                ABitmap : TBitmap); reintroduce;
+    constructor Create(AOwner: TComponent; pPosY, pN: integer;
+            pVideoId, pVideoToken, pVideoTitle, pVideoDescription, pVideoLang:  string;
+            pImage : TBitMap); reintroduce;
       overload; virtual;
 //    procedure DinButtonDeleteVideoClick(Sender: TObject);
   end;
@@ -33,7 +33,7 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 485;
+  Width := 305;
   Height := 105;
   Left := 8;
 //  ParentColor := false;
@@ -42,51 +42,39 @@ begin
   //Top := 8;
 end;
 
-constructor TVideoPanel.Create(AOwner: TComponent;  pPos, pN: integer;
-      pChId, pChToken, pChName, pChLang : string; ABitmap : TBitmap);
+constructor TVideoPanel.Create(AOwner: TComponent; pPosY, pN: integer;
+            pVideoId, pVideoToken, pVideoTitle, pVideoDescription, pVideoLang:  string;
+            pImage : TBitMap);
+//            pUrlImage : string);
+//AOwner: TComponent;  pPos, pN: integer;
+//      pChId, pChToken, pChName, pChLang : string; ABitmap : TBitmap);
+var
+  vS : string;
+  AAPIUrl: String;
+{  FHTTPClient: THTTPClient;
+  AResponce: IHTTPResponse;
+  jpegimg: TJPEGImage;}
 begin
   Create(AOwner);
-  Self.Position.y := 8 + pPos;
+  Self.Position.y := 8 + pPosY;
   //Self.Name := 'P' + IntToStr(pN);
   Self.tag :=  pN;
 
-  ChId := TLabel.Create(Self);
-  with ChId do
+  VdId := TLabel.Create(Self);
+  with VdId do
   begin
     Parent := Self;
-    Text := pChId;
+    Text := pVideoId;
     Visible := false;
     tag :=  pN;
   end;
 
-  chToken := TLabel.Create(Self);
-  with chToken do
+  VdTitle := TLabel.Create(Self);
+  with VdTitle do
   begin
     Parent := Self;
-    Text := pChToken;
-    Visible := false;
-    tag :=  pN;
-  end;
-
-  ButtonDel := TButton.Create(Self);
-  with ButtonDel do
-  begin
-    Parent := Self;
-    Text := 'Delete';
-    name := 'D' + IntToStr(pN);
-    Position.x := 400;
-    Position.y := 10;
-    Width := 60;
-    Visible := True;
-    Tag :=  pN;
-  end;
-
-  ChName := TLabel.Create(Self);
-  with ChName do
-  begin
-    Parent := Self;
-    Text := pChName;
-    Name := 'N' + IntToStr(pN);
+    Text := pVideoTitle;
+    Visible := true;
     Width := 449;
     Position.y:=  25;
     Height :=  21;
@@ -97,12 +85,28 @@ begin
     Visible := True;
   end;
 
-  ChLang := TLabel.Create(Self);
-  with ChLang do
+  VdDescription := TLabel.Create(Self);
+  with VdDescription do
   begin
     Parent := Self;
-    Text := pChLang;
-    Name := 'L' + IntToStr(pN);
+    Text := pVideoTitle;
+    Name := 'T' + IntToStr(pN);
+    Width := 449;
+    Position.y:=  25;
+    Height :=  21;
+    Position.x := 120;
+    Font.Size := 12;
+    //Font.Style := [fsBold];
+    Tag :=  pN;
+    Visible := True;
+  end;
+
+  VdLang := TLabel.Create(Self);
+  with VdLang do
+  begin
+    Parent := Self;
+    Text := pVideoDescription;
+    Name := 'D' + IntToStr(pN);
     Height := 17;
     Position.x := 120;
     Position.y := 64;
@@ -112,6 +116,42 @@ begin
     Visible := True;
   end;
 
+  VdImage := TImage.Create(Self);
+  with VdImage do
+  begin
+    Parent := Self;
+    Height := 90;
+    Left := 8;
+    Top := 8;
+    Width := 120;
+    Tag :=  pN;
+    vdImage.Bitmap := pImage;
+{      try
+
+        vS := StringReplace(pUrlImage, #13, '', [rfReplaceAll, rfIgnoreCase]);
+        AAPIUrl := StringReplace(vS, #10, '', [rfReplaceAll, rfIgnoreCase]);
+        FHTTPClient := THTTPClient.Create;
+        FHTTPClient.UserAgent :=
+          'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+        try
+          AResponce := FHTTPClient.Get(AAPIUrl);
+        except
+          showmessage('нет подключения');
+        end;
+        if Not Assigned(AResponce) then
+        begin
+          showmessage('Пусто');
+        end;
+
+        jpegimg := TJPEGImage.Create;
+        jpegimg.LoadFromStream(AResponce.ContentStream);
+        vdImage.Picture.Assign(jpegimg);
+      except
+      end;
+      }
+    Visible := True;
+  end;
+{
   ChImage := TImage.Create(Self);
   with ChImage do
   begin
@@ -127,8 +167,9 @@ begin
        null;
     end;
     Visible := True;
-  end;
 
+  end;
+ }
 //  self.ButtonDel.OnClick := DinButtonDeleteVideoClick;
 end;
 

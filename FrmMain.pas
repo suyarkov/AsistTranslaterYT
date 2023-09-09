@@ -7,7 +7,8 @@ uses
   System.Variants, System.Net.HTTPClient, System.NetEncoding,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
-  PnChannel, FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess,
+  PnChannel, PnVideo,
+  FrmDataSQLite, FMX.Objects, FmProgressBar, FmProgressEndLess,
   IdBaseComponent, IdComponent, IdCustomTCPServer, IdTCPServer,
   Winapi.ShellAPI,
   IdContext, OAuth2,
@@ -17,7 +18,7 @@ uses
   //IdMessageClient, //IdSMTPBase, IdSMTP,
   Classes.shearche.image,
   uEmailSend, uQ,
-  Classes.channel.statistics, FmMainChannel;
+  Classes.channel.statistics, FmMainChannel, FmVideos;
 
 type
   TfMain = class(TForm)
@@ -45,8 +46,9 @@ type
     Edit2: TEdit;
     ButtonEmail2: TButton;
     ButtonQ: TButton;
-    Button100: TButton;
     FrameMainChannel: TFrameMainChannel;
+    Button200: TButton;
+    FrameVideos: TFrameVideos;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -54,6 +56,7 @@ type
     procedure ButtonSelChannelsClick(Sender: TObject);
     procedure DinButtonDeleteChannelClick(Sender: TObject);
     procedure DinPanelClick(Sender: TObject);
+    procedure DinPanelVideoClick(Sender: TObject);
     procedure DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
       X, Y: Single);
     procedure FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
@@ -67,7 +70,7 @@ type
     procedure BGetChannelClick(Sender: TObject);
     procedure ButtonEmail2Click(Sender: TObject);
     procedure ButtonQClick(Sender: TObject);
-    procedure Button100Click(Sender: TObject);
+    procedure Button200Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -91,9 +94,11 @@ type
 
 var
   fMain: TfMain;
-  PanChannels: array [1 .. 20] of TChannelPanel;
+  PanChannels: array [1 .. 50] of TChannelPanel;
+  PanVideos: array [1 .. 1000] of TVideoPanel;
   vEventMove: integer; // 10 - обратно, 11- вправо. первую форму
-  vState: integer; // 1 - первая форма - пароль,
+  vState: integer; // 1 - первая форма - пароль,// 2 вторая форма каналы,
+  // 3 третья - один канал // 4- конкретный ролик
   // PanVideos: array [1 .. 50] of TMyVideoPanel;
   lastPanel: TPanel;
   vDefaultColor: TAlphaColor;
@@ -101,6 +106,7 @@ var
   GlobalProgressThread: TProgressThread;
   FrameProgressEndLess: TFrameProgressEndLess;
   vResponceChannel : string;
+  vResponceVideo : string;
   EdAccessCode : string;
   EdRefresh_token :string;
   EdAccess_token :string;
@@ -157,6 +163,10 @@ begin
   fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
   fMain.FrameMainChannel.Position.Y := 56;
 
+    // спрячем третий фрейм за границу видимости
+  fMain.FrameVideos.Position.X := Round(fMain.Width + 1);
+  fMain.FrameVideos.Position.Y := 56;
+
   FrameProgressBar.Visible := false;
 
   if not Assigned(FrameProgressEndLess) then
@@ -193,8 +203,7 @@ begin
   vObj:= Tchannel.Create;
   // в мемо должен быть уже строка с канала
   vObj := TJson.JsonToObject<Tchannel>(Memo1.Text);
-//  showmessage('разобрали в объект, все ОК');
-//   vResponceChannel
+
 
   for i := 0 to Length(vObj.Items) - 1 do
   begin
@@ -222,37 +231,9 @@ begin
 
       Bitimg := TBitmap.Create;
       Bitimg.LoadFromStream(AResponce.ContentStream);
-//      Image1. LoadFromStream(AResponce.ContentStream);
-//      Image1.Bitmap := Bitimg;
-//      vChannel.img_channel := TBlobType(Image1.Bitmap);
-//      showmessage('Что ОК4' + TString(vChannel.img_channel));
-//      Image2.Bitmap := TBitmap(vChannel.img_channel);
       vChannel.img := TBitmap.Create;
-//      showmessage('Что ОК41');
-//      vChannel.img.Assign(Image1.Bitmap);
-//      showmessage('Что ОК5');
       vChannel.img := Bitimg;
-//      showmessage('Что ОК2');
-//      Image2.Bitmap := vChannel.img;
-//      Image2.Bitmap := Bitimg;
       vChannel.img_channel := TBlobType(Bitimg);
-
-{
-    jp.LoadFromFile('C:\Bilder1\PIC.jpg');
-    ads.SQL.Text := 'Insert into IMGBlob (ID,Blob,typ) Values (:ID,:BLOB,:typ)';
-    ads.Parameters[0].Value := 1;
-    ads.Parameters[1].Assign(jp);
-    ads.Parameters[2].Value := itJPG;
-    ads.ExecSQL;
-    }
-//      vChannel.img_channel := TBlobType(Bitimg);
-//      vChannel.img.Bitmap := TBitmap.Create;
-
-//      Image1.Bitmap := TBitmap(vChannel.img_channel);
-//      Image1.Bitmap.Assign( := vChannel.img.Bitmap;//TBitmap(vChannel.img_channel);
-//      Image1. ign(vChannel.img.Bitmap);//TBitmap(vChannel.img_channel);
-//      Image2.Picture.Assign(jpegimg);
-//      Image2.Picture.LoadFromStream(SQLiteModule.LoadAnyImage(vImgUrl));
     except
        showmessage('Что except');
     end;
@@ -300,12 +281,6 @@ begin
   ButtonSelChannelsClick(Sender); // обновление не забудь!!!
 end;
 
-procedure TfMain.Button100Click(Sender: TObject);
-begin
-  FrameChannels.Height := 280;
-  FrameChannels.Visible := not(FrameChannels.Visible);
-end;
-
 procedure TfMain.Button1Click(Sender: TObject);
 var
   NewThread: TNewThread;
@@ -317,6 +292,27 @@ begin
   NewThread.FreeOnTerminate := true;
   NewThread.Priority := tpLower;
   NewThread.Resume;
+end;
+
+// получить списко видео по каналу
+procedure TfMain.Button200Click(Sender: TObject);
+var
+  Access_token: string;      // токен выполнения операций
+  Refresh_token: string;     // токен получения следующего токена на выполнение
+
+  OAuth2: TOAuth;
+  vString: string;
+begin
+  OAuth2 := TOAuth.Create;
+  OAuth2.ClientID :=
+    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  OAuth2.ClientSecret := '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';
+  // крайне важно
+  OAuth2.refresh_token := FrameMainChannel.Label3.text;
+  vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label2.text);
+  //  Memo1.Text := vResponceVideo;
+  OAuth2.Free;
+
 end;
 
 // поток для прогресс бара
@@ -362,11 +358,14 @@ end;
 // установка актаульного фрейма
 procedure TNewThread.SetActualFrame;
 var
-  vLeftBorderFrame, vStepSize, vLeftBorderFrame2: integer;
+  vLeftBorderFrame, vStepSize, vLeftBorderFrame2, vLeftBorderFrame3,
+  vLeftBorderFrame4: integer;
 begin
   vStepSize := 10;
   vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
   vLeftBorderFrame2 := Round((fMain.Width - fMain.FrameChannels.Width) / 2);
+  vLeftBorderFrame3 := Round((fMain.Width - fMain.FrameMainChannel.Width) / 2);
+  vLeftBorderFrame4 := Round((fMain.Width - fMain.FrameVideos.Width) / 2);
 
   // первая форма заменяется второй с каналами
   if vEventMove = 11 then
@@ -414,6 +413,108 @@ begin
     If fMain.FrameChannels.Position.X > -fMain.FrameChannels.Width then
     begin
       fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X -
+        vStepSize;
+    end;
+
+  end;
+
+    // вторая форма заменяется третьей с каналами  FrameMainChannel
+  if vEventMove = 21 then
+  begin
+    If fMain.FrameChannels.Position.X < (fMain.Width + 1) then
+    begin
+      fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X + vStepSize;
+    end;
+
+    If fMain.FrameMainChannel.Position.X >= fMain.Width then
+    begin
+      fMain.FrameMainChannel.Position.X := -fMain.FrameMainChannel.Width - 1;
+    end;
+
+    If fMain.FrameMainChannel.Position.X < (vLeftBorderFrame3) then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if ABS(fMain.FrameMainChannel.Position.X - vLeftBorderFrame3) > vStepSize
+      then
+        fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X +
+          vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameMainChannel.Position.X := vLeftBorderFrame3;
+    end;
+
+    If fMain.FrameMainChannel.Position.X = (vLeftBorderFrame3) then
+    begin
+      fMain.FrameMainChannel.Visible := true;
+    end;
+
+  end;
+
+  // форма с каналом видео заменяется второй со списком каналов
+  if vEventMove = 20 then
+  begin
+    If fMain.FrameChannels.Position.X > vLeftBorderFrame2 then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if fMain.FrameChannels.Position.X - vLeftBorderFrame2 > vStepSize then
+        fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X - vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameChannels.Position.X := vLeftBorderFrame2;
+    end;
+
+    If fMain.FrameMainChannel.Position.X > -fMain.FrameMainChannel.Width then
+    begin
+      fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X -
+        vStepSize;
+    end;
+
+  end;
+
+   // третья форма с видео, заменяется подробной для редакции описания видео
+  if vEventMove = 31 then
+  begin
+    If fMain.FrameMainChannel.Position.X < (fMain.Width + 1) then
+    begin
+      fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X + vStepSize;
+    end;
+
+    If fMain.FrameVideos.Position.X >= fMain.Width then
+    begin
+      fMain.FrameVideos.Position.X := -fMain.FrameVideos.Width - 1;
+    end;
+
+    If fMain.FrameVideos.Position.X < (vLeftBorderFrame4) then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if ABS(fMain.FrameVideos.Position.X - vLeftBorderFrame4) > vStepSize
+      then
+        fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X +
+          vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameVideos.Position.X := vLeftBorderFrame4;
+    end;
+
+    If fMain.FrameVideos.Position.X = (vLeftBorderFrame4) then
+    begin
+      fMain.FrameVideos.Visible := true;
+    end;
+
+  end;
+
+  // форма с подробностями видео заменяется третьей со списком видео
+  if vEventMove = 30 then
+  begin
+    If fMain.FrameMainChannel.Position.X > vLeftBorderFrame3 then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if fMain.FrameMainChannel.Position.X - vLeftBorderFrame3 > vStepSize then
+        fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X - vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameMainChannel.Position.X := vLeftBorderFrame2;
+    end;
+
+    If fMain.FrameVideos.Position.X > -fMain.FrameVideos.Width then
+    begin
+      fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X -
         vStepSize;
     end;
 
@@ -492,17 +593,6 @@ begin
       GlobalProgressThread.Terminate;
     Label1.text := Label1.text + '  ' +
       BoolToStr(GlobalProgressThread.Terminated);
-    {
-      if GlobalProgressThread.Terminated = true then
-      begin
-      Label1.text := 'true';
-      GlobalProgressThread.Free;
-      end
-      else if GlobalProgressThread.Terminated = false then
-      Label1.text := 'false'
-      else
-      Label1.text := 'null';
-    }
     if GlobalProgressThread.Terminated = null then
       Label1.text := Label1.text + ' null';
 
@@ -512,8 +602,6 @@ begin
     GlobalProgressThread.Free;
   end;
   vProgressBarStatus := 0;
-  // GlobalProgressThread.DoTerminate;
-  // GlobalProgressThread.Terminated := true;
 
   FrameProgressBar.Visible := false;
   FrameProgressEndLess.Visible := false;
@@ -596,12 +684,12 @@ begin
         end;
 
       vPos := 30 + (i - 1) * 120;
-      PanChannels[i] := TChannelPanel.Create(FrameChannels, vPos, i,
+      PanChannels[i] := TChannelPanel.Create(FrameChannels.BoxChannels, vPos, i,
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
         results.FieldByName('lang').AsString, vBitmap);
-      PanChannels[i].Parent := FrameChannels;
+      PanChannels[i].Parent := FrameChannels.BoxChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
       PanChannels[i].OnMouseMove := DinPanelMouseMove;
       PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
@@ -693,7 +781,7 @@ begin
   edit2.Text :=  vResponce;
   OAuth2.Free;
 
-  // рекация
+  // реакция
   if vOk = false then
   // ошибка идентификации
   begin
@@ -851,15 +939,15 @@ begin
   vIdChannel := PanChannels[vNPanel].chId.text;
   vNameChannel := PanChannels[vNPanel].ChName.text;
   strQuestionDelete := 'Delete 3' + vNameChannel + ' ?';
+
   if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
     [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
-
   then
   begin
      SQLiteModule.DelChannel(vIdChannel);
 
     try
-      for i := 1 to 20 do
+      for i := 1 to 50 do
         PanChannels[i].Free;
     finally
       lastPanel := nil;
@@ -874,60 +962,226 @@ procedure TfMain.DinPanelClick(Sender: TObject);
 const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
 var
-  vMessage, vIdChannel, vNameChannel: string;
+  vMessage, vIdChannel, vNameChannel, vToken: string;
   vNPanel: integer;
-  { Params: TDictionary<String, String>;
-    Response: string;
-    Access_token: string;
-    refresh_token: string;
+  NewThread: TNewThread;
 
-    OAuth2: TOAuth;
-    vString: string;
+  vObjVideo : TObjvideo;
+  S: string;
+  i, vPosY: integer;
+  vVideo : TVideo;
 
-    strQuestionDelete, vIdChannel, vNameChannel: string;
-    vNPanel: Integer;
-    vToken: string;
-
-    // vObj: Tvideo;
-    vObjVideo: Tchannel;
-    res, i: Integer;
-    urlget: string;
-    AJsonString: string;
-
-    vImgUrl: string;
-    g: TGraphic;
-    ssimg: TStringStream;
-    vSS: TStringStream;
-    SS: TStringStream;
-
-    jpegimg: TJPEGImage;
-    S: string;
-    AAPIUrl: String;
-    FHTTPClient: THTTPClient;
-    AResponce: IHTTPResponse;
-    vVideo: TrVideo;
-
-    vPosX, vPosY: Integer; }
-
+  AAPIUrl: String;
+  FHTTPClient: THTTPClient;
+  AResponce: IHTTPResponse;
+  Bitimg: TBitmap;
+//  vPanVideo: array [1 .. 1000] of TVideoPanel;
 begin
-  {
-    //Button4Click(Sender);
-    try
-    for i := 1 to 50 do
-    PanVideos[i].Free;
-    finally
-    lastPanel := nil;
-    end;
-  }
   vNPanel := TButton(Sender).Tag;
   vIdChannel := PanChannels[vNPanel].chId.text;
   // vToken := PanChannels[vNPanel].chToken.Caption;
   vNameChannel := PanChannels[vNPanel].ChName.text;
+  vToken := PanChannels[vNPanel].chToken.Text;
   // Для сообщения при отладке что нажали
-  vIdChannel := PanChannels[vNPanel].chId.text;
-  vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
-    IntToStr(vNPanel);
+  //  vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
+  //  IntToStr(vNPanel);
+  //  showmessage(vMessage);
+  FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
+  FrameMainChannel.Label1.text := vNameChannel;
+  FrameMainChannel.Label2.text := vIdChannel;
+  FrameMainChannel.Label3.text := vToken;
+  // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
+  fMain.Button200Click(Sender);
+  //  vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
+  //Наполняем панель видео
+
+  s := '0';
+  vObjVideo:= TObjvideo.Create;
+  // в мемо должен быть уже строка с канала
+  vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
+
+
+  for i := 0 to Length(vObjVideo.Items) - 1 do
+  begin
+    vVideo.videoId := vObjVideo.Items[i].id.videoId;
+    vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
+    vVideo.title := vObjVideo.Items[i].snippet.title;
+    vVideo.description := vObjVideo.Items[i].snippet.description;
+    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.url;
+    vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
+    vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
+       // решил тут не грузить видео по урлу, сделаю это внутри панели
+    try
+      S := StringReplace(vVideo.urlDefault, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+      FHTTPClient := THTTPClient.Create;
+      FHTTPClient.UserAgent :=
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+      try
+        AResponce := FHTTPClient.Get(AAPIUrl);
+      except
+        showmessage('нет подключения');
+      end;
+      if Not Assigned(AResponce) then
+      begin
+        showmessage('Пусто');
+      end;
+
+      Bitimg := TBitmap.Create;
+      Bitimg.LoadFromStream(AResponce.ContentStream);
+      vVideo.img := TBitmap.Create;
+      vVideo.img := Bitimg;
+    except
+       showmessage('Что except load video');
+    end;
+
+    vPosY := 30 + (i) * 120;
+                                                          //PanelVideos
+    PanVideos[i+1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY, i+1,
+        vVideo.videoId,
+        vVideo.channelId,
+        vVideo.title,
+        vVideo.description,
+        'нету',
+        vVideo.img);
+      PanVideos[i+1].Parent := FrameMainChannel.BoxVideos;
+
+      //PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+      //PanChannels[i].OnMouseMove := DinPanelMouseMove;
+      PanVideos[i+1].OnClick := DinPanelVideoClick; // Type (sender, 'TPanel');
+      PanVideos[i+1].VdImage.OnClick := DinPanelVideoClick;
+      //vPanVideo[i+1].VdTitle.OnClick := DinPanelVideoClick;
+      //vPanVideo[i+1].VdDescription.OnClick := DinPanelVideoClick;
+
+  end;
+  //
+  vEventMove := vState * 10 + 1;
+  vState := 3;
+  ButtonBack.Enabled := true;
+  NewThread := TNewThread.Create(true);
+  NewThread.FreeOnTerminate := true;
+  NewThread.Priority := tpLower;
+  NewThread.Resume;
+
+end;
+
+
+// Нажатие для выбора видео
+procedure TfMain.DinPanelVideoClick(Sender: TObject);
+const
+  tokenurl = 'https://accounts.google.com/o/oauth2/token';
+var
+  vMessage, vTitle, vDescription, vToken: string;
+  vNPanel: integer;
+  NewThread: TNewThread;
+
+  vObjVideo : TObjvideo;
+  S: string;
+  i, vPosY: integer;
+  vVideo : TVideo;
+
+  AAPIUrl: String;
+  FHTTPClient: THTTPClient;
+  AResponce: IHTTPResponse;
+  Bitimg: TBitmap;
+//  vPanVideo: array [1 .. 1000] of TVideoPanel;
+begin
+  vNPanel := TButton(Sender).Tag;
+  vTitle := PanVideos[vNPanel].VdTitle.text;
+  vDescription := PanVideos[vNPanel].VdDescription.text;
+//  vIdChannel := PanVideos[vNPanel].chId.text;
+  // vToken := PanChannels[vNPanel].chToken.Caption;
+//  vNameChannel := PanChannels[vNPanel].ChName.text;
+//  vToken := PanChannels[vNPanel].chToken.Text;
+
+  // Для сообщения при отладке что нажали
+  vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
   showmessage(vMessage);
+
+//  showmessage(vPanVideo[1].VdTitle.Text);
+  FrameVideos.ImageVideo.Bitmap := PanVideos[vNPanel].VdImage.Bitmap;
+  FrameVideos.MemoTitle.Text := PanVideos[vNPanel].VdTitle.Text;
+  FrameVideos.MemoDescription.Text := PanVideos[vNPanel].VdDescription.Text;
+  {
+  FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
+  FrameMainChannel.Label1.text := vNameChannel;
+  FrameMainChannel.Label2.text := vIdChannel;
+  FrameMainChannel.Label3.text := vToken;
+  // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
+  fMain.Button200Click(Sender);
+  //  vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
+  //Наполняем панель видео
+
+  s := '0';
+  vObjVideo:= TObjvideo.Create;
+  // в мемо должен быть уже строка с канала
+  vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
+
+
+  for i := 0 to Length(vObjVideo.Items) - 1 do
+  begin
+    vVideo.videoId := vObjVideo.Items[i].id.videoId;
+    vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
+    vVideo.title := vObjVideo.Items[i].snippet.title;
+    vVideo.description := vObjVideo.Items[i].snippet.description;
+    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.url;
+    vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
+    vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
+       // решил тут не грузить видео по урлу, сделаю это внутри панели
+    try
+      S := StringReplace(vVideo.urlDefault, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+      FHTTPClient := THTTPClient.Create;
+      FHTTPClient.UserAgent :=
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+      try
+        AResponce := FHTTPClient.Get(AAPIUrl);
+      except
+        showmessage('нет подключения');
+      end;
+      if Not Assigned(AResponce) then
+      begin
+        showmessage('Пусто');
+      end;
+
+      Bitimg := TBitmap.Create;
+      Bitimg.LoadFromStream(AResponce.ContentStream);
+      vVideo.img := TBitmap.Create;
+      vVideo.img := Bitimg;
+    except
+       showmessage('Что except load video');
+    end;
+
+    vPosY := 30 + (i) * 120;
+                                                          //PanelVideos
+    vPanVideo[i+1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY, i+1,
+        vVideo.videoId,
+        vVideo.channelId,
+        vVideo.title,
+        vVideo.description,
+        'нету',
+        vVideo.img);
+      vPanVideo[i+1].Parent := FrameMainChannel.BoxVideos;
+      {
+      PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+      PanChannels[i].OnMouseMove := DinPanelMouseMove;
+      PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
+      PanChannels[i].ChImage.OnClick := DinPanelClick;
+      PanChannels[i].ChName.OnClick := DinPanelClick;
+      PanChannels[i].ChLang.OnClick := DinPanelClick;
+
+  end;
+  //
+  }
+
+  vEventMove := vState * 10 + 1;
+  vState := 4;
+  ButtonBack.Enabled := true;
+  NewThread := TNewThread.Create(true);
+  NewThread.FreeOnTerminate := true;
+  NewThread.Priority := tpLower;
+  NewThread.Resume;
+
 end;
 
 end.

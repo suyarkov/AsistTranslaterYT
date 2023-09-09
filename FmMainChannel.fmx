@@ -1,6 +1,6 @@
 object FrameMainChannel: TFrameMainChannel
-  Size.Width = 191.000000000000000000
-  Size.Height = 340.000000000000000000
+  Size.Width = 670.000000000000000000
+  Size.Height = 510.000000000000000000
   Size.PlatformDefault = False
   object LabelNameChannel: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -47,5 +47,24 @@ object FrameMainChannel: TFrameMainChannel
     Size.PlatformDefault = False
     Text = 'Label3'
     TabOrder = 1
+  end
+  object BoxVideos: TVertScrollBox
+    Position.X = 216.000000000000000000
+    Position.Y = 33.000000000000000000
+    Size.Width = 446.000000000000000000
+    Size.Height = 424.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Viewport.Width = 446.000000000000000000
+    Viewport.Height = 424.000000000000000000
+  end
+  object ButtonAddNextVideo: TButton
+    Position.X = 533.000000000000000000
+    Position.Y = 465.000000000000000000
+    Size.Width = 129.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'ButtonAddNextVideo'
   end
 end

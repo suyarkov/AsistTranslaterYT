@@ -1,0 +1,13 @@
+object FrameVideoView: TFrameVideos
+  Size.Width = 754.000000000000000000
+  Size.Height = 409.000000000000000000
+  Size.PlatformDefault = False
+  object LabelVideoView: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Your Videos'
+    TabOrder = 0
+  end
+end

@@ -1,13 +1,61 @@
 object FrameVideos: TFrameVideos
-  Size.Width = 482.000000000000000000
-  Size.Height = 200.000000000000000000
+  Size.Width = 754.000000000000000000
+  Size.Height = 409.000000000000000000
   Size.PlatformDefault = False
   object LabelVideos: TLabel
     StyledSettings = [Family, Size, FontColor]
     Position.X = 16.000000000000000000
     Position.Y = 8.000000000000000000
     TextSettings.Font.StyleExt = {00070000000000000004000000}
-    Text = 'Your Videos'
+    Text = 'Video'
     TabOrder = 0
+  end
+  object MemoTitle: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 360.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    Viewport.Width = 365.000000000000000000
+    Viewport.Height = 37.000000000000000000
+  end
+  object MemoDescription: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Position.X = 368.000000000000000000
+    Position.Y = 128.000000000000000000
+    Size.Width = 361.000000000000000000
+    Size.Height = 193.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Viewport.Width = 357.000000000000000000
+    Viewport.Height = 189.000000000000000000
+  end
+  object CheckBox1: TCheckBox
+    Position.X = 36.000000000000000000
+    Position.Y = 144.000000000000000000
+    TabOrder = 3
+    Text = 'CheckBox1'
+  end
+  object ComboBox1: TComboBox
+    Position.X = 36.000000000000000000
+    Position.Y = 200.000000000000000000
+    Size.Width = 133.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+  end
+  object ImageVideo: TImage
+    MultiResBitmap = <
+      item
+      end>
+    Position.X = 32.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 73.000000000000000000
+    Size.PlatformDefault = False
   end
 end
