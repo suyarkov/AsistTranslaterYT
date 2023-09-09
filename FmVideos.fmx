@@ -1,4 +1,4 @@
-object V: TV
+object FrameVideos: TFrameVideos
   Size.Width = 791.000000000000000000
   Size.Height = 409.000000000000000000
   Size.PlatformDefault = False
