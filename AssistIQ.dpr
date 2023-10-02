@@ -33,7 +33,9 @@ uses
   uQ in 'uQ.pas',
   FmVideos in 'FmVideos.pas' {FrameVideos: TFrame},
   PnVideo in 'PnVideo.pas',
-  FmMainChannel in 'FmMainChannel.pas' {FrameMainChannel: TFrame};
+  FmMainChannel in 'FmMainChannel.pas' {FrameMainChannel: TFrame},
+  Classes.videoinfo in 'Classes.videoinfo.pas',
+  Classes.videoInfo.itemInfo in 'Classes.videoInfo.itemInfo.pas';
 
 {$R *.res}
 

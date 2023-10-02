@@ -9,7 +9,7 @@ object fMain: TfMain
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
-  DesignerMasterStyle = 1
+  DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Top
     Size.Width = 900.000000000000000000
@@ -46,11 +46,6 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
-    inherited LabelPas: TLabel
-      inherited LabelError: TLabel
-        TabOrder = 4
-      end
-    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end
@@ -196,8 +191,8 @@ object fMain: TfMain
     Size.Height = 59.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 18
-    Viewport.Width = 876.000000000000000000
-    Viewport.Height = 51.000000000000000000
+    Viewport.Width = 884.000000000000000000
+    Viewport.Height = 59.000000000000000000
   end
   object Edit4: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -261,12 +256,12 @@ object fMain: TfMain
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited MemoTitle: TMemo
-      Viewport.Width = 473.000000000000000000
-      Viewport.Height = 32.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 40.000000000000000000
     end
     inherited MemoDescription: TMemo
-      Viewport.Width = 495.000000000000000000
-      Viewport.Height = 247.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 255.000000000000000000
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer

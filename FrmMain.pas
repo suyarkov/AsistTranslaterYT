@@ -18,7 +18,8 @@ uses
   //IdMessageClient, //IdSMTPBase, IdSMTP,
   Classes.shearche.image,
   uEmailSend, uQ,
-  Classes.channel.statistics, FmMainChannel, FmVideos;
+  Classes.channel.statistics, FmMainChannel, FmVideos,
+  Classes.videoInfo;
 
 type
   TfMain = class(TForm)
@@ -71,6 +72,7 @@ type
     procedure ButtonEmail2Click(Sender: TObject);
     procedure ButtonQClick(Sender: TObject);
     procedure Button200Click(Sender: TObject);
+    procedure ButtonVideoInfoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -107,6 +109,7 @@ var
   FrameProgressEndLess: TFrameProgressEndLess;
   vResponceChannel : string;
   vResponceVideo : string;
+  vResponceInfoVideo : string;
   EdAccessCode : string;
   EdRefresh_token :string;
   EdAccess_token :string;
@@ -178,6 +181,9 @@ begin
   end;
 
   fMain.FrameFirst1.EditName.Text := uQ.LoadReestr('Name');
+
+  fMain.FrameVideos.LanguageComboBox.Items.Add('ABC1');
+  fMain.FrameVideos.LanguageComboBox.Items.Add('ABC2');
 
 end;
 
@@ -294,7 +300,7 @@ begin
   NewThread.Resume;
 end;
 
-// получить списко видео по каналу
+// получить список видео по каналу
 procedure TfMain.Button200Click(Sender: TObject);
 var
   Access_token: string;      // токен выполнения операций
@@ -312,7 +318,6 @@ begin
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label2.text);
   //  Memo1.Text := vResponceVideo;
   OAuth2.Free;
-
 end;
 
 // поток для прогресс бара
@@ -707,6 +712,25 @@ begin
 
 end;
 
+procedure TfMain.ButtonVideoInfoClick(Sender: TObject);
+var
+  Access_token: string;      // токен выполнения операций
+  Refresh_token: string;     // токен получения следующего токена на выполнение
+
+  OAuth2: TOAuth;
+  vString: string;
+begin
+  OAuth2 := TOAuth.Create;
+  OAuth2.ClientID :=
+    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  OAuth2.ClientSecret := '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';
+  // крайне важно
+  OAuth2.refresh_token := FrameMainChannel.Label3.text;
+  vResponceInfoVideo := OAuth2.VideoInfo(FrameMainChannel.Label2.text);
+  Memo1.Text := vResponceInfoVideo;
+  OAuth2.Free;
+end;
+
 // обработка пароля
 procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
 var
@@ -1075,58 +1099,61 @@ var
   vNPanel: integer;
   NewThread: TNewThread;
 
-  vObjVideo : TObjvideo;
+  vObjVideo : TObjvideoInfo;
   S: string;
   i, vPosY: integer;
   vVideo : TVideo;
+
+  vVdId : string;
 
   AAPIUrl: String;
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
   Bitimg: TBitmap;
-//  vPanVideo: array [1 .. 1000] of TVideoPanel;
+
+  Access_token: string;      // токен выполнения операций
+  Refresh_token: string;     // токен получения следующего токена на выполнение
+  OAuth2: TOAuth;
+  vString: string;
 begin
   vNPanel := TButton(Sender).Tag;
   vTitle := PanVideos[vNPanel].VdTitle.text;
   vDescription := PanVideos[vNPanel].VdDescription.text;
+  vVdId := PanVideos[vNPanel].VdId.text;
 //  vIdChannel := PanVideos[vNPanel].chId.text;
   // vToken := PanChannels[vNPanel].chToken.Caption;
-//  vNameChannel := PanChannels[vNPanel].ChName.text;
-//  vToken := PanChannels[vNPanel].chToken.Text;
-
   // Для сообщения при отладке что нажали
 //  vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
 //  showmessage(vMessage);
 
-//  showmessage(vPanVideo[1].VdTitle.Text);
-  FrameVideos.ImageVideo.Bitmap := PanVideos[vNPanel].VdImage.Bitmap;
-  FrameVideos.MemoTitle.Text := PanVideos[vNPanel].VdTitle.Text;
-  FrameVideos.MemoDescription.Text := PanVideos[vNPanel].VdDescription.Text;
-  {
-  FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
-  FrameMainChannel.Label1.text := vNameChannel;
-  FrameMainChannel.Label2.text := vIdChannel;
-  FrameMainChannel.Label3.text := vToken;
-  // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
-  fMain.Button200Click(Sender);
-  //  vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
-  //Наполняем панель видео
+  // данные о видео запросить
+  OAuth2 := TOAuth.Create;
+  OAuth2.ClientID :=
+    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  OAuth2.ClientSecret := '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';
+  // крайне важно
+  OAuth2.refresh_token := FrameMainChannel.Label3.text;
+  vResponceInfoVideo := OAuth2.VideoInfo(vVdId);
+  Memo1.Text := vResponceInfoVideo;
+  OAuth2.Free;
 
+  // данные о видео разобарть
   s := '0';
-  vObjVideo:= TObjvideo.Create;
+  vObjVideo:= TObjvideoInfo.Create;
   // в мемо должен быть уже строка с канала
-  vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
+  vObjVideo := TJson.JsonToObject<TObjvideoInfo>(vResponceInfoVideo);
 
 
   for i := 0 to Length(vObjVideo.Items) - 1 do
   begin
-    vVideo.videoId := vObjVideo.Items[i].id.videoId;
+    vVideo.videoId := vObjVideo.Items[i].id;
     vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
     vVideo.title := vObjVideo.Items[i].snippet.title;
     vVideo.description := vObjVideo.Items[i].snippet.description;
     vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.url;
     vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
     vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
+    vVideo.language := vObjVideo.Items[i].snippet.defaultLanguage;
        // решил тут не грузить видео по урлу, сделаю это внутри панели
     try
       S := StringReplace(vVideo.urlDefault, #13, '', [rfReplaceAll, rfIgnoreCase]);
@@ -1152,27 +1179,14 @@ begin
        showmessage('Что except load video');
     end;
 
-    vPosY := 30 + (i) * 120;
-                                                          //PanelVideos
-    vPanVideo[i+1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY, i+1,
-        vVideo.videoId,
-        vVideo.channelId,
-        vVideo.title,
-        vVideo.description,
-        'нету',
-        vVideo.img);
-      vPanVideo[i+1].Parent := FrameMainChannel.BoxVideos;
-      {
-      PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-      PanChannels[i].OnMouseMove := DinPanelMouseMove;
-      PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
-      PanChannels[i].ChImage.OnClick := DinPanelClick;
-      PanChannels[i].ChName.OnClick := DinPanelClick;
-      PanChannels[i].ChLang.OnClick := DinPanelClick;
-
   end;
   //
-  }
+
+  FrameVideos.LanguageVideoLabel.text := vVideo.language;
+
+  FrameVideos.ImageVideo.Bitmap := vVideo.img;//PanVideos[vNPanel].VdImage.Bitmap;
+  FrameVideos.MemoTitle.Text := vVideo.title;
+  FrameVideos.MemoDescription.Text := vVideo.description;
 
   vEventMove := vState * 10 + 1;
   vState := 4;

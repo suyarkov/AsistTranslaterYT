@@ -335,6 +335,8 @@
             <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="Classes.videoinfo.pas"/>
+        <DCCReference Include="Classes.videoInfo.itemInfo.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

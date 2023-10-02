@@ -13,11 +13,15 @@ type
     LabelVideos: TLabel;
     MemoTitle: TMemo;
     MemoDescription: TMemo;
-    CheckBox1: TCheckBox;
-    ComboBox1: TComboBox;
+    LanguageCheckBox: TCheckBox;
+    LanguageComboBox: TComboBox;
     ImageVideo: TImage;
+    LanguageVideoLabel: TLabel;
+    PanelTitle: TPanel;
     LabelTitle: TLabel;
+    PanelDescription: TPanel;
     LabelDescription: TLabel;
+    TitleLengthLabel: TLabel;
     procedure ImageAddVideoClick(Sender: TObject);
   private
     { Private declarations }

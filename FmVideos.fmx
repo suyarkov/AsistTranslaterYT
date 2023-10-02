@@ -13,18 +13,23 @@ object FrameVideos: TFrameVideos
   object MemoTitle: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    ShowScrollBars = False
+    StyledSettings = [Family, Size, FontColor]
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
     Position.X = 280.000000000000000000
-    Position.Y = 33.000000000000000000
-    Size.Width = 481.000000000000000000
-    Size.Height = 40.000000000000000000
+    Position.Y = 49.000000000000000000
+    Size.Width = 503.000000000000000000
+    Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    Viewport.Width = 477.000000000000000000
-    Viewport.Height = 36.000000000000000000
+    Viewport.Width = 499.000000000000000000
+    Viewport.Height = 44.000000000000000000
   end
   object MemoDescription: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    StyledSettings = [Family, Size, FontColor]
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
     Position.X = 280.000000000000000000
     Position.Y = 130.000000000000000000
     Size.Width = 503.000000000000000000
@@ -34,15 +39,20 @@ object FrameVideos: TFrameVideos
     Viewport.Width = 499.000000000000000000
     Viewport.Height = 251.000000000000000000
   end
-  object CheckBox1: TCheckBox
+  object LanguageCheckBox: TCheckBox
+    StyledSettings = [Family, Size, FontColor]
     Position.X = 36.000000000000000000
-    Position.Y = 181.000000000000000000
+    Position.Y = 221.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 19.000000000000000000
+    Size.PlatformDefault = False
     TabOrder = 3
-    Text = 'CheckBox1'
+    Text = 'Change the language'
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
   end
-  object ComboBox1: TComboBox
+  object LanguageComboBox: TComboBox
     Position.X = 36.000000000000000000
-    Position.Y = 216.000000000000000000
+    Position.Y = 256.000000000000000000
     Size.Width = 209.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
@@ -58,16 +68,52 @@ object FrameVideos: TFrameVideos
     Size.Height = 132.000000000000000000
     Size.PlatformDefault = False
   end
-  object LabelTitle: TLabel
-    Position.X = 280.000000000000000000
-    Position.Y = 8.000000000000000000
-    Text = 'Title'
-    TabOrder = 6
-  end
-  object LabelDescription: TLabel
-    Position.X = 280.000000000000000000
-    Position.Y = 105.000000000000000000
-    Text = 'Description'
+  object LanguageVideoLabel: TLabel
+    Position.X = 40.000000000000000000
+    Position.Y = 176.000000000000000000
+    Text = 'LanguageVideoLabel'
     TabOrder = 5
+  end
+  object PanelTitle: TPanel
+    Position.X = 280.000000000000000000
+    Position.Y = 24.000000000000000000
+    Size.Width = 503.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'pushpanel'
+    TabOrder = 7
+    object LabelTitle: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Title'
+      TabOrder = 5
+    end
+  end
+  object PanelDescription: TPanel
+    Position.X = 280.000000000000000000
+    Position.Y = 97.000000000000000000
+    Size.Width = 503.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'pushpanel'
+    TabOrder = 6
+    object LabelDescription: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Description'
+      TabOrder = 5
+    end
+  end
+  object TitleLengthLabel: TLabel
+    Anchors = [akTop, akRight]
+    Position.X = 732.000000000000000000
+    Position.Y = 77.000000000000000000
+    Size.Width = 51.000000000000000000
+    Size.Height = 20.000000000000000000
+    Size.PlatformDefault = False
+    Text = '100/100'
+    TabOrder = 8
   end
 end

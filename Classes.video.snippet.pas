@@ -15,6 +15,7 @@ type
     FchannelTitle: string;
     FliveBroadcastContent: string;
     FpublishTime: string; // дата формата "2023-03-21T11:50:33Z"
+    FdefaultLanguage : string;
   public
     property publishedAt: string read FpublishedAt write FpublishedAt;
     property channelId: string read FchannelId write FchannelId;
@@ -24,6 +25,8 @@ type
     property channelTitle: string read FchannelTitle write FchannelTitle;
     property liveBroadcastContent: string read FliveBroadcastContent write FliveBroadcastContent;
     property publishTime: string read FpublishTime write FpublishTime;
+    property defaultLanguage: string read FdefaultLanguage write FdefaultLanguage;
+
   end;
 
 implementation
