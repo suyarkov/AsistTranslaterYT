@@ -34,6 +34,8 @@ var
 begin
   vRect.Create(1,1,100,100);
   Canvas.ExcludeClipRect(vRect);
+
+
 //   PanelFm.Canvas. .Brush.Color :=  RGB(97,114,152);
 //   PanelFm.Canvas.Pen.Color := FormWait.Canvas.Brush.Color;
 //   Canvas.RoundRect( i*32-14, 25, i*32 + 30-14,  25+10, 6 ,6);
