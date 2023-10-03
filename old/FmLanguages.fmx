@@ -1,0 +1,5 @@
+object FrameLanguages: TFrameLanguages
+  Size.Width = 752.000000000000000000
+  Size.Height = 543.000000000000000000
+  Size.PlatformDefault = False
+end

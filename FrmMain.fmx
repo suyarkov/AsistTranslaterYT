@@ -256,12 +256,44 @@ object fMain: TfMain
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited MemoTitle: TMemo
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
       Viewport.Width = 503.000000000000000000
-      Viewport.Height = 40.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
       Viewport.Width = 503.000000000000000000
       Viewport.Height = 255.000000000000000000
+    end
+    inherited LanguageCheckBox: TCheckBox
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
+    inherited ImageVideo: TImage
+      OnClick = FrameVideosImageVideoClick
+    end
+    inherited PanelTitle: TPanel
+      inherited LabelTitle: TLabel
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+      end
+    end
+    inherited PanelDescription: TPanel
+      inherited LabelDescription: TLabel
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+      end
+    end
+    inherited BTranslater: TButton
+      OnClick = FrameVideosBTranslaterClick
+    end
+  end
+  inline FrameLanguages: TFrameLanguages
+    Position.X = 488.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 752.000000000000000000
+    Size.Height = 543.000000000000000000
+    Size.PlatformDefault = False
+    inherited BoxLanguages: TVertScrollBox
+      Viewport.Width = 689.000000000000000000
+      Viewport.Height = 424.000000000000000000
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer

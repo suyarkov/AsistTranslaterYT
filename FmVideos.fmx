@@ -22,8 +22,8 @@ object FrameVideos: TFrameVideos
     Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    Viewport.Width = 499.000000000000000000
-    Viewport.Height = 44.000000000000000000
+    Viewport.Width = 503.000000000000000000
+    Viewport.Height = 48.000000000000000000
   end
   object MemoDescription: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -36,8 +36,8 @@ object FrameVideos: TFrameVideos
     Size.Height = 255.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    Viewport.Width = 499.000000000000000000
-    Viewport.Height = 251.000000000000000000
+    Viewport.Width = 503.000000000000000000
+    Viewport.Height = 255.000000000000000000
   end
   object LanguageCheckBox: TCheckBox
     StyledSettings = [Family, Size, FontColor]
@@ -115,5 +115,12 @@ object FrameVideos: TFrameVideos
     Size.PlatformDefault = False
     Text = '100/100'
     TabOrder = 8
+  end
+  object BTranslater: TButton
+    Position.X = 40.000000000000000000
+    Position.Y = 352.000000000000000000
+    TabOrder = 9
+    Text = 'BTranslater'
+    OnClick = BTranslaterClick
   end
 end

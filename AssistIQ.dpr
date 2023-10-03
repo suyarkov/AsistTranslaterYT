@@ -35,7 +35,10 @@ uses
   PnVideo in 'PnVideo.pas',
   FmMainChannel in 'FmMainChannel.pas' {FrameMainChannel: TFrame},
   Classes.videoinfo in 'Classes.videoinfo.pas',
-  Classes.videoInfo.itemInfo in 'Classes.videoInfo.itemInfo.pas';
+  Classes.videoInfo.itemInfo in 'Classes.videoInfo.itemInfo.pas',
+  uLanguages in 'uLanguages.pas',
+  FmLanguages in 'FmLanguages.pas' {FrameLanguages: TFrame},
+  PnLanguage in 'PnLanguage.pas';
 
 {$R *.res}
 

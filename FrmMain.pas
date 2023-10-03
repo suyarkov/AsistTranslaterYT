@@ -19,7 +19,8 @@ uses
   Classes.shearche.image,
   uEmailSend, uQ,
   Classes.channel.statistics, FmMainChannel, FmVideos,
-  Classes.videoInfo;
+  Classes.videoInfo,
+  uLanguages, FmLanguages, PnLanguage;
 
 type
   TfMain = class(TForm)
@@ -50,6 +51,7 @@ type
     FrameMainChannel: TFrameMainChannel;
     Button200: TButton;
     FrameVideos: TFrameVideos;
+    FrameLanguages: TFrameLanguages;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -73,6 +75,8 @@ type
     procedure ButtonQClick(Sender: TObject);
     procedure Button200Click(Sender: TObject);
     procedure ButtonVideoInfoClick(Sender: TObject);
+    procedure FrameVideosImageVideoClick(Sender: TObject);
+    procedure FrameVideosBTranslaterClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -98,6 +102,7 @@ var
   fMain: TfMain;
   PanChannels: array [1 .. 50] of TChannelPanel;
   PanVideos: array [1 .. 1000] of TVideoPanel;
+  PanLanguages: array [1 .. 300] of TLanguagePanel;
   vEventMove: integer; // 10 - обратно, 11- вправо. первую форму
   vState: integer; // 1 - перва€ форма - пароль,// 2 втора€ форма каналы,
   // 3 треть€ - один канал // 4- конкретный ролик
@@ -169,6 +174,12 @@ begin
     // спр€чем третий фрейм за границу видимости
   fMain.FrameVideos.Position.X := Round(fMain.Width + 1);
   fMain.FrameVideos.Position.Y := 56;
+
+      // спр€чем четвертый (€зыки) фрейм за границу видимости
+  fMain.FrameLanguages.Position.X := Round(fMain.Width + 1);
+  fMain.FrameLanguages.Position.Y := 56;
+
+
 
   FrameProgressBar.Visible := false;
 
@@ -825,6 +836,53 @@ begin
   end;
 end;
 
+
+procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);
+var
+  i, vCountLanguages: integer;
+  vRes, vPos: integer;
+  vList: TListLanguages;
+  vBitmap: TBitmap;
+begin
+  FrameVideos.BTranslaterClick(Sender);
+  vList := InitListLanguagesStatic();
+  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
+  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
+
+    i := 1;
+  repeat
+      vPos := 30 + (i - 1) * 120;
+      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPos, i,
+        IntToStr(vList[i].Id),
+        vList[i].NameForEnter,
+        vList[i].NameForRead,
+        vList[i].LnCode); //, vBitmap
+      PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
+//      PanLanguages[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+    inc(i);
+  until (i >= 300) or (vList[i].LnCode = '');
+
+
+  //  showmessage('FrmMain');
+  {
+  fLanguages.Create(nil);
+  fLanguages.Caption := 'My Modal Dialog Box';
+
+  // Show your dialog box and provide an anonymous method that handles the closing of your dialog box.
+  fLanguages.ShowModal(
+    procedure(ModalResult: TModalResult)
+    begin
+      // Do something.
+    end
+  );
+  }
+
+end;
+
+procedure TfMain.FrameVideosImageVideoClick(Sender: TObject);
+begin
+
+end;
 
 // ќЅ–јЅќ“ ј  поступление согласловани€ или не согласовани€ выдачи прав на канал пользователем
 procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
