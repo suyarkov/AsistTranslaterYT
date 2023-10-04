@@ -3,13 +3,13 @@ object FrameLanguages: TFrameLanguages
   Size.Height = 543.000000000000000000
   Size.PlatformDefault = False
   object BoxLanguages: TVertScrollBox
-    Position.X = 32.000000000000000000
+    Position.X = 8.000000000000000000
     Position.Y = 33.000000000000000000
-    Size.Width = 689.000000000000000000
+    Size.Width = 736.000000000000000000
     Size.Height = 424.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
-    Viewport.Width = 689.000000000000000000
+    Viewport.Width = 736.000000000000000000
     Viewport.Height = 424.000000000000000000
   end
   object Button1: TButton

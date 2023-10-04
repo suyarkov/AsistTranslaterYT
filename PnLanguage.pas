@@ -16,14 +16,14 @@ type
     ChImage: TImage;
     ChName: TLabel;
     ChLang: TLabel;
-    ButtonDel: TButton;
+    ButtonOnOff: TButton;
     chId  : TLabel;
     chToken  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; pPos, pN: integer;
+    constructor Create(AOwner: TComponent; pPosX, pPosY, pN: integer;
                 pChId, pChToken, pChName, pChLang : string
-//;                ABitmap : TBitmap
+;                ABitmap : TBitmap
     ); reintroduce;
       overload; virtual;
 //    procedure DinButtonDeleteChannelClick(Sender: TObject);
@@ -45,11 +45,13 @@ begin
   //Top := 8;
 end;
 
-constructor TLanguagePanel.Create(AOwner: TComponent;  pPos, pN: integer;
-      pChId, pChToken, pChName, pChLang : string); // ; ABitmap : TBitmap
+constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN: integer;
+      pChId, pChToken, pChName, pChLang : string  ; ABitmap : TBitmap
+      );
 begin
   Create(AOwner);
-  Self.Position.y := 8 + pPos;
+  Self.Position.x :=  pPosX;
+  Self.Position.y :=  pPosY;
   //Self.Name := 'P' + IntToStr(pN);
   Self.tag :=  pN;
 
@@ -71,8 +73,8 @@ begin
     tag :=  pN;
   end;
 
-  ButtonDel := TButton.Create(Self);
-  with ButtonDel do
+  ButtonOnOff := TButton.Create(Self);
+  with ButtonOnOff do
   begin
     Parent := Self;
     Text := pChName;//'Delete';
@@ -97,7 +99,7 @@ begin
     Font.Size := 12;
     Font.Style := [TFontStyle.fsBold];
     Tag :=  pN;
-    Visible := True;
+    Visible := false;//True;
   end;
 
   ChLang := TLabel.Create(Self);
@@ -112,7 +114,7 @@ begin
     Width := 30;
     Font.Size := 10;
     Tag :=  pN;
-    Visible := True;
+    Visible := false;//True;
   end;
 
   ChImage := TImage.Create(Self);
@@ -121,11 +123,11 @@ begin
     Parent := Self;
     Position.x := 8;
     Position.y := 8;
-    Height := 88;
-    Width := 88;
+    Height := 16;
+    Width := 16;
     Tag :=  pN;
     try
-//    ChImage.Bitmap := ABitmap;
+    ChImage.Bitmap := ABitmap;
     except
        null;
     end;

@@ -75,8 +75,8 @@ type
     procedure ButtonQClick(Sender: TObject);
     procedure Button200Click(Sender: TObject);
     procedure ButtonVideoInfoClick(Sender: TObject);
-    procedure FrameVideosImageVideoClick(Sender: TObject);
     procedure FrameVideosBTranslaterClick(Sender: TObject);
+    procedure Image3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -840,23 +840,31 @@ end;
 procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);
 var
   i, vCountLanguages: integer;
-  vRes, vPos: integer;
+  vRes, vPosX, vPosY, vMod, vDiv: integer;
+  vWidth, vHeight : integer;
   vList: TListLanguages;
   vBitmap: TBitmap;
 begin
+  vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
   vList := InitListLanguagesStatic();
   fMain.FrameVideos.Position.X := Round(fMain.Width +1);
   fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
-
+//  vWidth := 0; vHeight := 0;
+  vWidth := 236+1; vHeight := 46+1;
     i := 1;
   repeat
-      vPos := 30 + (i - 1) * 120;
-      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPos, i,
+      vDiv := (i-1) div 3; // номер строки
+      vMod := (i-1) mod 3; // номер столбца
+      vPosY := vDiv * vHeight;  // по высоте
+      vPosX := (vMod) * vWidth;  // по ширине
+      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i,
         IntToStr(vList[i].Id),
         vList[i].NameForEnter,
-        vList[i].NameForRead,
-        vList[i].LnCode); //, vBitmap
+        vList[i].NameForRead + ' ' + IntToStr(i),
+        vList[i].LnCode, vBitmap); //,
+//      vWidth := PanLanguages[i].Width;
+//      vHeight := PanLanguages[i].Height;
       PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
 //      PanLanguages[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
     inc(i);
@@ -879,7 +887,7 @@ begin
 
 end;
 
-procedure TfMain.FrameVideosImageVideoClick(Sender: TObject);
+procedure TfMain.Image3Click(Sender: TObject);
 begin
 
 end;
