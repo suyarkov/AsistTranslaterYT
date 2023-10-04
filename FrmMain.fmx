@@ -205,8 +205,8 @@ object fMain: TfMain
     Size.Height = 59.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 18
-    Viewport.Width = 884.000000000000000000
-    Viewport.Height = 59.000000000000000000
+    Viewport.Width = 880.000000000000000000
+    Viewport.Height = 55.000000000000000000
   end
   object Edit4: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -293,6 +293,8 @@ object fMain: TfMain
       end
     end
     inherited BTranslater: TButton
+      StyledSettings = [Family, Size, FontColor]
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
       OnClick = FrameVideosBTranslaterClick
     end
   end
@@ -303,8 +305,14 @@ object fMain: TfMain
     Size.Height = 543.000000000000000000
     Size.PlatformDefault = False
     inherited BoxLanguages: TVertScrollBox
-      Viewport.Width = 689.000000000000000000
+      Viewport.Width = 736.000000000000000000
       Viewport.Height = 424.000000000000000000
+    end
+    inherited LabelTextCount: TLabel
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
+    inherited LabelCount: TLabel
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer

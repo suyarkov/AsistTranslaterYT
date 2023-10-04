@@ -77,6 +77,7 @@ type
     procedure ButtonVideoInfoClick(Sender: TObject);
     procedure FrameVideosBTranslaterClick(Sender: TObject);
     procedure Image3Click(Sender: TObject);
+    procedure DinLanguageClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -118,6 +119,7 @@ var
   EdAccessCode : string;
   EdRefresh_token :string;
   EdAccess_token :string;
+  vCurrentPanChannel: integer;
 
 implementation
 
@@ -704,7 +706,9 @@ begin
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
-        results.FieldByName('lang').AsString, vBitmap);
+        results.FieldByName('lang').AsString,
+        results.FieldByName('sel_lang').AsString,
+        vBitmap);
       PanChannels[i].Parent := FrameChannels.BoxChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
 //      PanChannels[i].OnMouseMove := DinPanelMouseMove;
@@ -844,6 +848,8 @@ var
   vWidth, vHeight : integer;
   vList: TListLanguages;
   vBitmap: TBitmap;
+  vSelected, vCount : integer; // 1- выбран,  0- не выбран
+  vSelLanguages : string;
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
@@ -853,12 +859,23 @@ begin
 //  vWidth := 0; vHeight := 0;
   vWidth := 236+1; vHeight := 46+1;
     i := 1;
+    vCount := 0;
   repeat
       vDiv := (i-1) div 3; // номер строки
       vMod := (i-1) mod 3; // номер столбца
       vPosY := vDiv * vHeight;  // по высоте
       vPosX := (vMod) * vWidth;  // по ширине
-      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vMod, // временно, потом вставить анализ выбранных языков
+      // определим есть ли данный язык в выбранных
+      vSelected := pos('/'+vList[i].LnCode+'/', PanChannels[vCurrentPanChannel].ChSelLang.text);
+      // res := SQLiteModule.InsRefreshToken(vChannel);
+      if vSelected > 0 then
+      begin
+        vSelected := 1;
+        inc(vCount);
+//        vSelLanguages := vSelLanguages + PanLanguages[vNPanel].ChLang + '/';
+      end;
+      //
+      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
         IntToStr(vList[i].Id),
         vList[i].NameForEnter,
         vList[i].NameForRead + ' ' + IntToStr(i),
@@ -866,25 +883,12 @@ begin
 //      vWidth := PanLanguages[i].Width;
 //      vHeight := PanLanguages[i].Height;
       PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
-//      PanLanguages[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+      PanLanguages[i].ButtonOnOff.OnClick := DinLanguageClick;
     inc(i);
   until (i >= 300) or (vList[i].LnCode = '');
 
-
-  //  showmessage('FrmMain');
-  {
-  fLanguages.Create(nil);
-  fLanguages.Caption := 'My Modal Dialog Box';
-
-  // Show your dialog box and provide an anonymous method that handles the closing of your dialog box.
-  fLanguages.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      // Do something.
-    end
-  );
-  }
-
+  fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelLanguages.Text :=  PanChannels[vCurrentPanChannel].ChSelLang.text;
 end;
 
 procedure TfMain.Image3Click(Sender: TObject);
@@ -1068,6 +1072,7 @@ var
 //  vPanVideo: array [1 .. 1000] of TVideoPanel;
 begin
   vNPanel := TButton(Sender).Tag;
+  vCurrentPanChannel := vNPanel;
   vIdChannel := PanChannels[vNPanel].chId.text;
   // vToken := PanChannels[vNPanel].chToken.Caption;
   vNameChannel := PanChannels[vNPanel].ChName.text;
@@ -1162,7 +1167,7 @@ const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
 var
   vMessage, vTitle, vDescription, vToken: string;
-  vNPanel: integer;
+  vNPanel: integer; // это номер канала в панеле видео  PanVideos[vNPanel]
   NewThread: TNewThread;
 
   vObjVideo : TObjvideoInfo;
@@ -1261,6 +1266,42 @@ begin
   NewThread.FreeOnTerminate := true;
   NewThread.Priority := tpLower;
   NewThread.Resume;
+
+end;
+
+// обновление языков
+procedure TfMain.DinLanguageClick(Sender: TObject);
+// Sender : TComponent;
+var
+  strQuestionDelete, vIdLanguage: string;
+  vNPanel: integer;
+  i, vCount: integer;
+  vSelLanguages : string;
+begin
+  lastPanel := nil;
+  vNPanel := TButton(Sender).Tag;
+  PanLanguages[vNPanel].ChImage.Visible := not(PanLanguages[vNPanel].ChImage.Visible);
+  if PanLanguages[vNPanel].ChImage.Visible = TRUE then
+    PanLanguages[vNPanel].ButtonOnOff.TextSettings.Font.Style := [TFontStyle.fsBold]
+  else
+    PanLanguages[vNPanel].ButtonOnOff.TextSettings.Font.Style := [];
+  vCount := 0;
+  vSelLanguages := '/';
+  for i := 1 to 300 do
+    begin
+      if PanLanguages[i] = nil then
+        break;
+      if PanLanguages[i].ChImage.Visible = TRUE then
+      begin
+        inc(vCount);
+        vSelLanguages := vSelLanguages + PanLanguages[i].ChLang.Text + '/';
+      end;
+    end;
+  vSelLanguages := vSelLanguages + '/';
+  fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelLanguages.Text :=  vSelLanguages;
+  PanChannels[vCurrentPanChannel].ChSelLang.text := vSelLanguages;
+  i:= SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel].ChId.Text, vSelLanguages);
 
 end;
 

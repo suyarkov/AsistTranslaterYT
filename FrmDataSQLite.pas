@@ -63,6 +63,7 @@ type
     function LoadAnyImage(pUrl: string): TStream;
     procedure SaveTestImage(pSS3: TBitmap);
     procedure DelChannel(pId: String);
+    function Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
 
     function LoadAddVideo(pIdChannel: string): TShortChannels;
   end;
@@ -111,7 +112,7 @@ begin
 end;
 
 
-// загрузка данных по каналу
+// загрузка данных по всем каналам
 function TSQLiteModule.SelInfoChannels(): TShortChannels;
 var
   i: integer;
@@ -152,7 +153,7 @@ var
   results: tDataSet;
 begin
 //  showmessage('„то save 1');
-  pShortChanel.sel_lang := 'az, ay, ak, sq, am, en, ar, hy, as, af, bm, eu, be, bn, my, bg, bs, cy, hu, vi,';
+//  pShortChanel.sel_lang := 'az, ay, ak, sq, am, en, ar, hy, as, af, bm, eu, be, bn, my, bg, bs, cy, hu, vi,';
   try
     SQLiteModule.SQL.ExecSQL
       ('delete from refresh_token where id_channel = :id_channel',
@@ -310,5 +311,29 @@ begin
 
   Result := Channels;
 end;
+
+function TSQLiteModule.Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
+var
+  i: integer;
+  results: tDataSet;
+begin
+  showmessage('„то save ' + pId_channel + 'строка ' + pSel_Lang);
+  try
+    SQLiteModule.SQL.ExecSQL
+      ('update refresh_token set sel_lang = :sel_lang  where id_channel = :id_channel',
+      [pSel_Lang, pId_channel]);
+
+  except
+    on E: Exception do
+    begin
+      SQLiteModule.SQL.Rollback;
+      showmessage('Exception update sel_lang with message: ' + E.Message);
+    end;
+  end;
+
+  SQLiteModule.SQL.Commit;
+  Result := 1;
+end;
+
 
 end.

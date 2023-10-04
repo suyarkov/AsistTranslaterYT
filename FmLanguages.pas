@@ -11,6 +11,9 @@ type
   TFrameLanguages = class(TFrame)
     BoxLanguages: TVertScrollBox;
     Button1: TButton;
+    LabelTextCount: TLabel;
+    LabelCount: TLabel;
+    LabelLanguages: TLabel;
   private
     { Private declarations }
   public

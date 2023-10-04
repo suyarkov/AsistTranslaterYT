@@ -16,13 +16,14 @@ type
     ChImage: TImage;
     ChName: TLabel;
     ChLang: TLabel;
+    ChSelLang: TLabel;
     ButtonDel: TButton;
     chId  : TLabel;
     chToken  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(AOwner: TComponent; pPos, pN: integer;
-                pChId, pChToken, pChName, pChLang : string;
+                pChId, pChToken, pChName, pChLang, pChSelLang : string;
                 ABitmap : TBitmap); reintroduce;
       overload; virtual;
 //    procedure DinButtonDeleteChannelClick(Sender: TObject);
@@ -45,7 +46,7 @@ begin
 end;
 
 constructor TChannelPanel.Create(AOwner: TComponent;  pPos, pN: integer;
-      pChId, pChToken, pChName, pChLang : string; ABitmap : TBitmap);
+      pChId, pChToken, pChName, pChLang, pChSelLang : string; ABitmap : TBitmap);
 begin
   Create(AOwner);
   Self.Position.y := 8 + pPos;
@@ -112,6 +113,21 @@ begin
     Font.Size := 10;
     Tag :=  pN;
     Visible := True;
+  end;
+
+  ChSelLang := TLabel.Create(Self);
+  with ChLang do
+  begin
+    Parent := Self;
+    Text := pChSelLang;
+    Name := 'SL' + IntToStr(pN);
+    Height := 17;
+    Position.x := 1000;
+    Position.y := 1000;
+    Width := 500;
+    Font.Size := 10;
+    Tag :=  pN;
+    Visible := false;
   end;
 
   ChImage := TImage.Create(Self);

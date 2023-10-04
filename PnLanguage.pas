@@ -22,8 +22,7 @@ type
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;
-                pChId, pChToken, pChName, pChLang : string
-;                ABitmap : TBitmap
+                pChId, pChToken, pChName, pChLang : string;  ABitmap : TBitmap
     ); reintroduce;
       overload; virtual;
 //    procedure DinButtonDeleteChannelClick(Sender: TObject);
@@ -61,10 +60,16 @@ begin
     Parent := Self;
     Text := pChName;//'Delete';
     name := 'B' + IntToStr(pN);
-    Position.x := 2;
-    Position.y := 2;
-    Width := Self.Position.Width - 4;
-    Height := Self.Position.Height - 4;
+    Position.x := 1;
+    Position.y := 1;
+    Width := 236;
+    Height := 46;
+//    Position.x := 2;
+//    Position.y := 2;
+//    Width := Self.Position.Width - 4;
+//    Height := Self.Position.Height - 4;
+//    if pSelected = 1 then
+      TextSettings.Font.Style := [TFontStyle.fsBold];
     Visible := True;
     Tag :=  pN;
   end;
@@ -123,7 +128,7 @@ begin
   begin
     Parent := Self;
     Position.x := 8;
-    Position.y := 8;
+    Position.y := 16;
     Height := 16;
     Width := 16;
     Tag :=  pN;
