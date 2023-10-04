@@ -21,7 +21,7 @@ type
     chToken  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; pPosX, pPosY, pN: integer;
+    constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;
                 pChId, pChToken, pChName, pChLang : string
 ;                ABitmap : TBitmap
     ); reintroduce;
@@ -45,7 +45,7 @@ begin
   //Top := 8;
 end;
 
-constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN: integer;
+constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;
       pChId, pChToken, pChName, pChLang : string  ; ABitmap : TBitmap
       );
 begin
@@ -53,9 +53,23 @@ begin
   Self.Position.x :=  pPosX;
   Self.Position.y :=  pPosY;
   //Self.Name := 'P' + IntToStr(pN);
-  Self.tag :=  pN;
+  Self.tag :=  pN; // а это номер в таблице объектов
 
-  ChId := TLabel.Create(Self);
+  ButtonOnOff := TButton.Create(Self);
+  with ButtonOnOff do
+  begin
+    Parent := Self;
+    Text := pChName;//'Delete';
+    name := 'B' + IntToStr(pN);
+    Position.x := 2;
+    Position.y := 2;
+    Width := Self.Position.Width - 4;
+    Height := Self.Position.Height - 4;
+    Visible := True;
+    Tag :=  pN;
+  end;
+
+  ChId := TLabel.Create(Self); // это ID номер в порядке справочника
   with ChId do
   begin
     Parent := Self;
@@ -64,7 +78,7 @@ begin
     tag :=  pN;
   end;
 
-  chToken := TLabel.Create(Self);
+  chToken := TLabel.Create(Self); // это не ясно, что за оно, можно и удалить
   with chToken do
   begin
     Parent := Self;
@@ -73,20 +87,7 @@ begin
     tag :=  pN;
   end;
 
-  ButtonOnOff := TButton.Create(Self);
-  with ButtonOnOff do
-  begin
-    Parent := Self;
-    Text := pChName;//'Delete';
-    name := 'B' + IntToStr(pN);
-    Position.x := 10;
-    Position.y := 10;
-    Width := 200;
-    Visible := True;
-    Tag :=  pN;
-  end;
-
-  ChName := TLabel.Create(Self);
+  ChName := TLabel.Create(Self); // наименование которое на кнопке видно
   with ChName do
   begin
     Parent := Self;
@@ -102,7 +103,7 @@ begin
     Visible := false;//True;
   end;
 
-  ChLang := TLabel.Create(Self);
+  ChLang := TLabel.Create(Self); // символьный код
   with ChLang do
   begin
     Parent := Self;
@@ -117,7 +118,7 @@ begin
     Visible := false;//True;
   end;
 
-  ChImage := TImage.Create(Self);
+  ChImage := TImage.Create(Self); // картинка, которая обозначает выбран данный язык или нет
   with ChImage do
   begin
     Parent := Self;
@@ -131,7 +132,11 @@ begin
     except
        null;
     end;
-    Visible := True;
+    if pSelected = 1 then
+      Visible := True
+    else 
+      Visible := False;
+
   end;
 
 //  self.ButtonDel.OnClick := DinButtonDeleteChannelClick;

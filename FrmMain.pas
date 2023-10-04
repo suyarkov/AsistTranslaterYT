@@ -858,7 +858,7 @@ begin
       vMod := (i-1) mod 3; // номер столбца
       vPosY := vDiv * vHeight;  // по высоте
       vPosX := (vMod) * vWidth;  // по ширине
-      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i,
+      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vMod, // временно, потом вставить анализ выбранных языков
         IntToStr(vList[i].Id),
         vList[i].NameForEnter,
         vList[i].NameForRead + ' ' + IntToStr(i),
