@@ -10,7 +10,8 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Dialogs, FMX.Graphics,
   IdTCPClient, System.Net.HTTPClient, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects;
+  FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects,
+  uLanguages;
 
 type
   TShortChannel = record
@@ -64,6 +65,7 @@ type
     procedure SaveTestImage(pSS3: TBitmap);
     procedure DelChannel(pId: String);
     function Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
+    function LoadLanguage(): TListLanguages;
 
     function LoadAddVideo(pIdChannel: string): TShortChannels;
   end;
@@ -315,6 +317,36 @@ begin
   end;
 
   Result := Channels;
+end;
+
+// загрузка данных по всем каналам
+function TSQLiteModule.LoadLanguage(): TListLanguages;
+var
+  i: integer;
+  results: tDataSet;
+  vList: TListLanguages;
+begin
+  try
+    SQLiteModule.SQL.ExecSQL('select * from refresh_token', nil, results);
+  except
+    on E: Exception do
+      showmessage('Exception raised with message: ' + E.Message);
+  end;
+  if not results.IsEmpty then
+  begin
+    results.First;
+    i := 0;
+    while not results.Eof do
+    begin
+      inc(i);
+      vList[i].Id := i;
+      vList[i].LnCode := results.FieldByName('lang_code').AsString;
+      vList[i].NameEnglish := results.FieldByName('lang_name_en').AsString;;
+      results.Next;
+    end;
+  end;
+
+  Result := vList;
 end;
 
 // сохранение выбранных языков в настройках канала

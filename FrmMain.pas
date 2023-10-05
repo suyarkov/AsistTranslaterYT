@@ -79,6 +79,7 @@ type
     procedure FrameVideosBTranslaterClick(Sender: TObject);
     procedure DinLanguageClick(Sender: TObject);
     procedure PanelButtonClick(Sender: TObject);
+    procedure FrameFirst1Image0Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -121,6 +122,8 @@ var
   EdRefresh_token :string;
   EdAccess_token :string;
   vCurrentPanChannel: integer;
+  vGlobalList: TListLanguages;
+  vInterfaceLanguage: string;
 
 implementation
 
@@ -160,6 +163,7 @@ begin
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // пароль
+  vInterfaceLanguage := 'en';
   vDefaultColor := TAlphaColors.Gray;
   // fMain.Fill.Color; // as TRectangle).Stroke.Color
   // по центру поместим форму
@@ -196,6 +200,7 @@ begin
 
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC1');
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC2');
+//  vGlobalList :=  SQLiteModule.LoadLanguage();
 
 end;
 
@@ -893,6 +898,27 @@ begin
   end;
 end;
 
+
+procedure TfMain.FrameFirst1Image0Click(Sender: TObject);
+var vButton: TImage;
+    vN  : integer;
+begin
+  vButton := Sender as TImage;
+  vN := StrToInt(vButton.Name[6]);
+//  FrameFirst1.Image0Click(Sender);
+//  vInterfaceLanguage :=  fMain.FrameFirst1.LangCurrent;
+  case vN of
+  0: vInterfaceLanguage := 'en';
+  1: vInterfaceLanguage := 'de';
+  2: vInterfaceLanguage := 'fr';
+  3: vInterfaceLanguage := 'es';
+  4: vInterfaceLanguage := 'pt';
+  5: vInterfaceLanguage := 'uk';
+  6: vInterfaceLanguage := 'ru';
+  end;
+//  vInterfaceLanguage := vButton.Name;
+  showmessage(vInterfaceLanguage);
+end;
 
 procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);
 var

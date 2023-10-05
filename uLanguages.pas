@@ -73,7 +73,8 @@ var
   vList: TListLanguages;
   i: integer;
 begin
-  i := 1;
+  //vList := SQLiteModule.LoadLanguage();
+{  i := 1;
   vList[i].Id := i;
   vList[i].LnCode := 'az';
 //  vList[i].Russian := 'ÀÇÅĞÁÀÉÄÆÀÍÑÊÈÉ';
@@ -366,7 +367,7 @@ begin
   vList[i].LnCode := 'ja';
 //  vList[i].NameForEnter := 'ßÏÎÍÑÊÈÉ';
   vList[i].NameRussian := 'ßïîíñêèé';
-
+}
   result := vList;
 end;
 
