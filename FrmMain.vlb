@@ -1,12 +1,6 @@
 ﻿[FrameVideos.LanguageVideoLabel]
 Coordinates=245,506,216,58
 
-[Memo1]
-Coordinates=10,302,57,58
-
-[ButtonPaint]
-Coordinates=215,438,81,58
-
 [FrameVideos.LabelDescription]
 Coordinates=615,302,191,58
 
@@ -18,9 +12,6 @@ Coordinates=10,438,195,58
 
 [ButtonBack]
 Coordinates=643,438,80,58
-
-[Edit1]
-Coordinates=807,166,44,58
 
 [FrameFirst1.ButtonLog]
 Coordinates=111,166,146,58
@@ -40,24 +31,11 @@ Coordinates=759,10,169,58
 [FrameVideos.MemoTitle]
 Coordinates=796,438,155,58
 
-[Edit4]
-Coordinates=238,302,44,58
-
-[Label1]
-Coordinates=426,370,53,58
-
 [FrameProgressBar]
 Coordinates=331,620,123,36
 
 [FrameFirst1.EditName]
 Coordinates=189,370,144,58
-
-[Panel1]
-Coordinates=266,620,55,36
-
-[Image3]
-Coordinates=591,234,57,58
-Visible=True
 
 [FrameFirst1]
 Coordinates=172,620,84,36
@@ -77,9 +55,6 @@ Coordinates=361,302,244,58
 [FrameVideos.ImageVideo]
 Coordinates=989,234,163,58
 
-[Label2]
-Coordinates=733,438,53,58
-
 [FrameProgressBar.Layout1]
 Coordinates=778,574,172,36
 
@@ -95,17 +70,8 @@ Coordinates=10,10,215,146
 [FrameFirst1.EditPas]
 Coordinates=168,234,132,58
 
-[BGetTokkens]
-Coordinates=489,234,92,58
-
 [FrameVideos.LanguageCheckBox]
 Coordinates=658,234,210,58
-
-[ButtonEmail2]
-Coordinates=10,166,91,58
-
-[Button200]
-Coordinates=343,370,73,58
 
 [FrameVideos.LabelVideos]
 Coordinates=590,370,165,58
@@ -122,9 +88,6 @@ Coordinates=310,234,169,58
 [FrameVideos.BTranslater]
 Coordinates=306,438,161,58
 
-[Panel2]
-Coordinates=713,574,55,36
-
 [LabelMail]
 Coordinates=938,10,70,58
 
@@ -137,9 +100,6 @@ Coordinates=349,574,152,36
 [FrameMainChannel]
 Coordinates=212,574,127,36
 
-[ButtonQ]
-Coordinates=10,506,62,58
-
 [FrameMainChannel.Label2]
 Coordinates=10,370,169,58
 
@@ -148,9 +108,6 @@ Coordinates=10,574,192,36
 
 [FrameProgressBar.Circle1]
 Coordinates=902,506,167,36
-
-[Button5]
-Coordinates=292,302,59,58
 
 [FrameVideos.MemoDescription]
 Coordinates=930,166,194,58
@@ -161,9 +118,6 @@ Coordinates=435,10,141,58
 [FrameFirst1.LabelForgot]
 Coordinates=477,438,156,58
 
-[Edit2]
-Coordinates=753,166,44,58
-
 [FrameChannels]
 Coordinates=786,506,106,36
 
@@ -173,23 +127,14 @@ Coordinates=82,506,153,58
 [FrameFirst1.LabelError]
 Coordinates=10,234,148,58
 
-[BGetChannel]
-Coordinates=489,370,91,58
-
 [FrameLanguages.BoxLanguages]
 Coordinates=572,506,204,36
-
-[ButtonSelChannels]
-Coordinates=1018,10,125,58
 
 [FrameMainChannel.ImageChannel]
 Coordinates=934,370,214,58
 
 [TCPServerYouTubeAnswers]
 Coordinates=1072,626,179,36
-
-[Button6]
-Coordinates=861,166,59,58
 
 [FrameVideos]
 Coordinates=471,506,91,36
@@ -198,5 +143,12 @@ Coordinates=471,506,91,36
 Coordinates=961,438,148,58
 
 []
-Coordinates=874,626,91,36
+Coordinates=10,506,62,58
+Visible=True
+
+[PanelButton]
+Coordinates=713,574,55,36
+
+[PanelTop]
+Coordinates=266,620,55,36
 

@@ -13,8 +13,9 @@ type
   TLanguage = record
     Id: integer; // номер по порядку
     LnCode: string;
-    NameForEnter: string;
-    NameForRead: string;
+    NameRussian: string;
+    NameEnglish: string;
+    NameLocal: string;
     Activ: integer;
   end;
 
@@ -26,8 +27,8 @@ procedure SaveListLanguages(ListLanguages: TListLanguages);
 // сохранение языков в файла
 
 function GetLnCode(pNameRead: String): String;
-function GetLnCodeFromList(pNameRead: String;
-  pListLanguages: TListLanguages): String;
+//function GetLnCodeFromList(pNameRead: String;
+//  pListLanguages: TListLanguages): String;
 function GetNextLnCodeForEnter(pLastLnCode: String;
   pListLanguages: TListLanguages): String;
 function GetNameEnterOnLnCodeFromList(pLnCode: String;
@@ -57,7 +58,7 @@ begin
     end
     else
     begin
-      vStr := ListLanguages[i].LnCode + ' ' + ListLanguages[i].NameForEnter + '.' + IntToStr(ListLanguages[i].Activ);
+      vStr := ListLanguages[i].LnCode + ' ' + ListLanguages[i].NameLocal + '.' + IntToStr(ListLanguages[i].Activ);
       FileText.Add(vStr);
     end;
   end;
@@ -75,296 +76,296 @@ begin
   i := 1;
   vList[i].Id := i;
   vList[i].LnCode := 'az';
-  vList[i].NameForEnter := 'АЗЕРБАЙДЖАНСКИЙ';
-  vList[i].NameForRead := 'Азербайджанский';
+//  vList[i].Russian := 'АЗЕРБАЙДЖАНСКИЙ';
+  vList[i].NameRussian := 'Азербайджанский';
 
   i := 2;
   vList[i].Id := i;
   vList[i].LnCode := 'ar';
-  vList[i].NameForEnter := 'АРАБСКИЙ';
-  vList[i].NameForRead := 'Арабский';
+//  vList[i].NameForEnter := 'АРАБСКИЙ';
+  vList[i].NameRussian := 'Арабский';
 
   i := 3;
   vList[i].Id := i;
   vList[i].LnCode := 'hy';
-  vList[i].NameForEnter := 'АРМЯНСКИЙ';
-  vList[i].NameForRead := 'Армянский';
+//  vList[i].NameForEnter := 'АРМЯНСКИЙ';
+  vList[i].NameRussian := 'Армянский';
 
   i := 4;
   vList[i].Id := i;
   vList[i].LnCode := 'be';
-  vList[i].NameForEnter := 'БЕЛОРУССКИЙ';
-  vList[i].NameForRead := 'Белорусский';
+//  vList[i].NameForEnter := 'БЕЛОРУССКИЙ';
+  vList[i].NameRussian := 'Белорусский';
 
   i := 5;
   vList[i].Id := i;
   vList[i].LnCode := 'bn';
-  vList[i].NameForEnter := 'БЕНГАЛЬСКИЙ';
-  vList[i].NameForRead := 'Бенгальский';
+//  vList[i].NameForEnter := 'БЕНГАЛЬСКИЙ';
+  vList[i].NameRussian := 'Бенгальский';
 
   i := 6;
   vList[i].Id := i;
   vList[i].LnCode := 'bg';
-  vList[i].NameForEnter := 'БОЛГАРСКИЙ';
-  vList[i].NameForRead := 'Болгарский';
+//  vList[i].NameForEnter := 'БОЛГАРСКИЙ';
+  vList[i].NameRussian := 'Болгарский';
 
   i := 7;
   vList[i].Id := i;
   vList[i].LnCode := 'bs';
-  vList[i].NameForEnter := 'БОСНИЙСКИЙ';
-  vList[i].NameForRead := 'Боснийский';
+//  vList[i].NameForEnter := 'БОСНИЙСКИЙ';
+  vList[i].NameRussian := 'Боснийский';
 
   i := 8;
   vList[i].Id := i;
   vList[i].LnCode := 'hu';
-  vList[i].NameForEnter := 'ВЕНГЕРСКИЙ';
-  vList[i].NameForRead := 'Венгерский';
+//  vList[i].NameForEnter := 'ВЕНГЕРСКИЙ';
+  vList[i].NameRussian := 'Венгерский';
 
   i := 9;
   vList[i].Id := i;
   vList[i].LnCode := 'el';
-  vList[i].NameForEnter := 'ГРЕЧЕСКИЙ';
-  vList[i].NameForRead := 'Греческий';
+//  vList[i].NameForEnter := 'ГРЕЧЕСКИЙ';
+  vList[i].NameRussian := 'Греческий';
 
   i := 10;
   vList[i].Id := i;
   vList[i].LnCode := 'ka';
-  vList[i].NameForEnter := 'ГРУЗИНСКИЙ';
-  vList[i].NameForRead := 'Грузинский';
+//  vList[i].NameForEnter := 'ГРУЗИНСКИЙ';
+  vList[i].NameRussian := 'Грузинский';
 
   i := 11;
   vList[i].Id := i;
   vList[i].LnCode := 'da';
-  vList[i].NameForEnter := 'ДАТСКИЙ';
-  vList[i].NameForRead := 'Датский';
+//  vList[i].NameForEnter := 'ДАТСКИЙ';
+  vList[i].NameRussian := 'Датский';
 
   i := 12;
   vList[i].Id := i;
   vList[i].LnCode := 'iw';
-  vList[i].NameForEnter := 'ИВРИТ';
-  vList[i].NameForRead := 'Иврит';
+//  vList[i].NameForEnter := 'ИВРИТ';
+  vList[i].NameRussian := 'Иврит';
 
   i := 13;
   vList[i].Id := i;
   vList[i].LnCode := 'ga';
-  vList[i].NameForEnter := 'ИРЛАНДСКИЙ';
-  vList[i].NameForRead := 'Ирландский';
+//  vList[i].NameForEnter := 'ИРЛАНДСКИЙ';
+  vList[i].NameRussian := 'Ирландский';
 
   i := 14;
   vList[i].Id := i;
   vList[i].LnCode := 'is';
-  vList[i].NameForEnter := 'ИСЛАНДСКИЙ';
-  vList[i].NameForRead := 'Исландский';
+//  vList[i].NameForEnter := 'ИСЛАНДСКИЙ';
+  vList[i].NameRussian := 'Исландский';
 
   i := 15;
   vList[i].Id := i;
   vList[i].LnCode := 'es';
-  vList[i].NameForEnter := 'ИСПАНСКИЙ';
-  vList[i].NameForRead := 'Испанский';
+//  vList[i].NameForEnter := 'ИСПАНСКИЙ';
+  vList[i].NameRussian := 'Испанский';
 
   i := 16;
   vList[i].Id := i;
   vList[i].LnCode := 'it';
-  vList[i].NameForEnter := 'ИТАЛЬЯНСКИЙ';
-  vList[i].NameForRead := 'Итальянский';
+//  vList[i].NameForEnter := 'ИТАЛЬЯНСКИЙ';
+  vList[i].NameRussian := 'Итальянский';
 
   i := 17;
   vList[i].Id := i;
   vList[i].LnCode := 'kk';
-  vList[i].NameForEnter := 'КАЗАХСКИЙ';
-  vList[i].NameForRead := 'Казахский';
+//  vList[i].NameForEnter := 'КАЗАХСКИЙ';
+  vList[i].NameRussian := 'Казахский';
 
   i := 18;
   vList[i].Id := i;
   vList[i].LnCode := 'ky';
-  vList[i].NameForEnter := 'КИРГИЗСКИЙ';
-  vList[i].NameForRead := 'Киргизский';
+//  vList[i].NameForEnter := 'КИРГИЗСКИЙ';
+  vList[i].NameRussian := 'Киргизский';
 
   i := 19;
   vList[i].Id := i;
   vList[i].LnCode := 'zh-CN';
-  vList[i].NameForEnter := 'КИТАЙСКИЙ';
-  vList[i].NameForRead := 'Китайский';
+//  vList[i].NameForEnter := 'КИТАЙСКИЙ';
+  vList[i].NameRussian := 'Китайский';
 
   i := 20;
   vList[i].Id := i;
   vList[i].LnCode := 'ko';
-  vList[i].NameForEnter := 'КОРЕЙСКИЙ';
-  vList[i].NameForRead := 'Корейский';
+//  vList[i].NameForEnter := 'КОРЕЙСКИЙ';
+  vList[i].NameRussian := 'Корейский';
 
   i := 21;
   vList[i].Id := i;
   vList[i].LnCode := 'la';
-  vList[i].NameForEnter := 'ЛАТИНСКИЙ';
-  vList[i].NameForRead := 'Латинский';
+//  vList[i].NameForEnter := 'ЛАТИНСКИЙ';
+  vList[i].NameRussian := 'Латинский';
 
   i := 22;
   vList[i].Id := i;
   vList[i].LnCode := 'lv';
-  vList[i].NameForEnter := 'ЛАТЫШСКИЙ';
-  vList[i].NameForRead := 'Латышский';
+//  vList[i].NameForEnter := 'ЛАТЫШСКИЙ';
+  vList[i].NameRussian := 'Латышский';
 
   i := 23;
   vList[i].Id := i;
   vList[i].LnCode := 'lt';
-  vList[i].NameForEnter := 'ЛИТОВСКИЙ';
-  vList[i].NameForRead := 'Литовский';
+//  vList[i].NameForEnter := 'ЛИТОВСКИЙ';
+  vList[i].NameRussian := 'Литовский';
 
   i := 24;
   vList[i].Id := i;
   vList[i].LnCode := 'lb';
-  vList[i].NameForEnter := 'ЛЮКСЕМБУРСКИЙ';
-  vList[i].NameForRead := 'Люксембурский';
+//  vList[i].NameForEnter := 'ЛЮКСЕМБУРСКИЙ';
+  vList[i].NameRussian := 'Люксембурский';
 
   i := 25;
   vList[i].Id := i;
   vList[i].LnCode := 'ms';
-  vList[i].NameForEnter := 'МАЛАЙСКИЙ';
-  vList[i].NameForRead := 'Малайский';
+//  vList[i].NameForEnter := 'МАЛАЙСКИЙ';
+  vList[i].NameRussian := 'Малайский';
 
   i := 26;
   vList[i].Id := i;
   vList[i].LnCode := 'mn';
-  vList[i].NameForEnter := 'МОНГОЛЬСКИЙ';
-  vList[i].NameForRead := 'Монгольский';
+//  vList[i].NameForEnter := 'МОНГОЛЬСКИЙ';
+  vList[i].NameRussian := 'Монгольский';
 
   i := 27;
   vList[i].Id := i;
   vList[i].LnCode := 'de';
-  vList[i].NameForEnter := 'НЕМЕЦКИЙ';
-  vList[i].NameForRead := 'Немецкий';
+//  vList[i].NameForEnter := 'НЕМЕЦКИЙ';
+  vList[i].NameRussian := 'Немецкий';
 
   i := 28;
   vList[i].Id := i;
   vList[i].LnCode := 'nl';
-  vList[i].NameForEnter := 'НИДЕРЛАНДСКИЙ';
-  vList[i].NameForRead := 'Нидерландский';
+//  vList[i].NameForEnter := 'НИДЕРЛАНДСКИЙ';
+  vList[i].NameRussian := 'Нидерландский';
 
   i := 29;
   vList[i].Id := i;
   vList[i].LnCode := 'no';
-  vList[i].NameForEnter := 'НОРВЕЖСКИЙ';
-  vList[i].NameForRead := 'Норвежский';
+//  vList[i].NameForEnter := 'НОРВЕЖСКИЙ';
+  vList[i].NameRussian := 'Норвежский';
 
   i := 30;
   vList[i].Id := i;
   vList[i].LnCode := 'pl';
-  vList[i].NameForEnter := 'ПОЛЬСКИЙ';
-  vList[i].NameForRead := 'Польский';
+//  vList[i].NameForEnter := 'ПОЛЬСКИЙ';
+  vList[i].NameRussian := 'Польский';
 
   i := 31;
   vList[i].Id := i;
   vList[i].LnCode := 'pt';
-  vList[i].NameForEnter := 'ПОРТУГАЛЬСКИЙ';
-  vList[i].NameForRead := 'Португальский';
+//  vList[i].NameForEnter := 'ПОРТУГАЛЬСКИЙ';
+  vList[i].NameRussian := 'Португальский';
 
   i := 32;
   vList[i].Id := i;
   vList[i].LnCode := 'ro';
-  vList[i].NameForEnter := 'РУМЫНСКИЙ';
-  vList[i].NameForRead := 'Румынский';
+//  vList[i].NameForEnter := 'РУМЫНСКИЙ';
+  vList[i].NameRussian := 'Румынский';
 
   i := 33;
   vList[i].Id := i;
   vList[i].LnCode := 'ru';
-  vList[i].NameForEnter := 'РУССКИЙ';
-  vList[i].NameForRead := 'Русский';
+//  vList[i].NameForEnter := 'РУССКИЙ';
+  vList[i].NameRussian := 'Русский';
 
   i := 34;
   vList[i].Id := i;
   vList[i].LnCode := 'sr';
-  vList[i].NameForEnter := 'СЕРБСКИЙ';
-  vList[i].NameForRead := 'Сербский';
+//  vList[i].NameForEnter := 'СЕРБСКИЙ';
+  vList[i].NameRussian := 'Сербский';
 
   i := 35;
   vList[i].Id := i;
   vList[i].LnCode := 'si';
-  vList[i].NameForEnter := 'СИГНАЛЬСКИЙ';
-  vList[i].NameForRead := 'Сигнальский';
+//  vList[i].NameForEnter := 'СИГНАЛЬСКИЙ';
+  vList[i].NameRussian := 'Сигнальский';
 
   i := 36;
   vList[i].Id := i;
   vList[i].LnCode := 'sk';
-  vList[i].NameForEnter := 'СЛОВАЦКИЙ';
-  vList[i].NameForRead := 'Словацкий';
+//  vList[i].NameForEnter := 'СЛОВАЦКИЙ';
+  vList[i].NameRussian := 'Словацкий';
 
   i := 37;
   vList[i].Id := i;
   vList[i].LnCode := 'so';
-  vList[i].NameForEnter := 'СЛОВЕНСКИЙ';
-  vList[i].NameForRead := 'Словенский';
+//  vList[i].NameForEnter := 'СЛОВЕНСКИЙ';
+  vList[i].NameRussian := 'Словенский';
 
   i := 38;
   vList[i].Id := i;
   vList[i].LnCode := 'tr';
-  vList[i].NameForEnter := 'ТУРЕЦКИЙ';
-  vList[i].NameForRead := 'Турецкий';
+//  vList[i].NameForEnter := 'ТУРЕЦКИЙ';
+  vList[i].NameRussian := 'Турецкий';
 
   i := 39;
   vList[i].Id := i;
   vList[i].LnCode := 'uz';
-  vList[i].NameForEnter := 'УЗБЕКСКИЙ';
-  vList[i].NameForRead := 'Узбекский';
+//  vList[i].NameForEnter := 'УЗБЕКСКИЙ';
+  vList[i].NameRussian := 'Узбекский';
 
   i := 40;
   vList[i].Id := i;
   vList[i].LnCode := 'uk';
-  vList[i].NameForEnter := 'УКРАИНСКИЙ';
-  vList[i].NameForRead := 'Украинский';
+//  vList[i].NameForEnter := 'УКРАИНСКИЙ';
+  vList[i].NameRussian := 'Украинский';
 
   i := 41;
   vList[i].Id := i;
   vList[i].LnCode := 'ur';
-  vList[i].NameForEnter := 'УРДУ';
-  vList[i].NameForRead := 'Урду';
+//  vList[i].NameForEnter := 'УРДУ';
+  vList[i].NameRussian := 'Урду';
 
   i := 42;
   vList[i].Id := i;
   vList[i].LnCode := 'fi';
-  vList[i].NameForEnter := 'ФИНСКИЙ';
-  vList[i].NameForRead := 'Финский';
+//  vList[i].NameForEnter := 'ФИНСКИЙ';
+  vList[i].NameRussian := 'Финский';
 
   i := 43;
   vList[i].Id := i;
   vList[i].LnCode := 'fr';
-  vList[i].NameForEnter := 'ФРАНЦУЗСКИЙ';
-  vList[i].NameForRead := 'Французский';
+//  vList[i].NameForEnter := 'ФРАНЦУЗСКИЙ';
+  vList[i].NameRussian := 'Французский';
 
   i := 44;
   vList[i].Id := i;
   vList[i].LnCode := 'hi';
-  vList[i].NameForEnter := 'ХИНДИ';
-  vList[i].NameForRead := 'Хинди';
+//  vList[i].NameForEnter := 'ХИНДИ';
+  vList[i].NameRussian := 'Хинди';
 
   i := 45;
   vList[i].Id := i;
   vList[i].LnCode := 'hr';
-  vList[i].NameForEnter := 'ХОРВАТСКИЙ';
-  vList[i].NameForRead := 'Хорватский';
+//  vList[i].NameForEnter := 'ХОРВАТСКИЙ';
+  vList[i].NameRussian := 'Хорватский';
 
   i := 46;
   vList[i].Id := i;
   vList[i].LnCode := 'cs';
-  vList[i].NameForEnter := 'ЧЕШСКИЙ';
-  vList[i].NameForRead := 'Чешский';
+//  vList[i].NameForEnter := 'ЧЕШСКИЙ';
+  vList[i].NameRussian := 'Чешский';
 
   i := 47;
   vList[i].Id := i;
   vList[i].LnCode := 'sv';
-  vList[i].NameForEnter := 'ШВЕДСКИЙ';
-  vList[i].NameForRead := 'Шведский';
+//  vList[i].NameForEnter := 'ШВЕДСКИЙ';
+  vList[i].NameRussian := 'Шведский';
 
   i := 48;
   vList[i].Id := i;
   vList[i].LnCode := 'et';
-  vList[i].NameForEnter := 'ЭСТОНСКИЙ';
-  vList[i].NameForRead := 'Эстонский';
+//  vList[i].NameForEnter := 'ЭСТОНСКИЙ';
+  vList[i].NameRussian := 'Эстонский';
 
   i := 49;
   vList[i].Id := i;
   vList[i].LnCode := 'ja';
-  vList[i].NameForEnter := 'ЯПОНСКИЙ';
-  vList[i].NameForRead := 'Японский';
+//  vList[i].NameForEnter := 'ЯПОНСКИЙ';
+  vList[i].NameRussian := 'Японский';
 
   result := vList;
 end;
@@ -376,10 +377,11 @@ var
   i: integer;
 begin
   vList := InitListLanguagesStatic();
-  result := GetLnCodeFromList(pNameRead, vList);
+//  result := GetLnCodeFromList(pNameRead, vList);
 end;
 
-// по строке с наименование языке определяем сам язык
+{
+// по строке с наименованием языка определяем сам язык
 function GetLnCodeFromList(pNameRead: String;
   pListLanguages: TListLanguages): String;
 var
@@ -403,6 +405,7 @@ begin
     inc(i);
   until (i >= 300) or (pListLanguages[i].LnCode = '');
 end;
+}
 
 // получить следюущий код добавляемого языка
 function GetNextLnCodeForEnter(pLastLnCode: String;
@@ -449,7 +452,7 @@ begin
   repeat
     if pLnCode = pListLanguages[i].LnCode then
     begin
-      result := ToUpper(pListLanguages[i].NameForEnter); // в верхнем регистре
+      result := ToUpper(pListLanguages[i].NameRussian); // в верхнем регистре
       i := 1000;
       break;
     end;

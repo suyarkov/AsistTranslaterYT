@@ -33,7 +33,7 @@ object FrameChannels: TFrameChannels
     OnClick = ImageAddChannelClick
   end
   object BoxChannels: TVertScrollBox
-    Position.X = 16.000000000000000000
+    Position.X = 8.000000000000000000
     Position.Y = 40.000000000000000000
     Size.Width = 449.000000000000000000
     Size.Height = 335.000000000000000000

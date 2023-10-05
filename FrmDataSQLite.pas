@@ -147,6 +147,7 @@ begin
   Result := Channels;
 end;
 
+//сохраняем данные загруженного канала
 function TSQLiteModule.InsRefreshToken(pShortChanel: TShortChannel): integer;
 var
   i: integer;
@@ -199,6 +200,7 @@ begin
   Result := 1;
 end;
 
+// если вдруг нет базы данных модуля, то можно его создать?
 procedure TSQLiteModule.DataModuleCreate(Sender: TObject);
 begin
   {
@@ -212,6 +214,7 @@ begin
   }
 end;
 
+// загрузка фото из интернета по адресу
 function TSQLiteModule.LoadAnyImage(pUrl: string): TStream; // TPicture;
 var
   AValue, ConstSourceLang, ConstTargetLang: String;
@@ -254,6 +257,7 @@ begin
   Result := AResponce.ContentStream; // SS
 end;
 
+// просто для тестов, пересохранение рисунка по каналу в таблицу
 procedure TSQLiteModule.SaveTestImage(pSS3: TBitmap);
 begin
   begin
@@ -266,6 +270,7 @@ begin
   end;
 end;
 
+// удаление канала
 procedure TSQLiteModule.DelChannel(pId: String);
 begin
   begin
@@ -277,7 +282,7 @@ begin
   end;
 end;
 
-// загрузка данных по каналу
+// загрузка данных по всем каналам
 function TSQLiteModule.LoadAddVideo(pIdChannel: string): TShortChannels;
 var
   i: integer;
@@ -312,6 +317,7 @@ begin
   Result := Channels;
 end;
 
+// сохранение выбранных языков в настройках канала
 function TSQLiteModule.Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
 var
   i: integer;

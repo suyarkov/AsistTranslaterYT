@@ -24,34 +24,35 @@ uses
 
 type
   TfMain = class(TForm)
-    Panel1: TPanel;
+    PanelTop: TPanel;
     FrameFirst1: TFrameFirst;
-    Panel2: TPanel;
+    PanelButton: TPanel;
     LabelMail: TLabel;
     LabelCopyrigth: TLabel;
     ButtonBack: TButton;
-    Label1: TLabel;
     FrameChannels: TFrameChannels;
-    ButtonSelChannels: TButton;
-    Image3: TImage;
-    Button5: TButton;
-    Label2: TLabel;
-    Button6: TButton;
     FrameProgressBar: TFrameProgressBar;
-    ButtonPaint: TButton;
     TCPServerYouTubeAnswers: TIdTCPServer;
-    BGetTokkens: TButton;
-    BGetChannel: TButton;
-    Memo1: TMemo;
-    Edit4: TEdit;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    ButtonEmail2: TButton;
-    ButtonQ: TButton;
     FrameMainChannel: TFrameMainChannel;
-    Button200: TButton;
     FrameVideos: TFrameVideos;
     FrameLanguages: TFrameLanguages;
+    PanelAlpha: TPanel;
+    BGetTokkens: TButton;
+    BGetChannel: TButton;
+    Edit2: TEdit;
+    ButtonSelChannels: TButton;
+    Button200: TButton;
+    Label2: TLabel;
+    Image3: TImage;
+    Button5: TButton;
+    Button6: TButton;
+    Label1: TLabel;
+    Edit1: TEdit;
+    ButtonPaint: TButton;
+    Edit4: TEdit;
+    Memo1: TMemo;
+    ButtonQ: TButton;
+    ButtonEmail2: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirst1ButtonLogClick(Sender: TObject);
@@ -76,8 +77,8 @@ type
     procedure Button200Click(Sender: TObject);
     procedure ButtonVideoInfoClick(Sender: TObject);
     procedure FrameVideosBTranslaterClick(Sender: TObject);
-    procedure Image3Click(Sender: TObject);
     procedure DinLanguageClick(Sender: TObject);
+    procedure PanelButtonClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -930,8 +931,8 @@ begin
       //
       PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
         IntToStr(vList[i].Id),
-        vList[i].NameForEnter,
-        vList[i].NameForRead + ' ' + IntToStr(i),
+        vList[i].NameRussian,
+        vList[i].NameRussian + ' ' + IntToStr(i),
         vList[i].LnCode, vBitmap); //,
 //      vWidth := PanLanguages[i].Width;
 //      vHeight := PanLanguages[i].Height;
@@ -954,7 +955,7 @@ begin
   NewThread.Resume;
 end;
 
-procedure TfMain.Image3Click(Sender: TObject);
+procedure TfMain.PanelButtonClick(Sender: TObject);
 begin
 
 end;
