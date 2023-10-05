@@ -106,7 +106,7 @@ var
   PanLanguages: array [1 .. 300] of TLanguagePanel;
   vEventMove: integer; // 10 - обратно, 11- вправо. первую форму
   vState: integer; // 1 - первая форма - пароль,// 2 вторая форма каналы,
-  // 3 третья - один канал // 4- конкретный ролик
+  // 3 третья - один канал // 4- конкретный ролик // 5 - язык
   // PanVideos: array [1 .. 50] of TMyVideoPanel;
   lastPanel: TPanel;
   vDefaultColor: TAlphaColor;
@@ -173,15 +173,13 @@ begin
   fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
   fMain.FrameMainChannel.Position.Y := 56;
 
-    // спрячем третий фрейм за границу видимости
+    // спрячем четвертый фрейм за границу видимости
   fMain.FrameVideos.Position.X := Round(fMain.Width + 1);
   fMain.FrameVideos.Position.Y := 56;
 
-      // спрячем четвертый (языки) фрейм за границу видимости
+      // спрячем пятый (языки) фрейм за границу видимости
   fMain.FrameLanguages.Position.X := Round(fMain.Width + 1);
   fMain.FrameLanguages.Position.Y := 56;
-
-
 
   FrameProgressBar.Visible := false;
 
@@ -300,6 +298,7 @@ begin
   ButtonSelChannelsClick(Sender); // обновление не забудь!!!
 end;
 
+// прошли логик что ли
 procedure TfMain.Button1Click(Sender: TObject);
 var
   NewThread: TNewThread;
@@ -377,13 +376,14 @@ end;
 procedure TNewThread.SetActualFrame;
 var
   vLeftBorderFrame, vStepSize, vLeftBorderFrame2, vLeftBorderFrame3,
-  vLeftBorderFrame4: integer;
+  vLeftBorderFrame4, vLeftBorderFrame5: integer;
 begin
   vStepSize := 10;
   vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
   vLeftBorderFrame2 := Round((fMain.Width - fMain.FrameChannels.Width) / 2);
   vLeftBorderFrame3 := Round((fMain.Width - fMain.FrameMainChannel.Width) / 2);
   vLeftBorderFrame4 := Round((fMain.Width - fMain.FrameVideos.Width) / 2);
+  vLeftBorderFrame5 := Round((fMain.Width - fMain.FrameLanguages.Width) / 2);
 
   // первая форма заменяется второй с каналами
   if vEventMove = 11 then
@@ -537,6 +537,57 @@ begin
     end;
 
   end;
+
+   // четвертая форма с подробностями видео FrameVideos, заменяется языками  FrameLanguages
+  if vEventMove = 41 then
+  begin
+    If fMain.FrameVideos.Position.X < (fMain.Width + 1) then
+    begin
+      fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X + vStepSize;
+    end;
+
+    If fMain.FrameLanguages.Position.X >= fMain.Width then
+    begin
+      fMain.FrameLanguages.Position.X := -fMain.FrameLanguages.Width - 1;
+    end;
+
+    If fMain.FrameLanguages.Position.X < (vLeftBorderFrame5) then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if ABS(fMain.FrameLanguages.Position.X - vLeftBorderFrame5) > vStepSize
+      then
+        fMain.FrameLanguages.Position.X := fMain.FrameLanguages.Position.X +
+          vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameLanguages.Position.X := vLeftBorderFrame5;
+    end;
+
+    If fMain.FrameLanguages.Position.X = (vLeftBorderFrame5) then
+    begin
+      fMain.FrameLanguages.Visible := true;
+    end;
+
+  end;
+
+  // форма с языками заменяется обратно на форму с подробностями видео
+  if vEventMove = 40 then
+  begin
+    If fMain.FrameVideos.Position.X > vLeftBorderFrame4 then
+    begin
+      // если сдвиг больше шага сдвига до левой границы помещения формы
+      if fMain.FrameVideos.Position.X - vLeftBorderFrame4 > vStepSize then
+        fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X - vStepSize
+      else // если уже меньше, от просто подставим форму в нужное место
+        fMain.FrameVideos.Position.X := vLeftBorderFrame4;
+    end;
+
+    If fMain.FrameLanguages.Position.X > -fMain.FrameLanguages.Width then
+    begin
+      fMain.FrameLanguages.Position.X := fMain.FrameLanguages.Position.X -
+        vStepSize;
+    end;
+
+  end;
   // только для отладки
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
@@ -638,6 +689,7 @@ begin
     vEventMove := vState * 10;
   end;
 
+//  showmessage('vState = ' + IntToStr(vState) +  ' ' + IntToStr(vEventMove) );
   NewThread := TNewThread.Create(true);
   NewThread.FreeOnTerminate := true;
   NewThread.Priority := tpLower;
@@ -850,12 +902,13 @@ var
   vBitmap: TBitmap;
   vSelected, vCount : integer; // 1- выбран,  0- не выбран
   vSelLanguages : string;
+  NewThread: TNewThread;
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
   vList := InitListLanguagesStatic();
-  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
-  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
+//  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
+//  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
 //  vWidth := 0; vHeight := 0;
   vWidth := 236+1; vHeight := 46+1;
     i := 1;
@@ -888,7 +941,17 @@ begin
   until (i >= 300) or (vList[i].LnCode = '');
 
   fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
+//  fMain.FrameLanguages.BoxLanguages.Height :=  i * 47;
+  //showmessage('Что из базы по языкам ' + PanChannels[vCurrentPanChannel].ChSelLang.text);
   fMain.FrameLanguages.LabelLanguages.Text :=  PanChannels[vCurrentPanChannel].ChSelLang.text;
+
+  vEventMove := vState * 10 + 1;
+  vState := 5;
+  ButtonBack.Enabled := true;
+  NewThread := TNewThread.Create(true);
+  NewThread.FreeOnTerminate := true;
+  NewThread.Priority := tpLower;
+  NewThread.Resume;
 end;
 
 procedure TfMain.Image3Click(Sender: TObject);

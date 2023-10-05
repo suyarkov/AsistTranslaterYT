@@ -317,7 +317,7 @@ var
   i: integer;
   results: tDataSet;
 begin
-  showmessage('Что save ' + pId_channel + 'строка ' + pSel_Lang);
+//  showmessage('Что save ' + pId_channel + 'строка ' + pSel_Lang);
   try
     SQLiteModule.SQL.ExecSQL
       ('update refresh_token set sel_lang = :sel_lang  where id_channel = :id_channel',

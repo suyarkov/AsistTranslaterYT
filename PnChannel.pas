@@ -116,14 +116,14 @@ begin
   end;
 
   ChSelLang := TLabel.Create(Self);
-  with ChLang do
+  with ChSelLang do
   begin
     Parent := Self;
     Text := pChSelLang;
     Name := 'SL' + IntToStr(pN);
     Height := 17;
-    Position.x := 1000;
-    Position.y := 1000;
+    Position.x := 1;
+    Position.y := 1;
     Width := 500;
     Font.Size := 10;
     Tag :=  pN;

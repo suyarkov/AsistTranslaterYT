@@ -46,6 +46,11 @@ object fMain: TfMain
     Size.Width = 224.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
+    inherited LabelPas: TLabel
+      inherited LabelError: TLabel
+        TabOrder = 4
+      end
+    end
     inherited ButtonLog: TButton
       OnClick = FrameFirst1ButtonLogClick
     end
@@ -271,13 +276,13 @@ object fMain: TfMain
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 48.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 44.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 255.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 251.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
