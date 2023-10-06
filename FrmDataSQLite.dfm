@@ -1,4 +1,5 @@
 object SQLiteModule: TSQLiteModule
+  OnCreate = DataModuleCreate
   Height = 119
   Width = 186
   object SQL: TFDConnection

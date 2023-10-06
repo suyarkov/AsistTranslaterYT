@@ -202,18 +202,18 @@ begin
   Result := 1;
 end;
 
-// если вдруг нет базы данных модуля, то можно его создать?
+// а если вдруг нет базы данных модуля, то можно его создать?
 procedure TSQLiteModule.DataModuleCreate(Sender: TObject);
 begin
-  {
-    ClickConnection.Params.Add('Database='+mydir+'database.db');
-    try
-    ClickConnection.Connected := true;
+//    ClickConnection.Params.Add('Database='+mydir+'database.db');
+    SQL.Params.Database := GetCurrentDir() + '\libast.dll';
+{    try
+    SQL.Connected := true;
     except
     on E: EDatabaseError do
     ShowMessage('Exception raised with message' + E.Message);
     end;
-  }
+}
 end;
 
 // загрузка фото из интернета по адресу
