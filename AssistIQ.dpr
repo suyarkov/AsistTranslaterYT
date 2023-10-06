@@ -38,7 +38,8 @@ uses
   Classes.videoInfo.itemInfo in 'Classes.videoInfo.itemInfo.pas',
   uLanguages in 'uLanguages.pas',
   FmLanguages in 'FmLanguages.pas' {FrameLanguages: TFrame},
-  PnLanguage in 'PnLanguage.pas';
+  PnLanguage in 'PnLanguage.pas',
+  FmAsk in 'FmAsk.pas' {FrameAsk: TFrame};
 
 {$R *.res}
 
