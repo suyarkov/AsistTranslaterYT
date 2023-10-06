@@ -63,7 +63,7 @@ begin
     Position.x := 1;
     Position.y := 1;
     Width := 236;
-    Height := 46;
+    Height := 36;
 //    Position.x := 2;
 //    Position.y := 2;
 //    Width := Self.Position.Width - 4;

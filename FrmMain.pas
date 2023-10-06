@@ -20,12 +20,12 @@ uses
   uEmailSend, uQ,
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo,
-  uLanguages, FmLanguages, PnLanguage;
+  uLanguages, FmLanguages, PnLanguage, uTranslate;
 
 type
   TfMain = class(TForm)
     PanelTop: TPanel;
-    FrameFirst1: TFrameFirst;
+    FrameFirst: TFrameFirst;
     PanelButton: TPanel;
     LabelMail: TLabel;
     LabelCopyrigth: TLabel;
@@ -55,7 +55,7 @@ type
     ButtonEmail2: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
-    procedure FrameFirst1ButtonLogClick(Sender: TObject);
+    procedure FrameFirstButtonLogClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ButtonSelChannelsClick(Sender: TObject);
     procedure DinButtonDeleteChannelClick(Sender: TObject);
@@ -79,7 +79,8 @@ type
     procedure FrameVideosBTranslaterClick(Sender: TObject);
     procedure DinLanguageClick(Sender: TObject);
     procedure PanelButtonClick(Sender: TObject);
-    procedure FrameFirst1Image0Click(Sender: TObject);
+    procedure FrameFirstImage0Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -167,9 +168,9 @@ begin
   vDefaultColor := TAlphaColors.Gray;
   // fMain.Fill.Color; // as TRectangle).Stroke.Color
   // по центру поместим форму
-  fMain.FrameFirst1.Position.X :=
-    Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
-  fMain.FrameFirst1.Position.Y := 56;
+  fMain.FrameFirst.Position.X :=
+    Round((fMain.Width - fMain.FrameFirst.Width) / 2);
+  fMain.FrameFirst.Position.Y := 56;
   // спрячем второй фрейм за границу видимости
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
@@ -196,11 +197,25 @@ begin
     FrameProgressEndLess.Align := TAlignLayout.Center;
   end;
 
-  fMain.FrameFirst1.EditName.Text := uQ.LoadReestr('Name');
+  fMain.FrameFirst.EditName.Text := uQ.LoadReestr('Name');
 
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC1');
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC2');
-//  vGlobalList :=  SQLiteModule.LoadLanguage();
+
+
+end;
+
+procedure TfMain.FormShow(Sender: TObject);
+begin
+  // вспомним какой у нас интерфейс
+  vInterfaceLanguage := uQ.LoadReestr('Local');
+  // подменяем язык интерфейса, пока только по загрузке !!!
+  FrameFirst.ButtonLog.Text := GoogleTranslate(FrameFirst.ButtonLog.Text,
+        'en', vInterfaceLanguage);;
+  // загрузим известные языки перевод
+  vGlobalList :=  SQLiteModule.LoadLanguage();
+  // переведем названия языков на язык программы
+  // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
 
 end;
 
@@ -385,7 +400,7 @@ var
   vLeftBorderFrame4, vLeftBorderFrame5: integer;
 begin
   vStepSize := 10;
-  vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst1.Width) / 2);
+  vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst.Width) / 2);
   vLeftBorderFrame2 := Round((fMain.Width - fMain.FrameChannels.Width) / 2);
   vLeftBorderFrame3 := Round((fMain.Width - fMain.FrameMainChannel.Width) / 2);
   vLeftBorderFrame4 := Round((fMain.Width - fMain.FrameVideos.Width) / 2);
@@ -394,9 +409,9 @@ begin
   // первая форма заменяется второй с каналами
   if vEventMove = 11 then
   begin
-    If fMain.FrameFirst1.Position.X < (fMain.Width + 1) then
+    If fMain.FrameFirst.Position.X < (fMain.Width + 1) then
     begin
-      fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + vStepSize;
+      fMain.FrameFirst.Position.X := fMain.FrameFirst.Position.X + vStepSize;
     end;
 
     If fMain.FrameChannels.Position.X >= fMain.Width then
@@ -425,13 +440,13 @@ begin
   // форма с каналами заменяется первой с паролем
   if vEventMove = 10 then
   begin
-    If fMain.FrameFirst1.Position.X > vLeftBorderFrame then
+    If fMain.FrameFirst.Position.X > vLeftBorderFrame then
     begin
       // если сдвиг больше шага сдвига до левой границы помещения формы
-      if fMain.FrameFirst1.Position.X - vLeftBorderFrame > vStepSize then
-        fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X - vStepSize
+      if fMain.FrameFirst.Position.X - vLeftBorderFrame > vStepSize then
+        fMain.FrameFirst.Position.X := fMain.FrameFirst.Position.X - vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
-        fMain.FrameFirst1.Position.X := vLeftBorderFrame;
+        fMain.FrameFirst.Position.X := vLeftBorderFrame;
     end;
 
     If fMain.FrameChannels.Position.X > -fMain.FrameChannels.Width then
@@ -597,7 +612,7 @@ begin
   // только для отладки
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
-  // fMain.FrameFirst1.Position.X := fMain.FrameFirst1.Position.X + 5;
+  // fMain.FrameFirst.Position.X := fMain.FrameFirst.Position.X + 5;
   //fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
   //  IntToStr(Round(vLeftBorderFrame2)) + ', ' +
   //  IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
@@ -856,15 +871,15 @@ begin
   end; //
 end;
 
-procedure TfMain.FrameFirst1ButtonLogClick(Sender: TObject);
+procedure TfMain.FrameFirstButtonLogClick(Sender: TObject);
 var
   vOk: boolean;
   vLog, vPas, vResponce: string;
   OAuth2: TOAuth;
 begin
   vOk := false;
-  vLog := fMain.FrameFirst1.EditName.text;
-  vPas := fMain.FrameFirst1.EditPas.text;
+  vLog := fMain.FrameFirst.EditName.text;
+  vPas := fMain.FrameFirst.EditPas.text;
 
   // проверка логина и пароля
   if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) then
@@ -882,16 +897,16 @@ begin
   if vOk = false then
   // ошибка идентификации
   begin
-    fMain.FrameFirst1.LabelError.Visible := true;
-    fMain.FrameFirst1.LabelForgot.Visible := true;
+    fMain.FrameFirst.LabelError.Visible := true;
+    fMain.FrameFirst.LabelForgot.Visible := true;
   end
   else
   // идентификация успешна
   begin
     uQ.SaveReestr('Name',vLog);
-    LabelMail.text := fMain.FrameFirst1.EditName.text;
-    fMain.FrameFirst1.LabelError.Visible := false;
-    fMain.FrameFirst1.LabelForgot.Visible := false;
+    LabelMail.text := fMain.FrameFirst.EditName.text;
+    fMain.FrameFirst.LabelError.Visible := false;
+    fMain.FrameFirst.LabelForgot.Visible := false;
     fMain.Button1Click(Sender);
     // загрузим видимость каналов
     fMain.ButtonSelChannelsClick(Sender);
@@ -899,14 +914,14 @@ begin
 end;
 
 
-procedure TfMain.FrameFirst1Image0Click(Sender: TObject);
+procedure TfMain.FrameFirstImage0Click(Sender: TObject);
 var vButton: TImage;
     vN  : integer;
 begin
   vButton := Sender as TImage;
   vN := StrToInt(vButton.Name[6]);
-//  FrameFirst1.Image0Click(Sender);
-//  vInterfaceLanguage :=  fMain.FrameFirst1.LangCurrent;
+//  FrameFirst.Image0Click(Sender);
+//  vInterfaceLanguage :=  fMain.FrameFirst.LangCurrent;
   case vN of
   0: vInterfaceLanguage := 'en';
   1: vInterfaceLanguage := 'de';
@@ -916,8 +931,10 @@ begin
   5: vInterfaceLanguage := 'uk';
   6: vInterfaceLanguage := 'ru';
   end;
-//  vInterfaceLanguage := vButton.Name;
-  showmessage(vInterfaceLanguage);
+  FrameFirst.PanelIsLang.Position.X := vButton.Position.X;
+  //  vInterfaceLanguage := vButton.Name;
+  //  showmessage(vInterfaceLanguage);
+  uQ.SaveReestr('Local',vInterfaceLanguage);
 end;
 
 procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);
@@ -933,11 +950,11 @@ var
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
-  vList := LoadListLanguages();
+  vList := vGlobalList;
 //  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
 //  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
 //  vWidth := 0; vHeight := 0;
-  vWidth := 236+1; vHeight := 46+1;
+  vWidth := 236+1; vHeight := 36+1;
     i := 1;
     vCount := 0;
   repeat
@@ -958,7 +975,8 @@ begin
       PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
         IntToStr(vList[i].Id),
         vList[i].NameRussian, // русское отображение, наверное и нафиг надо
-        vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
+//        vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
+        vList[i].NameLocal , // отображение на кнопках
         vList[i].LnCode, vBitmap); //,
 //      vWidth := PanLanguages[i].Width;
 //      vHeight := PanLanguages[i].Height;

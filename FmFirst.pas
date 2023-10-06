@@ -25,6 +25,7 @@ type
     Image4: TImage;
     Image5: TImage;
     Image6: TImage;
+    PanelIsLang: TPanel;
     procedure FrameCanFocus(Sender: TObject; var ACanFocus: Boolean);
 {    procedure Image0Click(Sender: TObject);
     procedure Image1Click(Sender: TObject);

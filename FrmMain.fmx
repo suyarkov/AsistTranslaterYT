@@ -9,6 +9,7 @@ object fMain: TfMain
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object PanelTop: TPanel
     Align = Top
@@ -40,7 +41,7 @@ object fMain: TfMain
       OnClick = ButtonBackClick
     end
   end
-  inline FrameFirst1: TFrameFirst
+  inline FrameFirst: TFrameFirst
     Cursor = crHandPoint
     Position.X = 216.000000000000000000
     Position.Y = 112.000000000000000000
@@ -56,40 +57,40 @@ object fMain: TfMain
       end
     end
     inherited ButtonLog: TButton
-      OnClick = FrameFirst1ButtonLogClick
+      OnClick = FrameFirstButtonLogClick
     end
     inherited Image0: TImage
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
     end
     inherited Image1: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
       inherited Image2: TImage
         MultiResBitmap.Height = 58
         MultiResBitmap.Width = 83
-        OnClick = FrameFirst1Image0Click
+        OnClick = FrameFirstImage0Click
       end
     end
     inherited Image3: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
     end
     inherited Image4: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
     end
     inherited Image5: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
     end
     inherited Image6: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      OnClick = FrameFirst1Image0Click
+      OnClick = FrameFirstImage0Click
     end
   end
   object PanelButton: TPanel
@@ -113,10 +114,10 @@ object fMain: TfMain
     end
   end
   inline FrameChannels: TFrameChannels
-    Position.X = 826.000000000000000000
-    Position.Y = 60.000000000000000000
-    Size.Width = 482.000000000000000000
-    Size.Height = 361.000000000000000000
+    Position.X = 791.000000000000000000
+    Position.Y = 41.000000000000000000
+    Size.Width = 800.000000000000000000
+    Size.Height = 542.000000000000000000
     Size.PlatformDefault = False
     OnMouseMove = FrameChannelsMouseMove
     inherited LabelChannels: TLabel
@@ -128,9 +129,9 @@ object fMain: TfMain
     end
     inherited BoxChannels: TVertScrollBox
       Position.Y = 38.000000000000000000
-      Size.Height = 311.000000000000000000
-      Viewport.Width = 449.000000000000000000
-      Viewport.Height = 311.000000000000000000
+      Size.Height = 496.000000000000000000
+      Viewport.Width = 760.000000000000000000
+      Viewport.Height = 496.000000000000000000
     end
   end
   inline FrameProgressBar: TFrameProgressBar
@@ -148,24 +149,25 @@ object fMain: TfMain
     end
   end
   inline FrameMainChannel: TFrameMainChannel
-    Position.X = 490.000000000000000000
-    Position.Y = 207.000000000000000000
-    Size.Width = 670.000000000000000000
-    Size.Height = 510.000000000000000000
+    Position.X = 688.000000000000000000
+    Position.Y = 66.000000000000000000
+    Size.Width = 800.000000000000000000
+    Size.Height = 538.000000000000000000
     Size.PlatformDefault = False
     inherited LabelNameChannel: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited BoxVideos: TVertScrollBox
-      Viewport.Width = 446.000000000000000000
-      Viewport.Height = 424.000000000000000000
+      Position.X = 199.000000000000000000
+      Viewport.Width = 561.000000000000000000
+      Viewport.Height = 449.000000000000000000
     end
   end
   inline FrameVideos: TFrameVideos
     Position.X = 538.000000000000000000
     Position.Y = 41.000000000000000000
-    Size.Width = 791.000000000000000000
-    Size.Height = 409.000000000000000000
+    Size.Width = 800.000000000000000000
+    Size.Height = 500.000000000000000000
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -178,13 +180,14 @@ object fMain: TfMain
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       Viewport.Width = 499.000000000000000000
-      Viewport.Height = 251.000000000000000000
+      Viewport.Height = 351.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited PanelTitle: TPanel
       inherited LabelTitle: TLabel
+        Position.X = 1.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
       end
     end
@@ -199,8 +202,8 @@ object fMain: TfMain
     end
   end
   inline FrameLanguages: TFrameLanguages
-    Position.X = 472.000000000000000000
-    Position.Y = 416.000000000000000000
+    Position.X = 791.000000000000000000
+    Position.Y = 492.000000000000000000
     Size.Width = 752.000000000000000000
     Size.Height = 543.000000000000000000
     Size.PlatformDefault = False
@@ -216,8 +219,8 @@ object fMain: TfMain
     end
   end
   object PanelAlpha_ForTest: TPanel
-    Position.X = -169.000000000000000000
-    Position.Y = 41.000000000000000000
+    Position.X = -176.000000000000000000
+    Position.Y = 38.000000000000000000
     Size.Width = 193.000000000000000000
     Size.Height = 538.000000000000000000
     Size.PlatformDefault = False

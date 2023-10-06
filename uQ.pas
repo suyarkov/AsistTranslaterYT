@@ -108,7 +108,7 @@ begin
    Registry.Free;
 end;
 
-//procedure LoadReestr(pKey:string; pValue: string);
+//procedure LoadReestr(pKey:string; pValue: string); -- загружаем из реестра чтото
 function LoadReestr(pKey:string) : string;
 // „тение из реестра
 var

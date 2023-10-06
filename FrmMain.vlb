@@ -37,9 +37,6 @@ Coordinates=331,620,123,36
 [FrameFirst1.EditName]
 Coordinates=189,370,144,58
 
-[FrameFirst1]
-Coordinates=172,620,84,36
-
 [FrameProgressBar.Pie1]
 Coordinates=10,620,152,36
 
@@ -151,4 +148,7 @@ Coordinates=713,574,55,36
 
 [PanelTop]
 Coordinates=266,620,55,36
+
+[FrameFirst]
+Coordinates=172,620,84,36
 

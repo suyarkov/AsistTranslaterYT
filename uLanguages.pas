@@ -25,6 +25,31 @@ function GetNameEnterOnLnCodeFromList(pLnCode: String;
 
 implementation
 
+// Приводит первые буквы к верхнему регистру во всех словах переданного предложения
+procedure UpperFirstLetterAllWord(var pSentence:String);
+var
+  i, IsPrevSpace: integer;
+  vResult : string;
+begin
+  if Length(pSentence) > 0 then
+  begin
+    IsPrevSpace := 0;
+    vResult := AnsiUpperCase(pSentence[1]);
+    if Length(pSentence) > 1 then
+      for i:= 2 to Length(pSentence) do
+        begin
+          if IsPrevSpace = 1 then
+          begin
+             vResult :=  vResult + AnsiUpperCase(pSentence[i]);
+             IsPrevSpace := 0;
+          end
+          else vResult := vResult + pSentence[i];;
+          if pSentence[i] = ' ' then IsPrevSpace := 1;
+        end;
+  end;
+  pSentence := vResult;
+end;
+
 // Перевод списка языков на локальный  выбранный пользователем
 procedure TranslateListLanguages(cLang: String; var pListLanguages:TListLanguages);
 var
@@ -35,9 +60,10 @@ begin
     if cLang = 'en' then
       pListLanguages[i].NameLocal :=  pListLanguages[i].NameEnglish
     else
+      // перевод на требуемый язык названий языков
       pListLanguages[i].NameLocal := GoogleTranslate(pListLanguages[i].NameEnglish,
       'en', cLang);
-
+      UpperFirstLetterAllWord(pListLanguages[i].NameLocal);
     inc(i);
   until (i >= 300) or (pListLanguages[i].LnCode = '');
 end;
