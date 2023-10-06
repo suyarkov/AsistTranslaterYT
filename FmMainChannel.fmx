@@ -1,6 +1,6 @@
 object FrameMainChannel: TFrameMainChannel
-  Size.Width = 670.000000000000000000
-  Size.Height = 510.000000000000000000
+  Size.Width = 800.000000000000000000
+  Size.Height = 500.000000000000000000
   Size.PlatformDefault = False
   object LabelNameChannel: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -14,7 +14,7 @@ object FrameMainChannel: TFrameMainChannel
     MultiResBitmap = <
       item
       end>
-    Position.X = 16.000000000000000000
+    Position.X = 32.000000000000000000
     Position.Y = 33.000000000000000000
     Size.Width = 145.000000000000000000
     Size.Height = 144.000000000000000000
@@ -50,13 +50,13 @@ object FrameMainChannel: TFrameMainChannel
   end
   object BoxVideos: TVertScrollBox
     Position.X = 216.000000000000000000
-    Position.Y = 33.000000000000000000
-    Size.Width = 446.000000000000000000
-    Size.Height = 424.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 561.000000000000000000
+    Size.Height = 449.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 4
-    Viewport.Width = 446.000000000000000000
-    Viewport.Height = 424.000000000000000000
+    Viewport.Width = 561.000000000000000000
+    Viewport.Height = 449.000000000000000000
   end
   object ButtonAddNextVideo: TButton
     Position.X = 533.000000000000000000

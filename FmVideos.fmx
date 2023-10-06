@@ -1,6 +1,6 @@
 object FrameVideos: TFrameVideos
-  Size.Width = 791.000000000000000000
-  Size.Height = 409.000000000000000000
+  Size.Width = 800.000000000000000000
+  Size.Height = 500.000000000000000000
   Size.PlatformDefault = False
   object LabelVideos: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -17,13 +17,13 @@ object FrameVideos: TFrameVideos
     StyledSettings = [Family, Size, FontColor]
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Position.X = 280.000000000000000000
-    Position.Y = 49.000000000000000000
+    Position.Y = 34.000000000000000000
     Size.Width = 503.000000000000000000
     Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    Viewport.Width = 503.000000000000000000
-    Viewport.Height = 48.000000000000000000
+    Viewport.Width = 499.000000000000000000
+    Viewport.Height = 44.000000000000000000
   end
   object MemoDescription: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -31,13 +31,13 @@ object FrameVideos: TFrameVideos
     StyledSettings = [Family, Size, FontColor]
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Position.X = 280.000000000000000000
-    Position.Y = 130.000000000000000000
+    Position.Y = 118.000000000000000000
     Size.Width = 503.000000000000000000
-    Size.Height = 255.000000000000000000
+    Size.Height = 355.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    Viewport.Width = 503.000000000000000000
-    Viewport.Height = 255.000000000000000000
+    Viewport.Width = 499.000000000000000000
+    Viewport.Height = 351.000000000000000000
   end
   object LanguageCheckBox: TCheckBox
     StyledSettings = [Family, Size, FontColor]
@@ -76,7 +76,7 @@ object FrameVideos: TFrameVideos
   end
   object PanelTitle: TPanel
     Position.X = 280.000000000000000000
-    Position.Y = 24.000000000000000000
+    Position.Y = 13.000000000000000000
     Size.Width = 503.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
@@ -84,7 +84,7 @@ object FrameVideos: TFrameVideos
     TabOrder = 7
     object LabelTitle: TLabel
       StyledSettings = [Family, Size, FontColor]
-      Position.X = 8.000000000000000000
+      Position.Y = -5.000000000000000000
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       Text = 'Title'
       TabOrder = 5
@@ -92,7 +92,7 @@ object FrameVideos: TFrameVideos
   end
   object PanelDescription: TPanel
     Position.X = 280.000000000000000000
-    Position.Y = 97.000000000000000000
+    Position.Y = 93.000000000000000000
     Size.Width = 503.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
@@ -108,7 +108,7 @@ object FrameVideos: TFrameVideos
   end
   object TitleLengthLabel: TLabel
     Anchors = [akTop, akRight]
-    Position.X = 732.000000000000000000
+    Position.X = 741.000000000000000000
     Position.Y = 77.000000000000000000
     Size.Width = 51.000000000000000000
     Size.Height = 20.000000000000000000
@@ -117,10 +117,13 @@ object FrameVideos: TFrameVideos
     TabOrder = 8
   end
   object BTranslater: TButton
-    Position.X = 40.000000000000000000
-    Position.Y = 352.000000000000000000
+    Position.X = 36.000000000000000000
+    Position.Y = 451.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
     TabOrder = 9
-    Text = 'BTranslater'
+    Text = 'Translate'
     OnClick = BTranslaterClick
   end
 end

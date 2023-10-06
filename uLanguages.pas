@@ -7,27 +7,16 @@ uses
   System.Variants,
   System.JSON, System.Net.HTTPClient,
   System.NetEncoding,
-  Character;
+  Character, FrmDataSQLite,
+  uTranslate;
 
-type
-  TLanguage = record
-    Id: integer; // номер по пор€дку
-    LnCode: string;
-    NameRussian: string;
-    NameEnglish: string;
-    NameLocal: string;
-    Activ: integer;
-  end;
-
-type
-  TListLanguages = Array [1 .. 1000] of TLanguage;
-
-function InitListLanguagesStatic(): TListLanguages;
-procedure SaveListLanguages(ListLanguages: TListLanguages);
-// сохранение €зыков в файла
+// загрузка из базы списка €зыков
+function LoadListLanguages(): TListLanguages;
+// перевод списка €зыков на €зык интерфейса
+procedure TranslateListLanguages(cLang: String; var pListLanguages:TListLanguages);
 
 function GetLnCode(pNameRead: String): String;
-//function GetLnCodeFromList(pNameRead: String;
+// function GetLnCodeFromList(pNameRead: String;
 //  pListLanguages: TListLanguages): String;
 function GetNextLnCodeForEnter(pLastLnCode: String;
   pListLanguages: TListLanguages): String;
@@ -36,44 +25,128 @@ function GetNameEnterOnLnCodeFromList(pLnCode: String;
 
 implementation
 
-
-// сохранение настройки €зыков
-procedure SaveListLanguages(ListLanguages: TListLanguages);
-const
-  cNameFile: string = 'Languages.lng';
+// ѕеревод списка €зыков на локальный  выбранный пользователем
+procedure TranslateListLanguages(cLang: String; var pListLanguages:TListLanguages);
 var
-  vPath: string;
-  vFullNameFile: string;
-  FileText: TStringList;
   i: integer;
-  vStr: string;
 begin
-  FileText := TStringList.Create;
-  for i := 1 to 1000 do
-  begin
-    // пустые уже не добавл€ем а опусташаю
-    if ListLanguages[i].LnCode = '' then
-    begin
-      break;
-    end
+  i := 1;
+  repeat
+    if cLang = 'en' then
+      pListLanguages[i].NameLocal :=  pListLanguages[i].NameEnglish
     else
-    begin
-      vStr := ListLanguages[i].LnCode + ' ' + ListLanguages[i].NameLocal + '.' + IntToStr(ListLanguages[i].Activ);
-      FileText.Add(vStr);
-    end;
-  end;
-  vPath := GetCurrentDir();
-  vFullNameFile := vPath + '/' + cNameFile;
-  FileText.SaveToFile(vFullNameFile);
+      pListLanguages[i].NameLocal := GoogleTranslate(pListLanguages[i].NameEnglish,
+      'en', cLang);
 
+    inc(i);
+  until (i >= 300) or (pListLanguages[i].LnCode = '');
 end;
 
-function InitListLanguagesStatic(): TListLanguages;
+// получить следюущий код добавл€емого €зыка
+function GetNextLnCodeForEnter(pLastLnCode: String;
+  pListLanguages: TListLanguages): String;
+var
+  i: integer;
+  vFlNext: integer;
+begin
+  vFlNext := 0; // следующий пока не ищем
+  result := '';
+  if pLastLnCode = '' then
+  begin
+    vFlNext := 1; // если пустой то берем первый подход€щий
+  end;
+
+  i := 1;
+  repeat
+    // нашли следующий €зык дл€ ввода
+    if (vFlNext = 1) and (pListLanguages[i].Activ = 1) then
+    begin
+      result := pListLanguages[i].LnCode;
+      i := 1000;
+      break;
+    end;
+
+    if pLastLnCode = pListLanguages[i].LnCode then
+    begin
+      vFlNext := 1; // нашли текущий, искать следующий €зык дл€ ввода
+    end;
+
+    inc(i);
+  until (i >= 300) or (pListLanguages[i].LnCode = '');
+end;
+
+// по строке с кодом €зыка определ€ем сам €зык дл€ ввода
+function GetNameEnterOnLnCodeFromList(pLnCode: String;
+  pListLanguages: TListLanguages): String;
+var
+  i: integer;
+begin
+  // уберем лишние пробеллы
+  result := '';
+  i := 1;
+  repeat
+    if pLnCode = pListLanguages[i].LnCode then
+    begin
+      result := ToUpper(pListLanguages[i].NameRussian); // в верхнем регистре
+      i := 1000;
+      break;
+    end;
+    inc(i);
+  until (i >= 300) or (pListLanguages[i].LnCode = '');
+end;
+
+// загрузка из базы данных списка €зыков
+function LoadListLanguages(): TListLanguages;
 var
   vList: TListLanguages;
   i: integer;
 begin
-  //vList := SQLiteModule.LoadLanguage();
+  vList := SQLiteModule.LoadLanguage();
+  TranslateListLanguages('en', vList);
+  result := vList;
+end;
+
+// по инициализации нового списка €зыков
+function GetLnCode(pNameRead: String): String;
+var
+  vList: TListLanguages;
+  i: integer;
+begin
+  vList := LoadListLanguages();
+//  result := GetLnCodeFromList(pNameRead, vList);
+end;
+
+{
+// по строке с наименованием €зыка определ€ем сам €зык
+function GetLnCodeFromList(pNameRead: String;
+  pListLanguages: TListLanguages): String;
+var
+  i: integer;
+  vUpperName: string;
+begin
+  // приведем к верхнему регистру и ANSI и UTF
+  vUpperName := ToUpper(pNameRead);
+  // уберем лишние пробеллы
+  vUpperName := StringReplace(vUpperName, ' ', '',
+    [rfReplaceAll, rfIgnoreCase]);
+  result := 'unknown';
+  i := 1;
+  repeat
+    if vUpperName = pListLanguages[i].NameForRead then
+    begin
+      result := pListLanguages[i].LnCode;
+      i := 1000;
+      break;
+    end;
+    inc(i);
+  until (i >= 300) or (pListLanguages[i].LnCode = '');
+end;
+}
+
+
+end.
+
+
 {  i := 1;
   vList[i].Id := i;
   vList[i].LnCode := 'az';
@@ -368,97 +441,3 @@ begin
 //  vList[i].NameForEnter := 'яѕќЌ— »…';
   vList[i].NameRussian := 'японский';
 }
-  result := vList;
-end;
-
-// по инициализации нового списка €зыков
-function GetLnCode(pNameRead: String): String;
-var
-  vList: TListLanguages;
-  i: integer;
-begin
-  vList := InitListLanguagesStatic();
-//  result := GetLnCodeFromList(pNameRead, vList);
-end;
-
-{
-// по строке с наименованием €зыка определ€ем сам €зык
-function GetLnCodeFromList(pNameRead: String;
-  pListLanguages: TListLanguages): String;
-var
-  i: integer;
-  vUpperName: string;
-begin
-  // приведем к верхнему регистру и ANSI и UTF
-  vUpperName := ToUpper(pNameRead);
-  // уберем лишние пробеллы
-  vUpperName := StringReplace(vUpperName, ' ', '',
-    [rfReplaceAll, rfIgnoreCase]);
-  result := 'unknown';
-  i := 1;
-  repeat
-    if vUpperName = pListLanguages[i].NameForRead then
-    begin
-      result := pListLanguages[i].LnCode;
-      i := 1000;
-      break;
-    end;
-    inc(i);
-  until (i >= 300) or (pListLanguages[i].LnCode = '');
-end;
-}
-
-// получить следюущий код добавл€емого €зыка
-function GetNextLnCodeForEnter(pLastLnCode: String;
-  pListLanguages: TListLanguages): String;
-var
-  i: integer;
-  vFlNext: integer;
-begin
-  vFlNext := 0; // следующий пока не ищем
-  result := '';
-  if pLastLnCode = '' then
-  begin
-    vFlNext := 1; // если пустой то берем первый подход€щий
-  end;
-
-  i := 1;
-  repeat
-    // нашли следующий €зык дл€ ввода
-    if (vFlNext = 1) and (pListLanguages[i].Activ = 1) then
-    begin
-      result := pListLanguages[i].LnCode;
-      i := 1000;
-      break;
-    end;
-
-    if pLastLnCode = pListLanguages[i].LnCode then
-    begin
-      vFlNext := 1; // нашли текущий, искать следующий €зык дл€ ввода
-    end;
-
-    inc(i);
-  until (i >= 300) or (pListLanguages[i].LnCode = '');
-end;
-
-// по строке с кодом €зыка определ€ем сам €зык дл€ ввода
-function GetNameEnterOnLnCodeFromList(pLnCode: String;
-  pListLanguages: TListLanguages): String;
-var
-  i: integer;
-begin
-  // уберем лишние пробеллы
-  result := '';
-  i := 1;
-  repeat
-    if pLnCode = pListLanguages[i].LnCode then
-    begin
-      result := ToUpper(pListLanguages[i].NameRussian); // в верхнем регистре
-      i := 1000;
-      break;
-    end;
-    inc(i);
-  until (i >= 300) or (pListLanguages[i].LnCode = '');
-end;
-
-end.

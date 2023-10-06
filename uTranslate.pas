@@ -16,6 +16,7 @@ function YoutubeGet(const AValue, ConstSourceLang, ConstTargetLang
 
 implementation
 
+// перевод чего угодно на что угодно
 function GoogleTranslate(const AValue, ConstSourceLang, ConstTargetLang
   : String): String;
 var

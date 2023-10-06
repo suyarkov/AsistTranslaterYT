@@ -10,8 +10,7 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Dialogs, FMX.Graphics,
   IdTCPClient, System.Net.HTTPClient, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects,
-  uLanguages;
+  FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects;
 
 type
   TShortChannel = record
@@ -45,9 +44,21 @@ type
     }
   end;
 
+type
+  TLanguage = record
+    Id: integer; // номер по порядку
+    LnCode: string;
+    NameRussian: string;
+    NameEnglish: string;
+    NameLocal: string;
+    Activ: integer;
+  end;
+
+
 Type
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами
   TVideos = Array [1 .. 1000] of TVideo; // ограничим 1000 видеороликами
+  TListLanguages = Array [1 .. 300] of TLanguage; // языки вообще можно ограничить 300
 
 type
   TSQLiteModule = class(TDataModule)
@@ -78,6 +89,7 @@ implementation
 {%CLASSGROUP 'FMX.Controls.TControl'}
 {$R *.dfm}
 
+// загрузка данных по не удаленным каналам
 function TSQLiteModule.SelRefreshToken(): tDataSet;
 var
   i: integer;
@@ -98,7 +110,6 @@ begin
     while not results.Eof do
     begin
       inc(i);
-
       Channel[i].id_channel := results.FieldByName('id_channel').AsString;
       Channel[i].name_channel := results.FieldByName('name_channel').AsString;
       Channel[i].img_channel := TBlobType(results.FieldByName('img_channel'));
@@ -114,7 +125,7 @@ begin
 end;
 
 
-// загрузка данных по всем каналам
+// загрузка данных по всем каналам  и удаленным в том числе
 function TSQLiteModule.SelInfoChannels(): TShortChannels;
 var
   i: integer;
@@ -202,6 +213,7 @@ begin
   Result := 1;
 end;
 
+// где база находится
 // а если вдруг нет базы данных модуля, то можно его создать?
 procedure TSQLiteModule.DataModuleCreate(Sender: TObject);
 begin
@@ -319,7 +331,7 @@ begin
   Result := Channels;
 end;
 
-// загрузка данных по всем каналам
+// загрузка данных по всем языкам
 function TSQLiteModule.LoadLanguage(): TListLanguages;
 var
   i: integer;
@@ -327,7 +339,7 @@ var
   vList: TListLanguages;
 begin
   try
-    SQLiteModule.SQL.ExecSQL('select * from refresh_token', nil, results);
+    SQLiteModule.SQL.ExecSQL('select * from lang order by lang_name_en', nil, results);
   except
     on E: Exception do
       showmessage('Exception raised with message: ' + E.Message);
@@ -341,7 +353,8 @@ begin
       inc(i);
       vList[i].Id := i;
       vList[i].LnCode := results.FieldByName('lang_code').AsString;
-      vList[i].NameEnglish := results.FieldByName('lang_name_en').AsString;;
+      vList[i].NameEnglish := results.FieldByName('lang_name_en').AsString;
+      vList[i].NameLocal := vList[i].NameEnglish;
       results.Next;
     end;
   end;

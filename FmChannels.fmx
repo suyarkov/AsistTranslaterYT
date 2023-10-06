@@ -1,6 +1,6 @@
 object FrameChannels: TFrameChannels
-  Size.Width = 482.000000000000000000
-  Size.Height = 383.000000000000000000
+  Size.Width = 800.000000000000000000
+  Size.Height = 500.000000000000000000
   Size.PlatformDefault = False
   object LabelChannels: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -33,13 +33,13 @@ object FrameChannels: TFrameChannels
     OnClick = ImageAddChannelClick
   end
   object BoxChannels: TVertScrollBox
-    Position.X = 8.000000000000000000
+    Position.X = 32.000000000000000000
     Position.Y = 40.000000000000000000
-    Size.Width = 449.000000000000000000
-    Size.Height = 335.000000000000000000
+    Size.Width = 760.000000000000000000
+    Size.Height = 433.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    Viewport.Width = 449.000000000000000000
-    Viewport.Height = 335.000000000000000000
+    Viewport.Width = 760.000000000000000000
+    Viewport.Height = 433.000000000000000000
   end
 end

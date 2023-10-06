@@ -36,7 +36,7 @@ type
     FrameMainChannel: TFrameMainChannel;
     FrameVideos: TFrameVideos;
     FrameLanguages: TFrameLanguages;
-    PanelAlpha: TPanel;
+    PanelAlpha_ForTest: TPanel;
     BGetTokkens: TButton;
     BGetChannel: TButton;
     Edit2: TEdit;
@@ -933,7 +933,7 @@ var
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
-  vList := InitListLanguagesStatic();
+  vList := LoadListLanguages();
 //  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
 //  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
 //  vWidth := 0; vHeight := 0;
@@ -957,8 +957,8 @@ begin
       //
       PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
         IntToStr(vList[i].Id),
-        vList[i].NameRussian,
-        vList[i].NameRussian + ' ' + IntToStr(i),
+        vList[i].NameRussian, // русское отображение, наверное и нафиг надо
+        vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
         vList[i].LnCode, vBitmap); //,
 //      vWidth := PanLanguages[i].Width;
 //      vHeight := PanLanguages[i].Height;
@@ -966,12 +966,12 @@ begin
       PanLanguages[i].ButtonOnOff.OnClick := DinLanguageClick;
     inc(i);
   until (i >= 300) or (vList[i].LnCode = '');
-
+  // отображаем сколько языков выбрано
   fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
-//  fMain.FrameLanguages.BoxLanguages.Height :=  i * 47;
+
   //showmessage('Что из базы по языкам ' + PanChannels[vCurrentPanChannel].ChSelLang.text);
   fMain.FrameLanguages.LabelLanguages.Text :=  PanChannels[vCurrentPanChannel].ChSelLang.text;
-
+  // сдвиг  формы на активную
   vEventMove := vState * 10 + 1;
   vState := 5;
   ButtonBack.Enabled := true;
@@ -1359,9 +1359,8 @@ begin
 
 end;
 
-// обновление языков
+// обновление списка выбранных языков после нажатия на кнопке с языком
 procedure TfMain.DinLanguageClick(Sender: TObject);
-// Sender : TComponent;
 var
   strQuestionDelete, vIdLanguage: string;
   vNPanel: integer;

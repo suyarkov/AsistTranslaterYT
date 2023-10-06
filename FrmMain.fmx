@@ -52,7 +52,7 @@ object fMain: TfMain
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 4
       end
     end
     inherited ButtonLog: TButton
@@ -172,13 +172,13 @@ object fMain: TfMain
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 48.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 44.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 255.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 251.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -215,8 +215,8 @@ object fMain: TfMain
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
   end
-  object PanelAlpha: TPanel
-    Position.X = 8.000000000000000000
+  object PanelAlpha_ForTest: TPanel
+    Position.X = -169.000000000000000000
     Position.Y = 41.000000000000000000
     Size.Width = 193.000000000000000000
     Size.Height = 538.000000000000000000
@@ -333,7 +333,7 @@ object fMain: TfMain
     object Edit4: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 19
-      Position.X = 40.000000000000000000
+      Position.X = -264.000000000000000000
       Position.Y = 461.000000000000000000
       Size.Width = 449.000000000000000000
       Size.Height = 22.000000000000000000
@@ -342,14 +342,14 @@ object fMain: TfMain
     object Memo1: TMemo
       Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
       DataDetectorTypes = []
-      Position.X = 8.000000000000000000
-      Position.Y = 494.000000000000000000
+      Position.X = -699.000000000000000000
+      Position.Y = 491.000000000000000000
       Size.Width = 884.000000000000000000
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 884.000000000000000000
-      Viewport.Height = 59.000000000000000000
+      Viewport.Width = 880.000000000000000000
+      Viewport.Height = 55.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000

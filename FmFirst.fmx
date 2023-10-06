@@ -1698,7 +1698,7 @@ object FrameFirst: TFrameFirst
         FileName = 'D:\GitClicker\AsistTranslaterYT\old\Ok\rus83.jpg'
       end>
     Cursor = crHandPoint
-    Position.X = 249.000000000000000000
+    Position.X = 248.000000000000000000
     Position.Y = 241.000000000000000000
     Size.Width = 40.000000000000000000
     Size.Height = 25.000000000000000000
