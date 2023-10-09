@@ -47,7 +47,7 @@ type
     function VideoInfo(AVideoID: string): string;   // об одном видео
     function VideoUpdate(JSON: string): string;
     function MyVideos(AChannelID: string; NextToken: string = ''): string; // данные о всех виде
-    function MyChannels: string;  // данные о канале
+    function MyChannels: string;       // данные о канале
     function AccessURL: string;        // урл подключения
     function GetAccessToken: string;   // получить соединительный токен подключения
     function RefreshToken: string;     // постоянный ключ
@@ -553,6 +553,7 @@ begin
     Result := '';
 end;
 
+// что это?
 function TOAuth.RefreshToken: string;
 const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
@@ -565,8 +566,6 @@ begin
   Params.Add('client_secret', ClientSecret);
   Params.Add('refresh_token', Refresh_token);
 
-
-
   Params.Add('grant_type', 'refresh_token');
 
   Response := SendRequest(tokenurl, Params, nil, '', rmPost);
@@ -576,7 +575,7 @@ end;
 
 
 
-// My insert
+// My insert  ? добавление пользователя в базу
 function TOAuth.UserGet(ACollection: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27

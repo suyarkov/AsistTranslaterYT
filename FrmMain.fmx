@@ -51,11 +51,6 @@ object fMain: TfMain
     inherited LabelName: TLabel
       Position.X = 8.000000000000000000
     end
-    inherited LabelPas: TLabel
-      inherited LabelError: TLabel
-        TabOrder = 4
-      end
-    end
     inherited ButtonLog: TButton
       OnClick = FrameFirstButtonLogClick
     end
@@ -174,13 +169,13 @@ object fMain: TfMain
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -202,12 +197,14 @@ object fMain: TfMain
     end
   end
   inline FrameLanguages: TFrameLanguages
-    Position.X = 127.000000000000000000
-    Position.Y = 74.000000000000000000
+    Position.X = 216.000000000000000000
+    Position.Y = 214.000000000000000000
     Size.Width = 752.000000000000000000
     Size.Height = 543.000000000000000000
     Size.PlatformDefault = False
     inherited BoxLanguages: TVertScrollBox
+      Position.X = 9.000000000000000000
+      Position.Y = 25.000000000000000000
       Viewport.Width = 736.000000000000000000
       Viewport.Height = 424.000000000000000000
     end

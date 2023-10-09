@@ -1,4 +1,5 @@
 object FrameInfo: TFrameInfo
+  Align = Client
   Size.Width = 637.000000000000000000
   Size.Height = 447.000000000000000000
   Size.PlatformDefault = False

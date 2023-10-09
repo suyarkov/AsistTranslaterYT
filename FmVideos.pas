@@ -23,6 +23,7 @@ type
     LabelDescription: TLabel;
     TitleLengthLabel: TLabel;
     BTranslater: TButton;
+    LabelVideoId: TLabel;
     procedure BTranslaterClick(Sender: TObject);
   private
     { Private declarations }

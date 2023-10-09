@@ -16,9 +16,6 @@ Coordinates=643,438,80,58
 [FrameFirst1.ButtonLog]
 Coordinates=111,166,146,58
 
-[FrameLanguages]
-Coordinates=464,620,115,36
-
 [FrameChannels.ButtonAddChannel]
 Coordinates=816,302,217,58
 
@@ -151,4 +148,7 @@ Coordinates=266,620,55,36
 
 [FrameFirst]
 Coordinates=172,620,84,36
+
+[FrameLanguages]
+Coordinates=464,620,115,36
 

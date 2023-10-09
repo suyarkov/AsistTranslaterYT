@@ -9,6 +9,11 @@ object FrameVideos: TFrameVideos
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Text = 'Video'
     TabOrder = 0
+    object LabelVideoId: TLabel
+      Position.X = 56.000000000000000000
+      Text = 'LabelVideoId'
+      TabOrder = 4
+    end
   end
   object MemoTitle: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]

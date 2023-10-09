@@ -89,7 +89,7 @@ type
   public
     { Public declarations }
     function  FrameAsk(Sender: TObject; AskText: string): integer;
-    procedure FrameInfo(Sender: TObject; AskText: string);
+    procedure FrameInfo(Sender: TObject; InfoText: string);
   end;
 
   TNewThread = class(TThread)
@@ -1373,6 +1373,8 @@ begin
   FrameVideos.MemoTitle.Text := vVideo.title;
   FrameVideos.MemoDescription.Text := vVideo.description;
 
+  FrameVideos.LabelVideoId.Text := vVideo.videoId;
+
   vEventMove := vState * 10 + 1;
   vState := 4;
   ButtonBack.Enabled := true;
@@ -1442,17 +1444,17 @@ begin
   Result  := vResult;
 end;
 
-// поднимаем окно с вопросом и ждем ответа на него  (1-OК, 0-Нет)
+// поднимаем окно с сообщением
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
-procedure TfMain.FrameInfo(Sender: TObject; AskText: string);
+procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
 var
   vFrameInfo :TFrameInfo;
 begin
-  vFrameInfo := vFrameInfo.Create(self);
+  vFrameInfo := TFrameInfo.Create(self);
 //  vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
 //  vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
   vFrameInfo.MemoMessage.Visible := false;
-  vFrameInfo.LabelMessage.Text := AskText;
+  vFrameInfo.LabelMessage.Text := InfoText;
   vFrameInfo.Parent := fMain;
   vFrameInfo.status := - 1;
 
@@ -1461,10 +1463,50 @@ begin
   vFrameInfo.Destroy;
 end;
 
+
+// грузим субтитры пока
 procedure TfMain.FrameLanguagesButtonSubtitlesClick(Sender: TObject);
+var
+  // для сохранения в файл
+  vPath: string;
+  vFullNameFile: string;
+  vFileText: TStringList;
+
+  // подключение к YT3
+  Access_token: string;      // токен выполнения операций
+  Refresh_token: string;     // токен получения следующего токена на выполнение
+  OAuth2: TOAuth;
+  vString: string;
+
 begin
   if FrameAsk(Sender, 'Начать перевод Субтитров?') = 1 then
+  begin
     showmessage('Шарах! переводим субтитры');
+    // пока тут, но вообще вытащить куда в другой объект эти переводыж
+    OAuth2 := TOAuth.Create;
+    OAuth2.ClientID :=
+      '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+    OAuth2.ClientSecret := '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';
+      // крайне важно
+    OAuth2.refresh_token := FrameMainChannel.Label3.text;
+//    vString := OAuth2.SubtitleDownload(CaptionID, 'en');
+    vString := OAuth2.SubtitleList(FrameVideos.LabelVideoId.Text);
+    OAuth2.Free;
+
+    // сохраним в файл
+    vPath := GetCurrentDir();
+    vFullNameFile := vPath + '/' + 'sub';
+    vFileText := TStringList.Create;
+    vFileText.Add(vString);
+    // сохраняем
+    vFileText.SaveToFile(vFullNameFile);
+    showmessage('Перевели');
+  end
+  else
+  begin
+    FrameInfo(Sender, 'На нет и суда нет');
+  end;
+
 end;
 
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
