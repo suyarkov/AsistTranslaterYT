@@ -20,7 +20,8 @@ uses
   uEmailSend, uQ,
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo,
-  uLanguages, FmLanguages, PnLanguage, uTranslate;
+  uLanguages, FmLanguages, PnLanguage, uTranslate,
+  FmAsk;
 
 type
   TfMain = class(TForm)
@@ -53,6 +54,7 @@ type
     Memo1: TMemo;
     ButtonQ: TButton;
     ButtonEmail2: TButton;
+    TestCreateFrameMessage: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -81,10 +83,12 @@ type
     procedure PanelButtonClick(Sender: TObject);
     procedure FrameFirstImage0Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure TestCreateFrameMessageClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    function ResultAsk(Sender: TObject; AskText: string): integer;
   end;
 
   TNewThread = class(TThread)
@@ -1128,6 +1132,12 @@ begin
 
 end;
 
+procedure TfMain.TestCreateFrameMessageClick(Sender: TObject);
+begin
+  showmessage(IntToStr(ResultAsk(self, 'Кто же кто же кто же крыльями трясет')));
+{}
+end;
+
 // удaление канала
 procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
 // Sender : TComponent;
@@ -1410,6 +1420,29 @@ begin
   PanChannels[vCurrentPanChannel].ChSelLang.text := vSelLanguages;
   i:= SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel].ChId.Text, vSelLanguages);
 
+end;
+
+// поднимаем окно с вопросом и ждем ответа на него
+function TfMain.ResultAsk(Sender: TObject; AskText: string): integer;
+var
+  vResult : integer;
+  vFrameAsk :TFrameAsk;
+begin
+  vResult := 0;
+  vFrameAsk := TFrameAsk.Create(self);
+  vFrameAsk.Position.X := Round(fMain.Width/2 + 1);
+  vFrameAsk.Position.Y := Round(fMain.Height/2 + 1);
+  vFrameAsk.MemoMessage.Visible := false;
+  vFrameAsk.LabelMessage.Text := 'Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво ?';
+  vFrameAsk.Parent := fMain;
+  vFrameAsk.status := -1;
+
+  while vFrameAsk.status = - 1 do
+    Application.ProcessMessages; // wait
+  vResult := vFrameAsk.status;
+  vFrameAsk.Destroy;
+
+  Result  := vResult;
 end;
 
 end.

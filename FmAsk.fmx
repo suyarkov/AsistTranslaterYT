@@ -1,35 +1,49 @@
 object FrameAsk: TFrameAsk
-  Size.Width = 320.000000000000000000
-  Size.Height = 240.000000000000000000
+  Align = Client
+  Size.Width = 671.000000000000000000
+  Size.Height = 431.000000000000000000
   Size.PlatformDefault = False
-  object BtnYes: TButton
-    Position.X = 48.000000000000000000
-    Position.Y = 200.000000000000000000
-    TabOrder = 1
-    Text = 'Yes'
-  end
-  object BtnNo: TButton
-    Position.X = 192.000000000000000000
-    Position.Y = 200.000000000000000000
-    TabOrder = 0
-    Text = 'No'
-  end
-  object MemoMessage: TMemo
-    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-    DataDetectorTypes = []
-    Position.X = 64.000000000000000000
-    Position.Y = 56.000000000000000000
-    Size.Width = 208.000000000000000000
-    Size.Height = 50.000000000000000000
+  object Panel1: TPanel
+    Align = Center
+    Size.Width = 337.000000000000000000
+    Size.Height = 217.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
-    Viewport.Width = 204.000000000000000000
-    Viewport.Height = 46.000000000000000000
-  end
-  object LabelMessage: TLabel
-    Position.X = 64.000000000000000000
-    Position.Y = 144.000000000000000000
-    Text = 'LabelMessage'
-    TabOrder = 3
+    TabOrder = 0
+    object BtnNo: TButton
+      Position.X = 208.000000000000000000
+      Position.Y = 171.000000000000000000
+      TabOrder = 0
+      Text = 'No'
+      OnClick = BtnNoClick
+    end
+    object BtnYes: TButton
+      Position.X = 48.000000000000000000
+      Position.Y = 171.000000000000000000
+      TabOrder = 1
+      Text = 'Yes'
+      OnClick = BtnYesClick
+    end
+    object LabelMessage: TLabel
+      Position.X = 32.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 273.000000000000000000
+      Size.Height = 57.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.HorzAlign = Center
+      Text = 'LabelMessage'
+      TabOrder = 3
+    end
+    object MemoMessage: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      Position.X = 80.000000000000000000
+      Position.Y = 14.000000000000000000
+      Size.Width = 208.000000000000000000
+      Size.Height = 27.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Viewport.Width = 208.000000000000000000
+      Viewport.Height = 27.000000000000000000
+    end
   end
 end

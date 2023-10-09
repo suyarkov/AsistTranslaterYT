@@ -219,7 +219,7 @@ object fMain: TfMain
     end
   end
   object PanelAlpha_ForTest: TPanel
-    Position.X = -176.000000000000000000
+    Position.X = -57.000000000000000000
     Position.Y = 38.000000000000000000
     Size.Width = 193.000000000000000000
     Size.Height = 538.000000000000000000
@@ -247,7 +247,7 @@ object fMain: TfMain
     end
     object Edit2: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 22
+      TabOrder = 23
       Position.X = 32.000000000000000000
       Position.Y = 122.000000000000000000
       Size.Width = 144.000000000000000000
@@ -267,7 +267,7 @@ object fMain: TfMain
     object Button200: TButton
       Position.X = 24.000000000000000000
       Position.Y = 192.000000000000000000
-      TabOrder = 28
+      TabOrder = 29
       Text = 'Button200'
       OnClick = Button200Click
     end
@@ -322,7 +322,7 @@ object fMain: TfMain
     end
     object Edit1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 20
+      TabOrder = 21
       Position.X = 16.000000000000000000
       Position.Y = 401.000000000000000000
     end
@@ -335,7 +335,7 @@ object fMain: TfMain
     end
     object Edit4: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 19
+      TabOrder = 20
       Position.X = -264.000000000000000000
       Position.Y = 461.000000000000000000
       Size.Width = 449.000000000000000000
@@ -367,6 +367,16 @@ object fMain: TfMain
       TabOrder = 14
       Text = 'ButtonEmail'
       OnClick = ButtonEmail2Click
+    end
+    object TestCreateFrameMessage: TButton
+      Position.X = 89.000000000000000000
+      Position.Y = 104.000000000000000000
+      Size.Width = 104.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 19
+      Text = 'TestCreateFrameMessage'
+      OnClick = TestCreateFrameMessageClick
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer

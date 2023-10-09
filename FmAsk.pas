@@ -9,18 +9,32 @@ uses
 
 type
   TFrameAsk = class(TFrame)
-    BtnYes: TButton;
+    Panel1: TPanel;
     BtnNo: TButton;
-    MemoMessage: TMemo;
+    BtnYes: TButton;
     LabelMessage: TLabel;
+    MemoMessage: TMemo;
+    procedure BtnYesClick(Sender: TObject);
+    procedure BtnNoClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    status : integer;
   end;
 
 implementation
 
 {$R *.fmx}
+
+procedure TFrameAsk.BtnNoClick(Sender: TObject);
+begin
+  status := 0;
+end;
+
+procedure TFrameAsk.BtnYesClick(Sender: TObject);
+begin
+  status := 1;
+end;
 
 end.
