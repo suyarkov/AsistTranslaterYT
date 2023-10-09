@@ -149,7 +149,8 @@ begin
 
 end;
 
-function TOAuth.SendRequest(URL: string; Params: TDictionary<string, string>; Headers: TDictionary<string, string>; JSON: string; Method: TRESTRequestMethod; AFile: string = ''): string;
+function TOAuth.SendRequest(URL: string; Params: TDictionary<string, string>;
+    Headers: TDictionary<string, string>; JSON: string; Method: TRESTRequestMethod; AFile: string = ''): string;
 var
   FRest: TRestClient;
   FRequest: TRestrequest;
@@ -412,7 +413,7 @@ var
 begin
   Params := TDictionary<String, String>.Create;
   // if TargetLang <> '' then
-   Params.Add('tfmt', 'sbv');
+  //   Params.Add('tfmt', 'sbv');
 
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);

@@ -197,8 +197,8 @@ object fMain: TfMain
     end
   end
   inline FrameLanguages: TFrameLanguages
-    Position.X = 216.000000000000000000
-    Position.Y = 214.000000000000000000
+    Position.X = 578.000000000000000000
+    Position.Y = 467.000000000000000000
     Size.Width = 752.000000000000000000
     Size.Height = 543.000000000000000000
     Size.PlatformDefault = False

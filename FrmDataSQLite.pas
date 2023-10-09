@@ -54,6 +54,12 @@ type
     Activ: integer;
   end;
 
+type
+  TSubtitle = record
+    subtitleId: string; // Is субтитров
+    language: string;
+  end;
+
 
 Type
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами

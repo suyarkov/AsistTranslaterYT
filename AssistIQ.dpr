@@ -40,7 +40,10 @@ uses
   FmLanguages in 'FmLanguages.pas' {FrameLanguages: TFrame},
   PnLanguage in 'PnLanguage.pas',
   FmAsk in 'FmAsk.pas' {FrameAsk: TFrame},
-  FmInfo in 'FmInfo.pas' {FrameInfo: TFrame};
+  FmInfo in 'FmInfo.pas' {FrameInfo: TFrame},
+  Classes.subtitlelist.item in 'Classes.subtitlelist.item.pas',
+  Classes.subtitlelist in 'Classes.subtitlelist.pas',
+  Classes.subtitlelist.snippet in 'Classes.subtitlelist.snippet.pas';
 
 {$R *.res}
 

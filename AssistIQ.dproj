@@ -214,6 +214,9 @@
             <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="Classes.subtitlelist.item.pas"/>
+        <DCCReference Include="Classes.subtitlelist.pas"/>
+        <DCCReference Include="Classes.subtitlelist.snippet.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
