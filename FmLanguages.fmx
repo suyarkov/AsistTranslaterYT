@@ -12,11 +12,11 @@ object FrameLanguages: TFrameLanguages
     Viewport.Width = 736.000000000000000000
     Viewport.Height = 424.000000000000000000
   end
-  object Button1: TButton
-    Position.X = 648.000000000000000000
+  object ButtonTitle: TButton
+    Position.X = 456.000000000000000000
     Position.Y = 475.000000000000000000
-    TabOrder = 5
-    Text = 'Button1'
+    TabOrder = 6
+    Text = 'ButtonTitle'
   end
   object LabelTextCount: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -28,7 +28,7 @@ object FrameLanguages: TFrameLanguages
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     TextSettings.HorzAlign = Trailing
     Text = #1042#1099#1073#1088#1072#1085#1086' '#1103#1079#1099#1082#1086#1074' :'
-    TabOrder = 6
+    TabOrder = 7
   end
   object LabelCount: TLabel
     StyledSettings = [Family, Size]
@@ -40,12 +40,18 @@ object FrameLanguages: TFrameLanguages
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     TextSettings.FontColor = claCrimson
     Text = '999'
-    TabOrder = 7
+    TabOrder = 8
   end
   object LabelLanguages: TLabel
     Position.X = 200.000000000000000000
     Position.Y = 480.000000000000000000
     Text = 'LabelLanguages'
-    TabOrder = 8
+    TabOrder = 9
+  end
+  object ButtonSubtitles: TButton
+    Position.X = 568.000000000000000000
+    Position.Y = 475.000000000000000000
+    TabOrder = 5
+    Text = 'ButtonSubtitles'
   end
 end

@@ -10,10 +10,11 @@ uses
 type
   TFrameLanguages = class(TFrame)
     BoxLanguages: TVertScrollBox;
-    Button1: TButton;
+    ButtonTitle: TButton;
     LabelTextCount: TLabel;
     LabelCount: TLabel;
     LabelLanguages: TLabel;
+    ButtonSubtitles: TButton;
   private
     { Private declarations }
   public

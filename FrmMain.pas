@@ -21,7 +21,7 @@ uses
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
-  FmAsk;
+  FmAsk, FmInfo;
 
 type
   TfMain = class(TForm)
@@ -54,7 +54,6 @@ type
     Memo1: TMemo;
     ButtonQ: TButton;
     ButtonEmail2: TButton;
-    TestCreateFrameMessage: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -83,12 +82,14 @@ type
     procedure PanelButtonClick(Sender: TObject);
     procedure FrameFirstImage0Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure TestCreateFrameMessageClick(Sender: TObject);
+    procedure FrameLanguagesButtonTitleClick(Sender: TObject);
+    procedure FrameLanguagesButtonSubtitlesClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
-    function ResultAsk(Sender: TObject; AskText: string): integer;
+    function  FrameAsk(Sender: TObject; AskText: string): integer;
+    procedure FrameInfo(Sender: TObject; AskText: string);
   end;
 
   TNewThread = class(TThread)
@@ -1132,11 +1133,6 @@ begin
 
 end;
 
-procedure TfMain.TestCreateFrameMessageClick(Sender: TObject);
-begin
-  showmessage(IntToStr(ResultAsk(self, 'Кто же кто же кто же крыльями трясет')));
-{}
-end;
 
 // удaление канала
 procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
@@ -1422,18 +1418,19 @@ begin
 
 end;
 
-// поднимаем окно с вопросом и ждем ответа на него
-function TfMain.ResultAsk(Sender: TObject; AskText: string): integer;
+// поднимаем окно с вопросом и ждем ответа на него  (1-OК, 0-Нет)
+// пример вызова   showmessage(IntToStr(FrameAsk(self, 'Кто же кто же кто же крыльями трясет')));
+function TfMain.FrameAsk(Sender: TObject; AskText: string): integer;
 var
   vResult : integer;
   vFrameAsk :TFrameAsk;
 begin
   vResult := 0;
   vFrameAsk := TFrameAsk.Create(self);
-  vFrameAsk.Position.X := Round(fMain.Width/2 + 1);
-  vFrameAsk.Position.Y := Round(fMain.Height/2 + 1);
+//  vFrameAsk.Position.X := Round(fMain.Width/2 + 1);
+//  vFrameAsk.Position.Y := Round(fMain.Height/2 + 1);
   vFrameAsk.MemoMessage.Visible := false;
-  vFrameAsk.LabelMessage.Text := 'Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво Будешь Пиво ?';
+  vFrameAsk.LabelMessage.Text := AskText;
   vFrameAsk.Parent := fMain;
   vFrameAsk.status := -1;
 
@@ -1443,6 +1440,37 @@ begin
   vFrameAsk.Destroy;
 
   Result  := vResult;
+end;
+
+// поднимаем окно с вопросом и ждем ответа на него  (1-OК, 0-Нет)
+// пример вызова   FrameInfo(self, 'Денег просто нет')));
+procedure TfMain.FrameInfo(Sender: TObject; AskText: string);
+var
+  vFrameInfo :TFrameInfo;
+begin
+  vFrameInfo := vFrameInfo.Create(self);
+//  vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
+//  vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
+  vFrameInfo.MemoMessage.Visible := false;
+  vFrameInfo.LabelMessage.Text := AskText;
+  vFrameInfo.Parent := fMain;
+  vFrameInfo.status := - 1;
+
+  while vFrameInfo.status = - 1 do
+    Application.ProcessMessages; // wait
+  vFrameInfo.Destroy;
+end;
+
+procedure TfMain.FrameLanguagesButtonSubtitlesClick(Sender: TObject);
+begin
+  if FrameAsk(Sender, 'Начать перевод Субтитров?') = 1 then
+    showmessage('Шарах! переводим субтитры');
+end;
+
+procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
+begin
+  if FrameAsk(Sender, 'Начать перевод Названий и описаний?') = 1 then
+    showmessage('Шарах! переводим названия');
 end;
 
 end.

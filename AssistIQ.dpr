@@ -39,7 +39,8 @@ uses
   uLanguages in 'uLanguages.pas',
   FmLanguages in 'FmLanguages.pas' {FrameLanguages: TFrame},
   PnLanguage in 'PnLanguage.pas',
-  FmAsk in 'FmAsk.pas' {FrameAsk: TFrame};
+  FmAsk in 'FmAsk.pas' {FrameAsk: TFrame},
+  FmInfo in 'FmInfo.pas' {FrameInfo: TFrame};
 
 {$R *.res}
 

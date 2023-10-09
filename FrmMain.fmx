@@ -202,8 +202,8 @@ object fMain: TfMain
     end
   end
   inline FrameLanguages: TFrameLanguages
-    Position.X = 791.000000000000000000
-    Position.Y = 492.000000000000000000
+    Position.X = 127.000000000000000000
+    Position.Y = 74.000000000000000000
     Size.Width = 752.000000000000000000
     Size.Height = 543.000000000000000000
     Size.PlatformDefault = False
@@ -211,11 +211,17 @@ object fMain: TfMain
       Viewport.Width = 736.000000000000000000
       Viewport.Height = 424.000000000000000000
     end
+    inherited ButtonTitle: TButton
+      OnClick = FrameLanguagesButtonTitleClick
+    end
     inherited LabelTextCount: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited LabelCount: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+    end
+    inherited ButtonSubtitles: TButton
+      OnClick = FrameLanguagesButtonSubtitlesClick
     end
   end
   object PanelAlpha_ForTest: TPanel
@@ -247,7 +253,7 @@ object fMain: TfMain
     end
     object Edit2: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 23
+      TabOrder = 22
       Position.X = 32.000000000000000000
       Position.Y = 122.000000000000000000
       Size.Width = 144.000000000000000000
@@ -267,7 +273,7 @@ object fMain: TfMain
     object Button200: TButton
       Position.X = 24.000000000000000000
       Position.Y = 192.000000000000000000
-      TabOrder = 29
+      TabOrder = 28
       Text = 'Button200'
       OnClick = Button200Click
     end
@@ -322,7 +328,7 @@ object fMain: TfMain
     end
     object Edit1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 21
+      TabOrder = 20
       Position.X = 16.000000000000000000
       Position.Y = 401.000000000000000000
     end
@@ -335,7 +341,7 @@ object fMain: TfMain
     end
     object Edit4: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 20
+      TabOrder = 19
       Position.X = -264.000000000000000000
       Position.Y = 461.000000000000000000
       Size.Width = 449.000000000000000000
@@ -367,16 +373,6 @@ object fMain: TfMain
       TabOrder = 14
       Text = 'ButtonEmail'
       OnClick = ButtonEmail2Click
-    end
-    object TestCreateFrameMessage: TButton
-      Position.X = 89.000000000000000000
-      Position.Y = 104.000000000000000000
-      Size.Width = 104.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 19
-      Text = 'TestCreateFrameMessage'
-      OnClick = TestCreateFrameMessageClick
     end
   end
   object TCPServerYouTubeAnswers: TIdTCPServer
