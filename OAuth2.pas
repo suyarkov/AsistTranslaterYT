@@ -418,6 +418,7 @@ begin
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 
   Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
 end;
