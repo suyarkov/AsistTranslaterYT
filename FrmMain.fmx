@@ -166,6 +166,9 @@ object fMain: TfMain
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+      inherited LabelVideoId: TLabel
+        TabOrder = 3
+      end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}

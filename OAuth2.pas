@@ -412,8 +412,9 @@ var
   Headers: TDictionary<String, String>;
 begin
   Params := TDictionary<String, String>.Create;
-  // if TargetLang <> '' then
-  //   Params.Add('tfmt', 'sbv');
+  Params.Add('tfmt', 'sbv');
+  if TargetLang <> '' then
+    Params.Add('tlang', 'TargetLang');
 
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);

@@ -1484,7 +1484,7 @@ var
 
   // получаем список титров
   vObjSubtitles : TObjSubtitleList;
-  vMainLanguage, i : integer;
+  vIndexMainLanguage, i : integer;
   vSubtitles: array [1 .. 300] of TSubtitle;
   vSCount : integer; // количество уже существующих субтитров.
 
@@ -1519,7 +1519,7 @@ begin
       vFileText.SaveToFile(vFullNameFile);
   //    showmessage('Перевели');
 
-      vMainLanguage := 0; // пока нет субтитров главных заданных
+      vIndexMainLanguage := 0; // пока нет субтитров главных заданных
       vSCount := 0; // кол-во уже существующих субтитров
       vObjSubtitles:= TObjSubtitleList.Create;
       // в мемо должен быть уже строка с канала
@@ -1530,35 +1530,35 @@ begin
         vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
         if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-          then  vMainLanguage := vSCount; // задан субтитр основного языка
+          then  vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
 
       // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
-      if vMainLanguage = 0 then
+      if vIndexMainLanguage = 0 then
       begin
         FrameInfo(Sender, 'Нет основного языка, переводить не с чего!');
       end
       else
       begin
 
-        // грузим в требуемом переводе
-        vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vMainLanguage].subtitleId, 'ru');
-        vFullNameFile := vPath + '/' + 'subload';
+        // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
+        vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
+        {vFullNameFile := vPath + '/' + 'subload';
         vFileText := TStringList.Create;
-        vFileText.Add(vSubtitles[vMainLanguage].subtitleId + vResponceLoadSubtitle);
-        vFileText.SaveToFile(vFullNameFile);
+        vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
+        vFileText.SaveToFile(vFullNameFile);}
 
 
         // начинаем удаление
         for i := 1 to vSCount do
         begin
   //        if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
-          if vSCount <> vMainLanguage then
+          if vSCount <> vIndexMainLanguage then
           begin
             vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
             vFullNameFile := vPath + '/' + 'subDel';
             vFileText := TStringList.Create;
-            vFileText.Add(vSubtitles[vMainLanguage].subtitleId + vResponceDelSubtitle);
+            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
             vFileText.SaveToFile(vFullNameFile);
           end;
         end;
@@ -1579,6 +1579,7 @@ begin
 //            vResponceInsSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
           end;
         end;
+        FrameInfo(Sender, 'Перевели на ' + intToStr(vSCount - 1));
       end;
       OAuth2.Free;
     end
