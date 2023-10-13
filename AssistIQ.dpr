@@ -43,7 +43,9 @@ uses
   FmInfo in 'FmInfo.pas' {FrameInfo: TFrame},
   Classes.subtitlelist.item in 'Classes.subtitlelist.item.pas',
   Classes.subtitlelist in 'Classes.subtitlelist.pas',
-  Classes.subtitlelist.snippet in 'Classes.subtitlelist.snippet.pas';
+  Classes.subtitlelist.snippet in 'Classes.subtitlelist.snippet.pas',
+  FmAddUser in 'FmAddUser.pas' {FrameAddUser: TFrame},
+  FmTextInput in 'FmTextInput.pas' {FrameTextInput: TFrame};
 
 {$R *.res}
 

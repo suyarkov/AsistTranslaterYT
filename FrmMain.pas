@@ -21,7 +21,7 @@ uses
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo,  Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
-  FmAsk, FmInfo;
+  FmAsk, FmInfo, FmAddUser;
 
 type
   TfMain = class(TForm)
@@ -84,6 +84,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FrameLanguagesButtonTitleClick(Sender: TObject);
     procedure FrameLanguagesButtonSubtitlesClick(Sender: TObject);
+    procedure FrameFirstButtonRegClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -918,6 +919,44 @@ begin
   end;
 end;
 
+
+procedure TfMain.FrameFirstButtonRegClick(Sender: TObject);
+var
+  vFrameAddUser :TFrameAddUser;
+  vRes, vCountTry, vKey : integer;
+begin
+  // запрос новых данных пользователя
+  vFrameAddUser := TFrameAddUser.Create(self);
+  vFrameAddUser.Parent := fMain;
+  vFrameAddUser.status := - 1;
+
+  while vFrameAddUser.status = - 1 do
+    Application.ProcessMessages; // wait
+
+  vRes := vFrameAddUser.status;
+  vFrameAddUser.Destroy;
+  // вышли по эскейпт
+  if vRes = 0 then
+    exit;
+
+  // проверка, не существует ли уже такой пользователь
+
+  // отправка кода на ящик почтовый пользователю
+  repeat vKey := Random(10000) until vKey < 1000;
+
+  // сообщение о том, что на ящик отправлен код, для авторизации
+  FrameInfo(Sender, 'Проверьте почту, и прочтите регистрационный код');
+
+  vCountTry := 3;
+  // ввод кода, если код не совпал, то ещё две попытки
+
+
+  vCountTry := vCountTry - 1;
+
+  if vCountTry = 0 then
+   exit;
+
+end;
 
 procedure TfMain.FrameFirstImage0Click(Sender: TObject);
 var vButton: TImage;

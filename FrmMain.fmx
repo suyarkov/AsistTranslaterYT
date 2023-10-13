@@ -51,6 +51,9 @@ object fMain: TfMain
     inherited LabelName: TLabel
       Position.X = 8.000000000000000000
     end
+    inherited ButtonReg: TButton
+      OnClick = FrameFirstButtonRegClick
+    end
     inherited ButtonLog: TButton
       OnClick = FrameFirstButtonLogClick
     end
@@ -357,8 +360,8 @@ object fMain: TfMain
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 880.000000000000000000
-      Viewport.Height = 55.000000000000000000
+      Viewport.Width = 884.000000000000000000
+      Viewport.Height = 59.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000
