@@ -1,7 +1,7 @@
 object FrameAsk: TFrameAsk
   Align = Client
-  Size.Width = 671.000000000000000000
-  Size.Height = 431.000000000000000000
+  Size.Width = 434.000000000000000000
+  Size.Height = 297.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Center
@@ -42,8 +42,8 @@ object FrameAsk: TFrameAsk
       Size.Height = 27.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
-      Viewport.Width = 208.000000000000000000
-      Viewport.Height = 27.000000000000000000
+      Viewport.Width = 204.000000000000000000
+      Viewport.Height = 23.000000000000000000
     end
   end
 end

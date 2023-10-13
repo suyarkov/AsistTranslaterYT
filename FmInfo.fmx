@@ -1,7 +1,7 @@
 object FrameInfo: TFrameInfo
   Align = Client
-  Size.Width = 637.000000000000000000
-  Size.Height = 447.000000000000000000
+  Size.Width = 396.000000000000000000
+  Size.Height = 268.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Center
@@ -35,8 +35,8 @@ object FrameInfo: TFrameInfo
       Size.Height = 27.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
-      Viewport.Width = 204.000000000000000000
-      Viewport.Height = 23.000000000000000000
+      Viewport.Width = 208.000000000000000000
+      Viewport.Height = 27.000000000000000000
     end
   end
 end

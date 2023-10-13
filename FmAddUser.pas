@@ -11,7 +11,7 @@ type
   TFrameAddUser = class(TFrame)
     Panel1: TPanel;
     cLabelEmail: TLabel;
-    Edit1: TEdit;
+    EditEmail: TEdit;
     LabelPass1: TLabel;
     Pass1: TEdit;
     LabelPass2: TLabel;
@@ -38,7 +38,29 @@ end;
 
 procedure TFrameAddUser.ButtonSendClick(Sender: TObject);
 begin
-    status := 1;
+  // проверка логина и пароля
+  if (pos('@', EditEmail.Text) = 0) or (pos('.', EditEmail.Text) = 0) then
+  begin
+    showmessage('Неверный почтовый адрес');
+    EditEmail.SetFocus;
+    exit;
+  end;
+
+  if (pass1.Text = '') then
+  begin
+    showmessage('Пароли не заданы');
+    Pass1.SetFocus;
+    exit;
+  end;
+
+  if (pass1.Text <> pass2.Text) then
+  begin
+    showmessage('Пароли не совпадаеют');
+    Pass1.SetFocus;
+    exit;
+  end;
+
+  status := 1;
 end;
 
 end.

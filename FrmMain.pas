@@ -21,7 +21,7 @@ uses
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo,  Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
-  FmAsk, FmInfo, FmAddUser;
+  FmAsk, FmInfo, FmAddUser, FmTextInput;
 
 type
   TfMain = class(TForm)
@@ -90,6 +90,7 @@ type
   public
     { Public declarations }
     function  FrameAsk(Sender: TObject; AskText: string): integer;
+    function  FrameTextInput(Sender: TObject; AskText: string): string;
     procedure FrameInfo(Sender: TObject; InfoText: string);
   end;
 
@@ -167,6 +168,8 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
+  fMain.Caption := 'AssistIQ 0.0.1';
+  fMain.PanelAlpha_ForTest.visible := false;
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // пароль
@@ -222,6 +225,7 @@ begin
   vGlobalList :=  SQLiteModule.LoadLanguage();
   // переведем названия языков на язык программы
   // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
+  FrameInfo(Sender, 'Есть обновление!');
 
 end;
 
@@ -919,11 +923,13 @@ begin
   end;
 end;
 
-
+// регистрация пользователя
 procedure TfMain.FrameFirstButtonRegClick(Sender: TObject);
 var
   vFrameAddUser :TFrameAddUser;
   vRes, vCountTry, vKey : integer;
+  vEnterText : string;
+  vLog, vPas : string;
 begin
   // запрос новых данных пользователя
   vFrameAddUser := TFrameAddUser.Create(self);
@@ -934,28 +940,53 @@ begin
     Application.ProcessMessages; // wait
 
   vRes := vFrameAddUser.status;
+  vLog := vFrameAddUser.EditEmail.Text;
+  vPas := vFrameAddUser.Pass1.Text;
   vFrameAddUser.Destroy;
   // вышли по эскейпт
   if vRes = 0 then
     exit;
 
-  // проверка, не существует ли уже такой пользователь
+  // проверка на не существует ли уже такой пользователь
 
   // отправка кода на ящик почтовый пользователю
   repeat vKey := Random(10000) until vKey < 1000;
 
+  vKey := 1111; // на время отладки
   // сообщение о том, что на ящик отправлен код, для авторизации
-  FrameInfo(Sender, 'Проверьте почту, и прочтите регистрационный код');
+  FrameInfo(Sender, 'Проверьте почту!');
 
   vCountTry := 3;
   // ввод кода, если код не совпал, то ещё две попытки
 
+  repeat
+    vEnterText := FrameTextInput(Sender, 'Введите код из письма!');
+    if vEnterText = '-9999' then
+     exit;
 
-  vCountTry := vCountTry - 1;
+    if vEnterText = IntToStr(vKey) then
+        begin
+        vCountTry := -100
+        end
+    else
+      begin
+        vCountTry := vCountTry - 1;
+        FrameInfo(Sender, 'Код неверен! Осталось попыток ' + intToStr(vCountTry));
+      end;
+  until vCountTry <= 0;
 
-  if vCountTry = 0 then
-   exit;
+  // выходим если не совпал
+  if vEnterText <> IntToStr(vKey) then
+    exit;;
 
+  // -- все вроде прошло ок
+   // помещаем чела в базу и авторизируемся
+   FrameInfo(Sender, 'Регистрация успешна!');
+
+   FrameFirst.EditName.Text := vlog;
+   FrameFirst.EditPas.text := vpas;
+
+   FrameFirstButtonLogClick(Sender);
 end;
 
 procedure TfMain.FrameFirstImage0Click(Sender: TObject);
@@ -1480,6 +1511,30 @@ begin
   vResult := vFrameAsk.status;
   vFrameAsk.Destroy;
 
+  Result  := vResult;
+end;
+
+function TfMain.FrameTextInput(Sender: TObject; AskText: string): string;
+var
+  vResult : string;
+  vStatus : integer;
+  vFrameTextInput :TFrameTextInput;
+begin
+  vResult := '';
+  vStatus := -1;
+  vFrameTextInput := TFrameTextInput.Create(self);
+
+  vFrameTextInput.LabelMessage.Text := AskText;
+  vFrameTextInput.Parent := fMain;
+  vFrameTextInput.status := -1;
+
+  while vFrameTextInput.status = - 1 do
+    Application.ProcessMessages; // wait
+  vStatus := vFrameTextInput.status;
+  vResult := vFrameTextInput.EditText.text;
+  vFrameTextInput.Destroy;
+  if vStatus = 0 then
+    vResult := '-9999';
   Result  := vResult;
 end;
 

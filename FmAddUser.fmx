@@ -18,7 +18,7 @@ object FrameAddUser: TFrameAddUser
       Text = #1042#1074#1077#1076#1080#1090#1077' '#1074#1072#1096' Email'
       TabOrder = 0
     end
-    object Edit1: TEdit
+    object EditEmail: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
       TabOrder = 1
       Position.X = 104.000000000000000000
@@ -31,11 +31,11 @@ object FrameAddUser: TFrameAddUser
       Position.X = 120.000000000000000000
       Position.Y = 112.000000000000000000
       Text = #1047#1072#1076#1072#1081#1090#1077' '#1087#1072#1088#1086#1083#1100
-      TabOrder = 4
+      TabOrder = 5
     end
     object Pass1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 6
+      TabOrder = 2
       Position.X = 104.000000000000000000
       Position.Y = 137.000000000000000000
       Size.Width = 225.000000000000000000
@@ -49,7 +49,7 @@ object FrameAddUser: TFrameAddUser
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = #1042#1074#1077#1076#1080#1090#1077' '#1087#1072#1088#1086#1083#1100' '#1087#1086#1074#1090#1086#1088#1085#1086
-      TabOrder = 2
+      TabOrder = 4
     end
     object Pass2: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -73,7 +73,7 @@ object FrameAddUser: TFrameAddUser
     object Button1: TButton
       Position.X = 8.000000000000000000
       Position.Y = 8.000000000000000000
-      TabOrder = 9
+      TabOrder = 8
       Text = 'ButtonCancel'
       OnClick = Button1Click
     end

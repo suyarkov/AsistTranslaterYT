@@ -1,5 +1,46 @@
 object FrameTextInput: TFrameTextInput
-  Size.Width = 320.000000000000000000
-  Size.Height = 240.000000000000000000
+  Align = Client
+  Size.Width = 411.000000000000000000
+  Size.Height = 287.000000000000000000
   Size.PlatformDefault = False
+  object Panel1: TPanel
+    Align = Center
+    Size.Width = 337.000000000000000000
+    Size.Height = 217.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object BtnNo: TButton
+      Position.X = 208.000000000000000000
+      Position.Y = 171.000000000000000000
+      TabOrder = 0
+      Text = 'No'
+      OnClick = BtnNoClick
+    end
+    object BtnYes: TButton
+      Position.X = 48.000000000000000000
+      Position.Y = 171.000000000000000000
+      TabOrder = 1
+      Text = 'Yes'
+      OnClick = BtnYesClick
+    end
+    object LabelMessage: TLabel
+      Position.X = 48.000000000000000000
+      Position.Y = 31.000000000000000000
+      Size.Width = 240.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.HorzAlign = Center
+      Text = 'LabelMessage'
+      TabOrder = 2
+    end
+    object EditText: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 3
+      Position.X = 48.000000000000000000
+      Position.Y = 80.000000000000000000
+      Size.Width = 240.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
 end
