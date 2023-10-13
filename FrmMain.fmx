@@ -4,7 +4,8 @@ object fMain: TfMain
   Caption = 'AsistYou'
   ClientHeight = 612
   ClientWidth = 900
-  Position = ScreenCenter
+  Position = Designed
+  StyleBook = StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -57,6 +58,7 @@ object fMain: TfMain
       end
     end
     inherited EditName: TEdit [2]
+      StyledSettings = [Family, Size, FontColor]
     end
     inherited EditPas: TEdit [3]
     end
@@ -111,7 +113,7 @@ object fMain: TfMain
       OnClick = FrameFirstImage0Click
     end
     inherited PanelIsLang: TPanel [14]
-      Position.Y = 274.000000000000000000
+      Position.X = -8.000000000000000000
       Size.Width = 305.000000000000000000
     end
   end
@@ -249,8 +251,8 @@ object fMain: TfMain
     end
   end
   object PanelAlpha_ForTest: TPanel
-    Position.X = -57.000000000000000000
-    Position.Y = 38.000000000000000000
+    Position.X = 7.000000000000000000
+    Position.Y = 41.000000000000000000
     Size.Width = 193.000000000000000000
     Size.Height = 538.000000000000000000
     Size.PlatformDefault = False
@@ -349,6 +351,16 @@ object fMain: TfMain
       Position.Y = 363.000000000000000000
       Text = 'Label1'
       TabOrder = 4
+      object TestAniingicator: TButton
+        Position.X = 48.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        Text = 'TestAniingicator'
+        OnClick = TestAniingicatorClick
+      end
     end
     object Edit1: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -399,11 +411,23 @@ object fMain: TfMain
       OnClick = ButtonEmail2Click
     end
   end
+  object AniIndicator1: TAniIndicator
+    Position.X = 248.000000000000000000
+    Position.Y = 409.000000000000000000
+    Size.Width = 153.000000000000000000
+    Size.Height = 132.000000000000000000
+    Size.PlatformDefault = False
+  end
   object TCPServerYouTubeAnswers: TIdTCPServer
     Bindings = <>
     DefaultPort = 1904
     OnExecute = TCPServerYouTubeAnswersExecute
     Left = 128
     Top = 40
+  end
+  object StyleBook1: TStyleBook
+    Styles = <
+      item
+      end>
   end
 end

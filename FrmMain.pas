@@ -54,6 +54,9 @@ type
     Memo1: TMemo;
     ButtonQ: TButton;
     ButtonEmail2: TButton;
+    StyleBook1: TStyleBook;
+    AniIndicator1: TAniIndicator;
+    TestAniingicator: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -85,6 +88,7 @@ type
     procedure FrameLanguagesButtonTitleClick(Sender: TObject);
     procedure FrameLanguagesButtonSubtitlesClick(Sender: TObject);
     procedure FrameFirstButtonRegClick(Sender: TObject);
+    procedure TestAniingicatorClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -169,7 +173,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'AssistIQ 0.0.1';
-  fMain.PanelAlpha_ForTest.visible := false;
+//  fMain.PanelAlpha_ForTest.visible := false;
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // пароль
@@ -1203,6 +1207,11 @@ begin
 
 end;
 
+
+procedure TfMain.TestAniingicatorClick(Sender: TObject);
+begin
+AniIndicator1.
+end;
 
 // удaление канала
 procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
