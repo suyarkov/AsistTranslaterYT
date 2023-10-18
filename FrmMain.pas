@@ -172,7 +172,7 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := 'AssistIQ 0.0.1';
+  fMain.Caption := '∆ааах!';//'AssistIQ 0.0.1';
 //  fMain.PanelAlpha_ForTest.visible := false;
   fMain.Width := 871;
   lastPanel := nil;
@@ -1210,7 +1210,7 @@ end;
 
 procedure TfMain.TestAniingicatorClick(Sender: TObject);
 begin
-AniIndicator1.
+//AniIndicator1.
 end;
 
 // удaление канала
@@ -1696,9 +1696,125 @@ begin
 end;
 
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
+var
+  // есть ли выбранные €зыки дл€ перевода
+  vLength : integer;
+  vPosBegin, vPosEnd: Integer;
+  vTransCount : integer;
+
+  // подключение к YT3
+  Access_token: string;      // токен выполнени€ операций
+  Refresh_token: string;     // токен получени€ следующего токена на выполнение
+  OAuth2: TOAuth;
+  vResponceSubtitleList: string;
+
+  // получаем список титров
+  vObjSubtitles : TObjSubtitleList;
+  vIndexMainLanguage, i : integer;
+  vSubtitles: array [1 .. 300] of TSubtitle;
+  vSCount : integer; // количество уже существующих субтитров.
+
+  vResponceInsTitle: string;
+  vJSON: string;
 begin
-  if FrameAsk(Sender, 'Ќачать перевод Ќазваний и описаний?') = 1 then
-    showmessage('Ўарах! переводим названи€');
+
+  vLength := length(fMain.FrameLanguages.LabelLanguages.Text);
+  if  vLength > 2 then
+  begin
+    if FrameAsk(Sender, 'Ќачать перевод Ќазваний и описаний?') = 1 then
+    begin
+      // пока тут, но вообще вытащить куда в другой объект эти переводыж
+      OAuth2 := TOAuth.Create;
+      OAuth2.ClientID :=
+        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+      OAuth2.ClientSecret := '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';
+        // крайне важно
+      OAuth2.refresh_token := FrameMainChannel.Label3.text;
+  //    vString := OAuth2.SubtitleDownload(CaptionID, 'en');
+      vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+
+      showmessage('ѕеревели');
+
+      vIndexMainLanguage := 0; // пока нет субтитров главных заданных
+      vSCount := 0; // кол-во уже существующих субтитров
+      vObjSubtitles:= TObjSubtitleList.Create;
+      // в мемо должен быть уже строка с канала
+      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>(vResponceSubtitleList);
+      for i := 0 to Length(vObjSubtitles.Items) - 1 do
+      begin
+        inc(vSCount);
+        vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
+        vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
+        if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
+          then  vIndexMainLanguage := vSCount; // задан субтитр основного €зыка
+      end;
+
+      // если нет основного €зыка то расстраиваемс€ и сообщаем клиенту, чтоб задал
+      if vIndexMainLanguage = 0 then
+      begin
+        FrameInfo(Sender, 'Ќет основного €зыка, переводить не с чего!');
+      end
+      else
+      begin
+
+        // грузим в требуемом переводе -- сохран€тьс€ в файл default.sbv в корень диска
+        // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
+        {vFullNameFile := vPath + '/' + 'subload';
+        vFileText := TStringList.Create;
+        vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
+        vFileText.SaveToFile(vFullNameFile);}
+
+
+        // начинаем удаление -- не знаю нужно ли это, но возможно дл€ тех €зыков которые не мен€ем это важно
+        for i := 1 to vSCount do
+        begin
+  //        if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
+          if vSCount <> vIndexMainLanguage then
+          begin
+  {          vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
+            vFullNameFile := vPath + '/' + 'subDel';
+            vFileText := TStringList.Create;
+            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
+            vFileText.SaveToFile(vFullNameFile);}
+          end;
+        end;
+        FrameInfo(Sender, '”далили €зыков ' + intToStr(vSCount - 1));
+        // начинаем разбор €зыков
+        vTransCount := 0; // количество переведенных €зыков
+        for i := 1 to 300 do
+        begin
+          if PanLanguages[i] = nil then
+            break;
+          if (PanLanguages[i].ChImage.Visible = TRUE)
+          and (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text) then
+          begin
+            inc(vTransCount);
+            // формируем JSON
+            vJSON := '{  "id": "'+
+            FrameVideos.LabelVideoId.Text //YOUR_VIDEO_ID
+            +'",  "localizations": {"'+
+            PanLanguages[i].ChLang.text // на какой €зык
+            + '" : {"title": "'
+            + FrameVideos.MemoTitle.Text // название
+            + '","description": "'
+            + FrameVideos.MemoDescription.Text // описание
+            +'"}}}"';
+            // загружаем в этом €зыке наименование и описание
+            vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+
+          end;
+        end;
+        FrameInfo(Sender, 'ѕеревели на ' + intToStr(vSCount - 1));
+      end;
+      OAuth2.Free;
+    end
+    else
+    begin // 'Ќа нет и суда нет'
+      FrameInfo(Sender, 'Ќа нет и суда нет');
+    end;
+  end
+  else
+    FrameInfo(Sender, 'Ќет €зыков на которые нужно перевести');
 end;
 
 end.

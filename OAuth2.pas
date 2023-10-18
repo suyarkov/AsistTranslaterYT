@@ -1,4 +1,4 @@
-unit OAuth2;
+п»їunit OAuth2;
 
 interface
 
@@ -14,23 +14,23 @@ const
 type
   TOAuth = class(TObject)//class
   private
-    FClientID: string; // id клиента
-    FClientSecret: string; // секретный ключ клиента приложения
-    FScope: string;        // тип необходимых разрешения
+    FClientID: string; // id РєР»РёРµРЅС‚Р°
+    FClientSecret: string; // СЃРµРєСЂРµС‚РЅС‹Р№ РєР»СЋС‡ РєР»РёРµРЅС‚Р° РїСЂРёР»РѕР¶РµРЅРёСЏ
+    FScope: string;        // С‚РёРї РЅРµРѕР±С…РѕРґРёРјС‹С… СЂР°Р·СЂРµС€РµРЅРёСЏ
     FExpires_in: TDateTime;
-    FRefresh_token: string; // токен подключения -- токен обновлений
-    FAccess_token: string;  // ключ доступа  -- токен доступа
-    FFireBaseToken: string; // токен для складывания
-    FResponseCode: string;  // точка доступа     -- код авторизации, который
-                            //приложение может обменять на токен доступа и токен обновления.
+    FRefresh_token: string; // С‚РѕРєРµРЅ РїРѕРґРєР»СЋС‡РµРЅРёСЏ -- С‚РѕРєРµРЅ РѕР±РЅРѕРІР»РµРЅРёР№
+    FAccess_token: string;  // РєР»СЋС‡ РґРѕСЃС‚СѓРїР°  -- С‚РѕРєРµРЅ РґРѕСЃС‚СѓРїР°
+    FFireBaseToken: string; // С‚РѕРєРµРЅ РґР»СЏ СЃРєР»Р°РґС‹РІР°РЅРёСЏ
+    FResponseCode: string;  // С‚РѕС‡РєР° РґРѕСЃС‚СѓРїР°     -- РєРѕРґ Р°РІС‚РѕСЂРёР·Р°С†РёРё, РєРѕС‚РѕСЂС‹Р№
+                            //РїСЂРёР»РѕР¶РµРЅРёРµ РјРѕР¶РµС‚ РѕР±РјРµРЅСЏС‚СЊ РЅР° С‚РѕРєРµРЅ РґРѕСЃС‚СѓРїР° Рё С‚РѕРєРµРЅ РѕР±РЅРѕРІР»РµРЅРёСЏ.
 
     procedure SetClientID(const Value: string);
     procedure SetScope(const Value: string);
 
     function ParamValue(ParamName, JSONString: string): string;
-    procedure SetAccess_token(const Value: string);      // установить ключ доступа
-    procedure SetRefresh_token(const Value: string);     // установить токен длинный
-    procedure SendRequest(URL: string; AFile: string); overload;  // перегруженная отправка
+    procedure SetAccess_token(const Value: string);      // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РєР»СЋС‡ РґРѕСЃС‚СѓРїР°
+    procedure SetRefresh_token(const Value: string);     // СѓСЃС‚Р°РЅРѕРІРёС‚СЊ С‚РѕРєРµРЅ РґР»РёРЅРЅС‹Р№
+    procedure SendRequest(URL: string; AFile: string); overload;  // РїРµСЂРµРіСЂСѓР¶РµРЅРЅР°СЏ РѕС‚РїСЂР°РІРєР°
     function SendRequest(URL: string; Params: TDictionary<string, string>; Headers: TDictionary<string, string>; JSON: string; Method: TRESTRequestMethod; AFile: string = ''): string; overload;
     procedure SetResponseCode(const Value: string);
     procedure ServerResponseToFile(AResponse: TRestResponse; AFileName: string);
@@ -41,16 +41,19 @@ type
     function SubtitleDownload(CaptionID, TargetLang: string): string;
     function SubtitleInsert(JSON: string; FileName: String): string;
 
-    function Language: string;
-    function GetTokenInfo: string;  // информация о токене? а для чего она то нужна?
+    function TitleDelete(LangID: string): string;
+    function TitleInsert(LangID,KeyTitle, KeyDescription: string): string;
 
-    function VideoInfo(AVideoID: string): string;   // об одном видео
+    function Language: string;
+    function GetTokenInfo: string;  // РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ С‚РѕРєРµРЅРµ? Р° РґР»СЏ С‡РµРіРѕ РѕРЅР° С‚Рѕ РЅСѓР¶РЅР°?
+
+    function VideoInfo(AVideoID: string): string;   // РѕР± РѕРґРЅРѕРј РІРёРґРµРѕ
     function VideoUpdate(JSON: string): string;
-    function MyVideos(AChannelID: string; NextToken: string = ''): string; // данные о всех виде
-    function MyChannels: string;       // данные о канале
-    function AccessURL: string;        // урл подключения
-    function GetAccessToken: string;   // получить соединительный токен подключения
-    function RefreshToken: string;     // постоянный ключ
+    function MyVideos(AChannelID: string; NextToken: string = ''): string; // РґР°РЅРЅС‹Рµ Рѕ РІСЃРµС… РІРёРґРµ
+    function MyChannels: string;       // РґР°РЅРЅС‹Рµ Рѕ РєР°РЅР°Р»Рµ
+    function AccessURL: string;        // СѓСЂР» РїРѕРґРєР»СЋС‡РµРЅРёСЏ
+    function GetAccessToken: string;   // РїРѕР»СѓС‡РёС‚СЊ СЃРѕРµРґРёРЅРёС‚РµР»СЊРЅС‹Р№ С‚РѕРєРµРЅ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
+    function RefreshToken: string;     // РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ РєР»СЋС‡
 
     function FireBaseAuth: string;
     function FireBaseGet(ACollection: string): string;
@@ -374,6 +377,15 @@ var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
 begin
+/*{
+/*  "id": "YOUR_VIDEO_ID",
+/*  "localizations": {
+/*    "es": {
+/*      "title": "no hay nada a ver aqui",
+/*      "description": "Esta descripcion es en espaГ±ol."
+/*    }
+/*  }
+/*}
   Params := TDictionary<String, String>.Create;
   Params.Add('part', 'snippet,status,localizations');
   Headers := TDictionary<String, String>.Create;
@@ -459,6 +471,41 @@ begin
   Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
+end;
+
+// Title delete
+function TOAuth.TitleDelete(LangID: string): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+begin
+  Params := TDictionary<String, String>.Create;
+  Params.Add('id', LangID);
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Accept', 'application/json');
+  Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
+end;
+
+// Title replace
+function TOAuth.TitleInsert(LangID,KeyTitle, KeyDescription: string): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
+//  PUT https://www.googleapis.com/youtube/v3/videos
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+begin
+  Params := TDictionary<String, String>.Create;
+  Params.Add('id', LangID);
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Accept', 'application/json');
+  Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
 
 // Firebase Auth
@@ -556,7 +603,7 @@ begin
     Result := '';
 end;
 
-// что это?
+// С‡С‚Рѕ СЌС‚Рѕ?
 function TOAuth.RefreshToken: string;
 const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
@@ -578,7 +625,7 @@ end;
 
 
 
-// My insert  ? добавление пользователя в базу
+// My insert  ? РґРѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РІ Р±Р°Р·Сѓ
 function TOAuth.UserGet(ACollection: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27

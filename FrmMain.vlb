@@ -1,110 +1,110 @@
 ﻿[FrameVideos.LanguageVideoLabel]
-Coordinates=245,506,216,58
+Coordinates=245,506,185,51
 
 [FrameVideos.LabelDescription]
-Coordinates=615,302,191,58
+Coordinates=615,302,165,51
 
 [FrameVideos.TitleLengthLabel]
-Coordinates=235,10,190,58
+Coordinates=235,10,164,51
 
 [FrameChannels.LabelChannels]
-Coordinates=10,438,195,58
+Coordinates=10,438,167,51
 
 [ButtonBack]
-Coordinates=643,438,80,58
+Coordinates=643,438,72,51
 
 [FrameFirst1.ButtonLog]
 Coordinates=111,166,146,58
 
 [FrameChannels.ButtonAddChannel]
-Coordinates=816,302,217,58
+Coordinates=816,302,188,51
 
 [FrameVideos.LabelTitle]
-Coordinates=77,302,151,58
+Coordinates=77,302,129,51
 
 [FrameMainChannel.Label1]
-Coordinates=759,10,169,58
+Coordinates=759,10,144,51
 
 [FrameVideos.MemoTitle]
-Coordinates=796,438,155,58
+Coordinates=796,438,132,51
 
 [FrameProgressBar]
-Coordinates=331,620,123,36
+Coordinates=331,620,107,33
 
 [FrameFirst1.EditName]
 Coordinates=189,370,144,58
 
 [FrameProgressBar.Pie1]
-Coordinates=10,620,152,36
+Coordinates=10,620,131,33
 
 [FrameLanguages.Button1]
 Coordinates=586,10,163,58
 
 [FrameChannels.BoxChannels]
-Coordinates=960,574,186,36
+Coordinates=960,574,160,33
 
 [FrameMainChannel.LabelNameChannel]
-Coordinates=361,302,244,58
+Coordinates=361,302,207,51
 
 [FrameVideos.ImageVideo]
-Coordinates=989,234,163,58
+Coordinates=989,234,139,51
 
 [FrameProgressBar.Layout1]
-Coordinates=778,574,172,36
+Coordinates=778,574,149,33
 
 [FrameChannels.ImageAddChannel]
-Coordinates=527,166,216,58
+Coordinates=527,166,184,51
 
 [FrameMainChannel.ButtonAddNextVideo]
-Coordinates=267,166,250,58
+Coordinates=267,166,215,51
 
 [FrameVideos.LanguageComboBox]
-Coordinates=10,10,215,146
+Coordinates=10,10,185,123
 
 [FrameFirst1.EditPas]
 Coordinates=168,234,132,58
 
 [FrameVideos.LanguageCheckBox]
-Coordinates=658,234,210,58
+Coordinates=658,234,180,51
 
 [FrameVideos.LabelVideos]
-Coordinates=590,370,165,58
+Coordinates=590,370,142,51
 
 [FrameProgressBar.Text1]
-Coordinates=765,370,159,58
+Coordinates=765,370,136,51
 
 [LabelCopyrigth]
-Coordinates=878,234,101,58
+Coordinates=878,234,89,51
 
 [FrameMainChannel.Label3]
-Coordinates=310,234,169,58
+Coordinates=310,234,144,51
 
 [FrameVideos.BTranslater]
-Coordinates=306,438,161,58
+Coordinates=306,438,139,51
 
 [LabelMail]
-Coordinates=938,10,70,58
+Coordinates=938,10,61,51
 
 [FrameMainChannel.BoxVideos]
-Coordinates=511,574,192,36
+Coordinates=511,574,165,33
 
 [FrameVideos.PanelTitle]
-Coordinates=349,574,152,36
+Coordinates=349,574,130,33
 
 [FrameMainChannel]
-Coordinates=212,574,127,36
+Coordinates=212,574,109,33
 
 [FrameMainChannel.Label2]
-Coordinates=10,370,169,58
+Coordinates=10,370,144,51
 
 [FrameVideos.PanelDescription]
-Coordinates=10,574,192,36
+Coordinates=10,574,166,33
 
 [FrameProgressBar.Circle1]
-Coordinates=902,506,167,36
+Coordinates=902,506,144,33
 
 [FrameVideos.MemoDescription]
-Coordinates=930,166,194,58
+Coordinates=930,166,168,51
 
 [FrameFirst1.LabelPas]
 Coordinates=435,10,141,58
@@ -113,7 +113,7 @@ Coordinates=435,10,141,58
 Coordinates=477,438,156,58
 
 [FrameChannels]
-Coordinates=786,506,106,36
+Coordinates=786,506,91,33
 
 [FrameFirst1.LabelName]
 Coordinates=82,506,153,58
@@ -122,33 +122,163 @@ Coordinates=82,506,153,58
 Coordinates=10,234,148,58
 
 [FrameLanguages.BoxLanguages]
-Coordinates=572,506,204,36
+Coordinates=572,506,176,33
 
 [FrameMainChannel.ImageChannel]
-Coordinates=934,370,214,58
+Coordinates=934,370,182,51
 
 [TCPServerYouTubeAnswers]
-Coordinates=1072,626,179,36
+Coordinates=1072,626,154,33
 
 [FrameVideos]
-Coordinates=471,506,91,36
+Coordinates=471,506,79,33
 
 [FrameFirst1.ButtonReg]
 Coordinates=961,438,148,58
 
 []
-Coordinates=10,506,62,58
+Coordinates=470,264,82,33
 Visible=True
 
 [PanelButton]
-Coordinates=713,574,55,36
+Coordinates=713,574,74,33
 
 [PanelTop]
-Coordinates=266,620,55,36
+Coordinates=266,620,60,33
 
 [FrameFirst]
-Coordinates=172,620,84,36
+Coordinates=172,620,67,33
 
 [FrameLanguages]
-Coordinates=464,620,115,36
+Coordinates=464,620,99,33
+
+[FrameFirst.LabelForgot]
+Coordinates=1412,1,129,51
+
+[FrameLanguages.LabelLanguages]
+Coordinates=555,87,183,51
+
+[Button5]
+Coordinates=407,232,53,51
+
+[StyleBook1]
+Coordinates=402,398,70,33
+
+[FrameFirst.LabelPas]
+Coordinates=73,534,115,51
+
+[FrameLanguages.ButtonTitle]
+Coordinates=1412,232,156,51
+
+[FrameFirst.PanelIsLang]
+Coordinates=1374,309,131,33
+
+[ButtonQ]
+Coordinates=806,164,55,51
+
+[TestAniingicator]
+Coordinates=1190,232,95,51
+
+[FrameFirst.Image3]
+Coordinates=555,164,105,51
+
+[PanelAlpha_ForTest]
+Coordinates=1374,364,113,33
+
+[Label2]
+Coordinates=407,155,46,51
+
+[Button6]
+Coordinates=1071,1,53,51
+
+[FrameFirst.ButtonLog]
+Coordinates=1412,78,122,51
+
+[FrameFirst.Image6]
+Coordinates=0,0,105,51
+
+[FrameFirst.LabelError]
+Coordinates=1412,155,122,51
+
+[FrameFirst.EditName]
+Coordinates=1190,386,117,51
+
+[FrameFirst.Image4]
+Coordinates=1190,1,105,51
+
+[FrameLanguages.LabelCount]
+Coordinates=1190,540,159,51
+
+[Label1]
+Coordinates=348,271,46,51
+
+[Edit1]
+Coordinates=555,241,40,51
+
+[FrameFirst.ButtonReg]
+Coordinates=1190,78,123,51
+
+[FrameFirst.Image2]
+Coordinates=244,155,105,51
+
+[FrameFirst.Image5]
+Coordinates=1190,155,105,51
+
+[FrameFirst.Image0]
+Coordinates=1190,309,105,51
+
+[FrameFirst.LabelName]
+Coordinates=1190,463,125,51
+
+[Edit4]
+Coordinates=28,271,40,51
+
+[BGetTokkens]
+Coordinates=249,271,80,51
+
+[FrameFirst.Image1]
+Coordinates=244,1,105,51
+
+[ButtonPaint]
+Coordinates=1071,311,72,51
+
+[ButtonSelChannels]
+Coordinates=244,78,109,51
+
+[FrameVideos.LabelVideoId]
+Coordinates=536,1,145,51
+
+[Image3]
+Coordinates=407,78,49,51
+Visible=True
+
+[BGetChannel]
+Coordinates=491,398,79,51
+
+[Button200]
+Coordinates=806,87,64,51
+
+[FrameFirst.Panel1]
+Coordinates=1374,419,103,33
+
+[FrameLanguages.LabelTextCount]
+Coordinates=966,447,180,51
+
+[Edit2]
+Coordinates=257,398,40,51
+
+[Memo1]
+Coordinates=1071,78,49,51
+
+[FrameLanguages.ButtonSubtitles]
+Coordinates=35,175,179,51
+
+[AniIndicator1]
+Coordinates=303,398,80,33
+
+[ButtonEmail2]
+Coordinates=407,1,80,51
+
+[FrameFirst.EditPas]
+Coordinates=906,87,108,51
 

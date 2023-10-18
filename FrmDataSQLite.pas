@@ -13,6 +13,14 @@ uses
   FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects;
 
 type
+  TLocalization = record
+    lang: string;
+    id_component: string;
+    name_components: string;
+  end;
+
+
+type
   TShortChannel = record
     id_channel: string;
     name_channel: string;
@@ -60,12 +68,11 @@ type
     language: string;
   end;
 
-
 Type
+  TTLocalization = Array [1 .. 1000] of TLocalization; // название компонент на выбранном языке
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами
   TVideos = Array [1 .. 1000] of TVideo; // ограничим 1000 видеороликами
   TListLanguages = Array [1 .. 300] of TLanguage; // языки вообще можно ограничить 300
-
 type
   TSQLiteModule = class(TDataModule)
     SQL: TFDConnection;
