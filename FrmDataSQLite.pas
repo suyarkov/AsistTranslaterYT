@@ -19,12 +19,11 @@ type
     name_components: string;
   end;
 
-
 type
   TShortChannel = record
     id_channel: string;
     name_channel: string;
-    img_channel: TBlobType;//tfGraphic;//TBlobType;
+    img_channel: TBlobType; // tfGraphic;//TBlobType;
     img: TBitmap;
     refresh_token: string;
     lang: string;
@@ -32,7 +31,7 @@ type
     deleted: integer;
     viewCount: integer;
     subscriberCount: integer;
-    videoCount:  integer;
+    videoCount: integer;
   end;
 
 type
@@ -40,15 +39,15 @@ type
     videoId: string;
     channelId: string;
     title: string;
-    description: string; //5000?
+    description: string; // 5000?
     urlDefault: string;
     publishedAt: string;
     publishTime: string;
     img: TBitmap;
     language: string;
     {
-    publishedAt: TDateTime;//"2023-04-08T17:37:31Z"
-    publishTime: TDateTime;//"2023-04-08T17:37:31Z"
+      publishedAt: TDateTime;//"2023-04-08T17:37:31Z"
+      publishTime: TDateTime;//"2023-04-08T17:37:31Z"
     }
   end;
 
@@ -68,11 +67,49 @@ type
     language: string;
   end;
 
+  // текущее название элементов приложения на выбранном языке
+type
+  TAppLocal = record
+    language: string;
+
+    First_LabelName: string;
+    First_LabelPas: string;
+    First_ButtonLog: string;
+    First_ButtonReg: string;
+
+    AddUser_LabelEmail: string;
+    AddUser_LabelPass1: string;
+    AddUser_LabelPass2: string;
+    AddUser_ButtonSend: string;
+    AddUser_MsgEmail: string;
+    AddUser_MsgPassword1: string;
+    AddUser_MsgPassword2: string;
+
+    Channels_LabelChannels: string;
+    Channels_ButtonAddChannel: string;
+
+    MainChannel_LabelNameChannel: string;
+    MainChannel_ButtonAddNextVideo: string;
+
+    MainVideos_LabelVideos: string;
+    MainVideos_LanguageCheckBox: string;
+    MainVideos_LabelTitle: string;
+    MainVideos_LabelDescription: string;
+    MainVideos_BTranslater: string;
+
+    FrameLanguages_LabelTextCount: string;
+    FrameLanguages_ButtonTitle: string;
+    FrameLanguages_ButtonSubtitles: string;
+  end;
+
 Type
-  TTLocalization = Array [1 .. 1000] of TLocalization; // название компонент на выбранном языке
+  TTLocalization = Array [1 .. 1000] of TLocalization;
+  // название компонент на выбранном языке
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами
   TVideos = Array [1 .. 1000] of TVideo; // ограничим 1000 видеороликами
-  TListLanguages = Array [1 .. 300] of TLanguage; // языки вообще можно ограничить 300
+  TListLanguages = Array [1 .. 300] of TLanguage;
+  // языки вообще можно ограничить 300
+
 type
   TSQLiteModule = class(TDataModule)
     SQL: TFDConnection;
@@ -88,7 +125,8 @@ type
     function LoadAnyImage(pUrl: string): TStream;
     procedure SaveTestImage(pSS3: TBitmap);
     procedure DelChannel(pId: String);
-    function Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
+    function Upd_sel_Lang_RefreshToken(pId_channel: string;
+      pSel_Lang: string): integer;
     function LoadLanguage(): TListLanguages;
 
     function LoadAddVideo(pIdChannel: string): TShortChannels;
@@ -111,7 +149,8 @@ var
   Bitimg: TBitmap;
 begin
   try
-    SQLiteModule.SQL.ExecSQL('select * from refresh_token where deleted = 0', nil, results);
+    SQLiteModule.SQL.ExecSQL('select * from refresh_token where deleted = 0',
+      nil, results);
   except
     on E: Exception do
       showmessage('Exception raised with message: ' + E.Message);
@@ -137,7 +176,6 @@ begin
   Result := results;
 end;
 
-
 // загрузка данных по всем каналам  и удаленным в том числе
 function TSQLiteModule.SelInfoChannels(): TShortChannels;
 var
@@ -162,7 +200,8 @@ begin
       Channels[i].id_channel := results.FieldByName('id_channel').AsString;
       Channels[i].name_channel := results.FieldByName('name_channel').AsString;
       Channels[i].img_channel := TBlobType(results.FieldByName('img_channel'));
-      Channels[i].refresh_token := results.FieldByName('refresh_token').AsString;
+      Channels[i].refresh_token := results.FieldByName('refresh_token')
+        .AsString;
       Channels[i].lang := results.FieldByName('lang').AsString;
       Channels[i].sel_lang := results.FieldByName('sel_lang').AsString;
       Channels[i].deleted := results.FieldByName('deleted').AsInteger;
@@ -173,20 +212,20 @@ begin
   Result := Channels;
 end;
 
-//сохраняем данные загруженного канала
+// сохраняем данные загруженного канала
 function TSQLiteModule.InsRefreshToken(pShortChanel: TShortChannel): integer;
 var
   i: integer;
   results: tDataSet;
 begin
-//  showmessage('Что save 1');
-//  pShortChanel.sel_lang := 'az, ay, ak, sq, am, en, ar, hy, as, af, bm, eu, be, bn, my, bg, bs, cy, hu, vi,';
+  // showmessage('Что save 1');
+  // pShortChanel.sel_lang := 'az, ay, ak, sq, am, en, ar, hy, as, af, bm, eu, be, bn, my, bg, bs, cy, hu, vi,';
   try
     SQLiteModule.SQL.ExecSQL
       ('delete from refresh_token where id_channel = :id_channel',
       [pShortChanel.id_channel]);
-{ -- так не передать
-    SQLiteModule.SQL.ExecSQL
+    { -- так не передать
+      SQLiteModule.SQL.ExecSQL
       ('insert into refresh_token ( id_channel,name_channel,' +
       'refresh_token,lang, sel_lang, deleted, timeadd, img_channel )' +
       'values(:id_channel, :name_channel, :refresh_token,'+
@@ -195,13 +234,12 @@ begin
       pShortChanel.refresh_token, pShortChanel.lang,
       pShortChanel.sel_lang, pShortChanel.deleted, DateToStr(Date) + ' ' + TimeToStr(Time),
       TBlobType(pShortChanel.img)]);
-        showmessage('SAVE Finish');
-}
+      showmessage('SAVE Finish');
+    }
 
-    SQLQuery.SQL.Text :=
-      'insert into refresh_token ( id_channel,name_channel,' +
-      'refresh_token,lang, sel_lang, deleted, timeadd, img_channel )' +
-      'values(:id_channel, :name_channel, :refresh_token,'+
+    SQLQuery.SQL.Text := 'insert into refresh_token ( id_channel,name_channel,'
+      + 'refresh_token,lang, sel_lang, deleted, timeadd, img_channel )' +
+      'values(:id_channel, :name_channel, :refresh_token,' +
       ':lang,:sel_lang,:deleted, :timeadd, :img_channel);';
     SQLQuery.Params[0].AsString := pShortChanel.id_channel;
     SQLQuery.Params[1].AsString := pShortChanel.name_channel;
@@ -230,15 +268,15 @@ end;
 // а если вдруг нет базы данных модуля, то можно его создать?
 procedure TSQLiteModule.DataModuleCreate(Sender: TObject);
 begin
-//    ClickConnection.Params.Add('Database='+mydir+'database.db');
-    SQL.Params.Database := GetCurrentDir() + '\libast.dll';
-{    try
+  // ClickConnection.Params.Add('Database='+mydir+'database.db');
+  SQL.Params.Database := GetCurrentDir() + '\libast.dll';
+  { try
     SQL.Connected := true;
     except
     on E: EDatabaseError do
     ShowMessage('Exception raised with message' + E.Message);
     end;
-}
+  }
 end;
 
 // загрузка фото из интернета по адресу
@@ -248,7 +286,7 @@ var
   AResponce: IHTTPResponse;
   FHTTPClient: THTTPClient;
   AAPIUrl: String;
-  //jpegimg: TJPEGImage;
+  // jpegimg: TJPEGImage;
   s: string;
   Ss: TStringStream;
 begin
@@ -290,7 +328,7 @@ begin
   begin
     SQLQuery.SQL.Text :=
       'update refresh_token set img_channel= :photo where id_channel = "UCta8Fu2bQ9uVNr4VzARiwLA";';
-//    SQLQuery.Params[0].AsBlob := TBlobType(pSS3);
+    // SQLQuery.Params[0].AsBlob := TBlobType(pSS3);
     SQLQuery.Params[0].Assign(pSS3);
     SQLQuery.ExecSQL;
     SQLiteModule.SQL.Commit;
@@ -333,7 +371,8 @@ begin
       Channels[i].id_channel := results.FieldByName('id_channel').AsString;
       Channels[i].name_channel := results.FieldByName('name_channel').AsString;
       Channels[i].img_channel := TBlobType(results.FieldByName('img_channel'));
-      Channels[i].refresh_token := results.FieldByName('refresh_token').AsString;
+      Channels[i].refresh_token := results.FieldByName('refresh_token')
+        .AsString;
       Channels[i].lang := results.FieldByName('lang').AsString;
       Channels[i].sel_lang := results.FieldByName('sel_lang').AsString;
       Channels[i].deleted := results.FieldByName('deleted').AsInteger;
@@ -352,7 +391,8 @@ var
   vList: TListLanguages;
 begin
   try
-    SQLiteModule.SQL.ExecSQL('select * from lang order by lang_name_en', nil, results);
+    SQLiteModule.SQL.ExecSQL('select * from lang order by lang_name_en',
+      nil, results);
   except
     on E: Exception do
       showmessage('Exception raised with message: ' + E.Message);
@@ -376,12 +416,13 @@ begin
 end;
 
 // сохранение выбранных языков в настройках канала
-function TSQLiteModule.Upd_sel_Lang_RefreshToken(pId_channel: string; pSel_Lang:string): integer;
+function TSQLiteModule.Upd_sel_Lang_RefreshToken(pId_channel: string;
+  pSel_Lang: string): integer;
 var
   i: integer;
   results: tDataSet;
 begin
-//  showmessage('Что save ' + pId_channel + 'строка ' + pSel_Lang);
+  // showmessage('Что save ' + pId_channel + 'строка ' + pSel_Lang);
   try
     SQLiteModule.SQL.ExecSQL
       ('update refresh_token set sel_lang = :sel_lang  where id_channel = :id_channel',
@@ -398,6 +439,5 @@ begin
   SQLiteModule.SQL.Commit;
   Result := 1;
 end;
-
 
 end.

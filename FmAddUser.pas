@@ -10,7 +10,7 @@ uses
 type
   TFrameAddUser = class(TFrame)
     Panel1: TPanel;
-    cLabelEmail: TLabel;
+    LabelEmail: TLabel;
     EditEmail: TEdit;
     LabelPass1: TLabel;
     Pass1: TEdit;

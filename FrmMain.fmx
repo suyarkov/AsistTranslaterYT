@@ -50,7 +50,7 @@ object fMain: TfMain
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
     inherited PanelIsLang: TPanel
-      Position.X = -8.000000000000000000
+      Position.X = -2.000000000000000000
       Size.Width = 305.000000000000000000
     end
     inherited LabelName: TLabel
@@ -72,7 +72,6 @@ object fMain: TfMain
       OnClick = FrameFirstButtonLogClick
     end
     inherited Image0: TImage
-      Visible = False
       OnClick = FrameFirstImage0Click
     end
     inherited Image1: TImage
@@ -108,7 +107,6 @@ object fMain: TfMain
     inherited Image6: TImage
       MultiResBitmap.Height = 58
       MultiResBitmap.Width = 83
-      Visible = False
       OnClick = FrameFirstImage0Click
     end
   end
@@ -190,6 +188,9 @@ object fMain: TfMain
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+      inherited LabelVideoId: TLabel
+        TabOrder = 4
+      end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}

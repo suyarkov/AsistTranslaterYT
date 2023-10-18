@@ -1010,10 +1010,14 @@ begin
   5: vInterfaceLanguage := 'uk';
   6: vInterfaceLanguage := 'ru';
   end;
+  // сдвиг панели на ту позицию которая выделена
   FrameFirst.PanelIsLang.Position.X := vButton.Position.X;
   //  vInterfaceLanguage := vButton.Name;
   //  showmessage(vInterfaceLanguage);
   uQ.SaveReestr('Local',vInterfaceLanguage);
+  // грузануть языковые надписи для интерфейса
+  // установить надписи на все панели!
+  FrameFirst.SetLang(Sender, 'Введите Email', 'Введите пароль', 'Войти', 'Регистрация');
 end;
 
 procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);

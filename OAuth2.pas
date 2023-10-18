@@ -377,15 +377,15 @@ var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
 begin
-/*{
-/*  "id": "YOUR_VIDEO_ID",
-/*  "localizations": {
-/*    "es": {
-/*      "title": "no hay nada a ver aqui",
-/*      "description": "Esta descripcion es en español."
-/*    }
-/*  }
-/*}
+//{
+//  "id": "YOUR_VIDEO_ID",
+//  "localizations": {
+//    "es": {
+//      "title": "no hay nada a ver aqui",
+//      "description": "Esta descripcion es en español."
+//    }
+//  }
+//}
   Params := TDictionary<String, String>.Create;
   Params.Add('part', 'snippet,status,localizations');
   Headers := TDictionary<String, String>.Create;
