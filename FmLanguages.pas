@@ -19,10 +19,21 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure SetLang(pLabelTextCount, pButtonTitle, pButtonSubtitles : string);
   end;
 
 implementation
 
 {$R *.fmx}
+
+procedure TFrameLanguages.SetLang(pLabelTextCount, pButtonTitle, pButtonSubtitles : string);
+begin
+  if pLabelTextCount <> '' then
+    LabelTextCount.Text := pLabelTextCount;
+  if pButtonTitle <> '' then
+    ButtonTitle.Text := pButtonTitle;
+  if pButtonSubtitles <> '' then
+    ButtonSubtitles.Text := pButtonSubtitles;
+end;
 
 end.

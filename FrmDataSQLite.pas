@@ -12,13 +12,7 @@ uses
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
   FireDAC.Phys.SQLiteWrapper.Stat, FMX.Objects;
 
-type
-  TLocalization = record
-    lang: string;
-    id_component: string;
-    name_components: string;
-  end;
-
+// короткое описание всех подключенных каналов
 type
   TShortChannel = record
     id_channel: string;
@@ -34,6 +28,7 @@ type
     videoCount: integer;
   end;
 
+  // описание активного, текущего видео
 type
   TVideo = record
     videoId: string;
@@ -51,6 +46,7 @@ type
     }
   end;
 
+  // запись - язык для перевода
 type
   TLanguage = record
     Id: integer; // номер по порядку
@@ -61,16 +57,27 @@ type
     Activ: integer;
   end;
 
+  // список всех субтитров которые есть на видео
 type
   TSubtitle = record
-    subtitleId: string; // Is субтитров
+    subtitleId: string; // ID субтитров
     language: string;
   end;
 
-  // текущее название элементов приложения на выбранном языке
+  // запись по объектным названиям - возможно не буду использовать
 type
-  TAppLocal = record
+  TLocalization = record
+    lang: string;
+    id_component: string;
+    name_components: string;
+  end;
+
+  // текущие все названия элементов приложения на выбранном языке
+type
+  TAppLocalization = record
     language: string;
+
+    MsgInfoUpdate :string;
 
     First_LabelName: string;
     First_LabelPas: string;
@@ -100,15 +107,16 @@ type
     FrameLanguages_LabelTextCount: string;
     FrameLanguages_ButtonTitle: string;
     FrameLanguages_ButtonSubtitles: string;
+
   end;
 
 Type
-  TTLocalization = Array [1 .. 1000] of TLocalization;
-  // название компонент на выбранном языке
   TShortChannels = Array [1 .. 50] of TShortChannel; // ограничим 50 каналами
   TVideos = Array [1 .. 1000] of TVideo; // ограничим 1000 видеороликами
+  // все языки на которые можно переводить
   TListLanguages = Array [1 .. 300] of TLanguage;
-  // языки вообще можно ограничить 300
+  // название компонент на всех языках - это не используем
+  TListLocalization = Array [1 .. 1000] of TLocalization;
 
 type
   TSQLiteModule = class(TDataModule)
@@ -128,8 +136,8 @@ type
     function Upd_sel_Lang_RefreshToken(pId_channel: string;
       pSel_Lang: string): integer;
     function LoadLanguage(): TListLanguages;
-
     function LoadAddVideo(pIdChannel: string): TShortChannels;
+    function GetAppLocalization(CurrentLanguage: string): TAppLocalization;
   end;
 
 var
@@ -438,6 +446,84 @@ begin
 
   SQLiteModule.SQL.Commit;
   Result := 1;
+end;
+
+function TSQLiteModule.GetAppLocalization(CurrentLanguage: string)
+  : TAppLocalization;
+var
+  vLocalization: TAppLocalization;
+begin
+  with vLocalization do
+  begin
+    language := CurrentLanguage;
+
+    if language = 'ru' then
+    begin
+      MsgInfoUpdate := 'Новая версия программы! Обновитесь!';
+      First_LabelName := 'Введите Email';
+      First_LabelPas := 'Пароль';
+      First_ButtonLog := 'Войти';
+      First_ButtonReg := 'Создать новый аккаунт';
+
+      AddUser_LabelEmail := 'Введите ваш email';
+      AddUser_LabelPass1 := 'Введите  пароль';
+      AddUser_LabelPass2 := 'Повторно введите пароль';
+      AddUser_ButtonSend := 'Зарегистрироваться';
+      AddUser_MsgEmail := 'Неверный формат Email';
+      AddUser_MsgPassword1 := 'Задайте пароли';
+      AddUser_MsgPassword2 := 'Пароли не совпадают';
+
+      Channels_LabelChannels := 'Ваши каналы';
+      Channels_ButtonAddChannel := 'Подключить Youtube канал при помощи Google';
+
+      MainChannel_LabelNameChannel := 'Текущий канал';
+      MainChannel_ButtonAddNextVideo := 'Показать предыдущие видео';
+
+      MainVideos_LabelVideos := 'Текущее видео';
+      MainVideos_LanguageCheckBox := 'Сменить язык для перевода';
+      MainVideos_LabelTitle := 'Наименование';
+      MainVideos_LabelDescription := 'Описание';
+      MainVideos_BTranslater := 'Перевести';
+
+      FrameLanguages_LabelTextCount := 'Выбрано языков:';
+      FrameLanguages_ButtonTitle := 'Перевести описание';
+      FrameLanguages_ButtonSubtitles := 'Перевести субтитры';
+    end
+    else // английский язык по умолчанию
+    begin
+      MsgInfoUpdate := 'New release! Update the program!';
+
+      First_LabelName := 'Email';
+      First_LabelPas := 'Password';
+      First_ButtonLog := 'Log In';
+      First_ButtonReg := 'Create new account';
+
+      AddUser_LabelEmail := 'Enter your email';
+      AddUser_LabelPass1 := 'Enter the password';
+      AddUser_LabelPass2 := 'Enter the password again';
+      AddUser_ButtonSend := 'Sign Up';
+      AddUser_MsgEmail := 'Invalid email format';
+      AddUser_MsgPassword1 := 'Enter passwords';
+      AddUser_MsgPassword2 := 'Passwords don''t match';
+
+      Channels_LabelChannels := 'Your channels';
+      Channels_ButtonAddChannel := 'Add Channels with Google';
+
+      MainChannel_LabelNameChannel := 'Your channel';
+      MainChannel_ButtonAddNextVideo := 'Show previous videos';
+
+      MainVideos_LabelVideos := 'Video';
+      MainVideos_LanguageCheckBox := 'Change the language';
+      MainVideos_LabelTitle := 'Title';
+      MainVideos_LabelDescription := 'Description';
+      MainVideos_BTranslater := 'Translate';
+
+      FrameLanguages_LabelTextCount := 'Number of selected languages:';
+      FrameLanguages_ButtonTitle := 'Translation of the description';
+      FrameLanguages_ButtonSubtitles := 'Translation of subtitles';
+    end;
+  end;
+  result := vLocalization;
 end;
 
 end.

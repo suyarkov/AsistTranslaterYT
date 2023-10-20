@@ -29,11 +29,26 @@ type
     { Private declarations }
   public
     { Public declarations }
+    procedure SetLang(pLabelVideos, pLanguageCheckBox, pLabelTitle, pLabelDescription, pBTranslater: string);
   end;
 
 implementation
 
 {$R *.fmx}
+
+procedure TFrameVideos.SetLang(pLabelVideos, pLanguageCheckBox, pLabelTitle, pLabelDescription, pBTranslater: string);
+begin
+  if pLabelVideos <> '' then
+    LabelVideos.Text := pLabelVideos;
+  if pLanguageCheckBox <> '' then
+    LanguageCheckBox.Text := pLanguageCheckBox;
+  if pLabelTitle <> '' then
+    LabelTitle.Text := pLabelTitle;
+  if pLabelDescription <> '' then
+    LabelDescription.Text := pLabelDescription;
+  if pBTranslater <> '' then
+    BTranslater.Text := pBTranslater;
+end;
 
 procedure TFrameVideos.BTranslaterClick(Sender: TObject);
 var

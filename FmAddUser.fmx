@@ -73,8 +73,11 @@ object FrameAddUser: TFrameAddUser
     object Button1: TButton
       Position.X = 8.000000000000000000
       Position.Y = 8.000000000000000000
+      Size.Width = 25.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 8
-      Text = 'ButtonCancel'
+      Text = '<'
       OnClick = Button1Click
     end
   end

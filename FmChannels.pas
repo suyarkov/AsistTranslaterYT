@@ -3,7 +3,8 @@ unit FmChannels;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.Objects, System.ImageList, FMX.ImgList,
   FMX.Layouts;
@@ -14,20 +15,23 @@ type
     ButtonAddChannel: TButton;
     ImageAddChannel: TImage;
     BoxChannels: TVertScrollBox;
-    procedure ImageAddChannelClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    procedure SetLang(pLabelChannels, pButtonAddChannel: string);
   end;
 
 implementation
 
 {$R *.fmx}
 
-procedure TFrameChannels.ImageAddChannelClick(Sender: TObject);
+procedure TFrameChannels.SetLang(pLabelChannels, pButtonAddChannel: string);
 begin
-//   ImageAddChannel.
+  if pLabelChannels <> '' then
+    LabelChannels.Text := pLabelChannels;
+  if pButtonAddChannel <> '' then
+    ButtonAddChannel.Text := pButtonAddChannel;
 end;
 
 end.

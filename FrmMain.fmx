@@ -50,16 +50,8 @@ object fMain: TfMain
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
     inherited PanelIsLang: TPanel
-      Position.X = -2.000000000000000000
-      Size.Width = 305.000000000000000000
-    end
-    inherited LabelName: TLabel
-      Position.X = 8.000000000000000000
-    end
-    inherited LabelPas: TLabel
-      inherited LabelError: TLabel
-        TabOrder = 4
-      end
+      Position.Y = 233.000000000000000000
+      Size.Width = 41.000000000000000000
     end
     inherited EditName: TEdit
       StyleLookup = 'EditNameStyle1'

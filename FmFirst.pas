@@ -41,8 +41,7 @@ type
     { Public declarations }
   var
     LangCurrent: string;
-    procedure SetLang(Sender: TObject; pLabelName, pLabelPas, pButtonLog,
-      pButtonReg: string);
+    procedure SetLang(pLabelName, pLabelPas, pButtonLog, pButtonReg: string);
   end;
 
 implementation
@@ -61,8 +60,8 @@ begin
   // Canvas.RoundRect( i*32-14, 25, i*32 + 30-14,  25+10, 6 ,6);
 end;
 
-procedure TFrameFirst.SetLang(Sender: TObject;
-  pLabelName, pLabelPas, pButtonLog, pButtonReg: string);
+procedure TFrameFirst.SetLang(pLabelName, pLabelPas, pButtonLog,
+  pButtonReg: string);
 begin
   if pLabelName <> '' then
     LabelName.Text := pLabelName;

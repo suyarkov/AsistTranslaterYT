@@ -15,11 +15,11 @@ uses
   Classes.channel, Classes.video,
   REST.JSON, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo, FMX.Edit, IdMessage,
   IdTCPConnection, IdTCPClient, IdExplicitTLSClientServerBase,
-  //IdMessageClient, //IdSMTPBase, IdSMTP,
+  // IdMessageClient, //IdSMTPBase, IdSMTP,
   Classes.shearche.image,
   uEmailSend, uQ,
   Classes.channel.statistics, FmMainChannel, FmVideos,
-  Classes.videoInfo,  Classes.subtitlelist,
+  Classes.videoInfo, Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput;
 
@@ -91,10 +91,12 @@ type
     procedure TestAniingicatorClick(Sender: TObject);
   private
     { Private declarations }
+    MsgInfoUpdate: string; // 'Есть обновление!'
+
   public
     { Public declarations }
-    function  FrameAsk(Sender: TObject; AskText: string): integer;
-    function  FrameTextInput(Sender: TObject; AskText: string): string;
+    function FrameAsk(Sender: TObject; AskText: string): integer;
+    function FrameTextInput(Sender: TObject; AskText: string): string;
     procedure FrameInfo(Sender: TObject; InfoText: string);
   end;
 
@@ -127,12 +129,12 @@ var
   vProgressBarStatus: integer;
   GlobalProgressThread: TProgressThread;
   FrameProgressEndLess: TFrameProgressEndLess;
-  vResponceChannel : string;
-  vResponceVideo : string;
-  vResponceInfoVideo : string;
-  EdAccessCode : string;
-  EdRefresh_token :string;
-  EdAccess_token :string;
+  vResponceChannel: string;
+  vResponceVideo: string;
+  vResponceInfoVideo: string;
+  EdAccessCode: string;
+  EdRefresh_token: string;
+  EdAccess_token: string;
   vCurrentPanChannel: integer;
   vGlobalList: TListLanguages;
   vInterfaceLanguage: string;
@@ -172,8 +174,8 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := 'Жааах!';//'AssistIQ 0.0.1';
-//  fMain.PanelAlpha_ForTest.visible := false;
+  fMain.Caption := 'Жааах!'; // 'AssistIQ 0.0.1';
+  fMain.PanelAlpha_ForTest.visible := false;
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // пароль
@@ -192,11 +194,11 @@ begin
   fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
   fMain.FrameMainChannel.Position.Y := 56;
 
-    // спрячем четвертый фрейм за границу видимости
+  // спрячем четвертый фрейм за границу видимости
   fMain.FrameVideos.Position.X := Round(fMain.Width + 1);
   fMain.FrameVideos.Position.Y := 56;
 
-      // спрячем пятый (языки) фрейм за границу видимости
+  // спрячем пятый (языки) фрейм за границу видимости
   fMain.FrameLanguages.Position.X := Round(fMain.Width + 1);
   fMain.FrameLanguages.Position.Y := 56;
 
@@ -210,26 +212,46 @@ begin
     FrameProgressEndLess.Align := TAlignLayout.Center;
   end;
 
-  fMain.FrameFirst.EditName.Text := uQ.LoadReestr('Name');
+  fMain.FrameFirst.EditName.text := uQ.LoadReestr('Name');
 
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC1');
   fMain.FrameVideos.LanguageComboBox.Items.Add('ABC2');
 
-
 end;
 
 procedure TfMain.FormShow(Sender: TObject);
+var
+  vAppLocalization: TAppLocalization;
 begin
   // вспомним какой у нас интерфейс
   vInterfaceLanguage := uQ.LoadReestr('Local');
   // подменяем язык интерфейса, пока только по загрузке !!!
-  FrameFirst.ButtonLog.Text := GoogleTranslate(FrameFirst.ButtonLog.Text,
-        'en', vInterfaceLanguage);;
+  FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
+    vInterfaceLanguage);;
   // загрузим известные языки перевод
-  vGlobalList :=  SQLiteModule.LoadLanguage();
+  vGlobalList := SQLiteModule.LoadLanguage();
   // переведем названия языков на язык программы
   // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
-  FrameInfo(Sender, 'Есть обновление!');
+  // переведем интерфейс
+
+    // грузануть языковые надписи для интерфейса
+  vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
+  // установить надписи на все панели!
+  MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
+  FrameFirst.SetLang(vAppLocalization.First_LabelName,
+    vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
+    vAppLocalization.First_ButtonReg);
+  FrameChannels.SetLang(vAppLocalization.Channels_LabelChannels,
+    vAppLocalization.Channels_ButtonAddChannel);
+  FrameMainChannel.SetLang(vAppLocalization.MainChannel_LabelNameChannel,
+    vAppLocalization.MainChannel_ButtonAddNextVideo);
+  FrameVideos.SetLang(vAppLocalization.MainVideos_LabelVideos,
+    vAppLocalization.MainVideos_LanguageCheckBox,
+    vAppLocalization.MainVideos_LabelTitle,
+    vAppLocalization.MainVideos_LabelDescription,
+    vAppLocalization.MainVideos_BTranslater);
+  // 'Если Есть обновление!'
+  FrameInfo(Sender, MsgInfoUpdate);
 
 end;
 
@@ -237,11 +259,11 @@ end;
 // разбор полученного ответа в vResponceChannel по каналу от сервера youtube и создание коротного описания каналов
 procedure TfMain.BGetChannelClick(Sender: TObject);
 var
-  vObj: Tchannel;//Tchannel;
-  res, i: Integer;
+  vObj: Tchannel; // Tchannel;
+  res, i: integer;
   urlget: string;
   vChannel: TShortChannel;
-//  vTest : Tshearche_image;
+  // vTest : Tshearche_image;
   vImgUrl: string;
   // S: AnsiString;
   Bitimg: TBitmap;
@@ -249,24 +271,23 @@ var
   AAPIUrl: String;
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
-  Stream : TStream;
+  Stream: TStream;
 begin
-  s := '0';
-  vObj:= Tchannel.Create;
+  S := '0';
+  vObj := Tchannel.Create;
   // в мемо должен быть уже строка с канала
-  vObj := TJson.JsonToObject<Tchannel>(Memo1.Text);
-
+  vObj := TJson.JsonToObject<Tchannel>(Memo1.text);
 
   for i := 0 to Length(vObj.Items) - 1 do
   begin
     vChannel.id_channel := vObj.Items[i].id;
     vChannel.name_channel := vObj.Items[i].snippet.title;
-    vChannel.lang :=vObj.Items[i].snippet.country;
-//    vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
+    vChannel.lang := vObj.Items[i].snippet.country;
+    // vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
     vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
-    Edit4.Text := vImgUrl;
+    Edit4.text := vImgUrl;
     try
-      S := StringReplace(Edit4.Text, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      S := StringReplace(Edit4.text, #13, '', [rfReplaceAll, rfIgnoreCase]);
       AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
       FHTTPClient := THTTPClient.Create;
       FHTTPClient.UserAgent :=
@@ -287,13 +308,13 @@ begin
       vChannel.img := Bitimg;
       vChannel.img_channel := TBlobType(Bitimg);
     except
-       showmessage('Что except');
+      showmessage('Что except');
     end;
 
     vChannel.refresh_token := EdRefresh_token;
     if vChannel.lang = '' then
     begin
-      vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
+      vChannel.lang := vObj.Items[i].snippet.defaultLanguage;
     end;
     // vChannel.sel_lang := vObj.;
     vChannel.deleted := 0;
@@ -302,13 +323,12 @@ begin
 
 end;
 
-
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
 procedure TfMain.BGetTokkensClick(Sender: TObject);
 
 var
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
 
   OAuth2: TOAuth;
   vString: string;
@@ -317,18 +337,18 @@ begin
   OAuth2.ClientID :=
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
   OAuth2.ClientSecret := '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';
-  OAuth2.ResponseCode := EdAccessCode;// Edit1.Text;//
-  Edit1.Text := EdAccessCode;
+  OAuth2.ResponseCode := EdAccessCode; // Edit1.Text;//
+  Edit1.text := EdAccessCode;
 
   Access_token := OAuth2.GetAccessToken;
-  Refresh_token := OAuth2.refresh_token;
+  refresh_token := OAuth2.refresh_token;
 
-  Edit4.Text := Access_token + ' иии ' + refresh_token;
+  Edit4.text := Access_token + ' иии ' + refresh_token;
 
   vResponceChannel := OAuth2.MyChannels;
-  Memo1.Text := vResponceChannel;
+  Memo1.text := vResponceChannel;
   OAuth2.Free;
-  EdRefresh_token :=  Refresh_token;
+  EdRefresh_token := refresh_token;
   BGetChannelClick(Sender);
   ButtonSelChannelsClick(Sender); // обновление не забудь!!!
 end;
@@ -350,8 +370,8 @@ end;
 // получить список видео по каналу
 procedure TfMain.Button200Click(Sender: TObject);
 var
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
 
   OAuth2: TOAuth;
   vString: string;
@@ -363,7 +383,7 @@ begin
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label3.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label2.text);
-  //  Memo1.Text := vResponceVideo;
+  // Memo1.Text := vResponceVideo;
   OAuth2.Free;
 end;
 
@@ -411,7 +431,7 @@ end;
 procedure TNewThread.SetActualFrame;
 var
   vLeftBorderFrame, vStepSize, vLeftBorderFrame2, vLeftBorderFrame3,
-  vLeftBorderFrame4, vLeftBorderFrame5: integer;
+    vLeftBorderFrame4, vLeftBorderFrame5: integer;
 begin
   vStepSize := 10;
   vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst.Width) / 2);
@@ -471,12 +491,13 @@ begin
 
   end;
 
-    // вторая форма заменяется третьей с каналами  FrameMainChannel
+  // вторая форма заменяется третьей с каналами  FrameMainChannel
   if vEventMove = 21 then
   begin
     If fMain.FrameChannels.Position.X < (fMain.Width + 1) then
     begin
-      fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X + vStepSize;
+      fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X +
+        vStepSize;
     end;
 
     If fMain.FrameMainChannel.Position.X >= fMain.Width then
@@ -509,7 +530,8 @@ begin
     begin
       // если сдвиг больше шага сдвига до левой границы помещения формы
       if fMain.FrameChannels.Position.X - vLeftBorderFrame2 > vStepSize then
-        fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X - vStepSize
+        fMain.FrameChannels.Position.X := fMain.FrameChannels.Position.X -
+          vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
         fMain.FrameChannels.Position.X := vLeftBorderFrame2;
     end;
@@ -522,12 +544,13 @@ begin
 
   end;
 
-   // третья форма с видео, заменяется подробной для редакции описания видео
+  // третья форма с видео, заменяется подробной для редакции описания видео
   if vEventMove = 31 then
   begin
     If fMain.FrameMainChannel.Position.X < (fMain.Width + 1) then
     begin
-      fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X + vStepSize;
+      fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X +
+        vStepSize;
     end;
 
     If fMain.FrameVideos.Position.X >= fMain.Width then
@@ -538,10 +561,8 @@ begin
     If fMain.FrameVideos.Position.X < (vLeftBorderFrame4) then
     begin
       // если сдвиг больше шага сдвига до левой границы помещения формы
-      if ABS(fMain.FrameVideos.Position.X - vLeftBorderFrame4) > vStepSize
-      then
-        fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X +
-          vStepSize
+      if ABS(fMain.FrameVideos.Position.X - vLeftBorderFrame4) > vStepSize then
+        fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X + vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
         fMain.FrameVideos.Position.X := vLeftBorderFrame4;
     end;
@@ -560,20 +581,20 @@ begin
     begin
       // если сдвиг больше шага сдвига до левой границы помещения формы
       if fMain.FrameMainChannel.Position.X - vLeftBorderFrame3 > vStepSize then
-        fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X - vStepSize
+        fMain.FrameMainChannel.Position.X := fMain.FrameMainChannel.Position.X -
+          vStepSize
       else // если уже меньше, от просто подставим форму в нужное место
         fMain.FrameMainChannel.Position.X := vLeftBorderFrame3;
     end;
 
     If fMain.FrameVideos.Position.X > -fMain.FrameVideos.Width then
     begin
-      fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X -
-        vStepSize;
+      fMain.FrameVideos.Position.X := fMain.FrameVideos.Position.X - vStepSize;
     end;
 
   end;
 
-   // четвертая форма с подробностями видео FrameVideos, заменяется языками  FrameLanguages
+  // четвертая форма с подробностями видео FrameVideos, заменяется языками  FrameLanguages
   if vEventMove = 41 then
   begin
     If fMain.FrameVideos.Position.X < (fMain.Width + 1) then
@@ -627,9 +648,9 @@ begin
   // Form1.ProgressBar1.Position:=Progress;
   // Form1.Label1.Caption := UnitRead.Read('22_') + IntToStr(Progress);
   // fMain.FrameFirst.Position.X := fMain.FrameFirst.Position.X + 5;
-  //fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
-  //  IntToStr(Round(vLeftBorderFrame2)) + ', ' +
-  //  IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
+  // fMain.Label1.text := IntToStr(Round(fMain.FrameChannels.Position.X)) + ' : ' +
+  // IntToStr(Round(vLeftBorderFrame2)) + ', ' +
+  // IntToStr(Round(fMain.FrameChannels.Position.Y)) + ', ';
 end;
 
 procedure TfMain.Button5Click(Sender: TObject);
@@ -724,7 +745,7 @@ begin
     vEventMove := vState * 10;
   end;
 
-//  showmessage('vState = ' + IntToStr(vState) +  ' ' + IntToStr(vEventMove) );
+  // showmessage('vState = ' + IntToStr(vState) +  ' ' + IntToStr(vEventMove) );
   NewThread := TNewThread.Create(true);
   NewThread.FreeOnTerminate := true;
   NewThread.Priority := tpLower;
@@ -733,22 +754,19 @@ end;
 
 procedure TfMain.ButtonEmail2Click(Sender: TObject);
 begin
-  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru',
-  '0wxKM9nE60HAwsvhGbN5', 'brest20133@mail.ru', 'aFromName',
-  'suyarkov@gmail.com', 'Тема пирога', 'Привет от асиста',
-  '', true);
+  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
+    'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
+    'Привет от асиста', '', true);
 end;
 
 procedure TfMain.ButtonPaintClick(Sender: TObject);
 begin
-//      fMaim.
+  // fMaim.
 end;
-
-
 
 procedure TfMain.ButtonQClick(Sender: TObject);
 var
-  vText : string;
+  vText: string;
 begin
   vText := 'проба пера';
   Code(vText, 'qwedfnkj123', true);
@@ -782,23 +800,22 @@ begin
     results.First;
     while not results.Eof do
     begin
-        try
-          vBitmap := TBitmap(results.FieldByName('img_channel'));
-        except
-//          vBitmap := vDefaulBitmap;
-        end;
+      try
+        vBitmap := TBitmap(results.FieldByName('img_channel'));
+      except
+        // vBitmap := vDefaulBitmap;
+      end;
 
       vPos := 30 + (i - 1) * 120;
       PanChannels[i] := TChannelPanel.Create(FrameChannels.BoxChannels, vPos, i,
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
-        results.FieldByName('lang').AsString,
-        results.FieldByName('sel_lang').AsString,
-        vBitmap);
+        results.FieldByName('lang').AsString, results.FieldByName('sel_lang')
+        .AsString, vBitmap);
       PanChannels[i].Parent := FrameChannels.BoxChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-//      PanChannels[i].OnMouseMove := DinPanelMouseMove;
+      // PanChannels[i].OnMouseMove := DinPanelMouseMove;
       PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
       PanChannels[i].ChImage.OnClick := DinPanelClick;
       PanChannels[i].ChName.OnClick := DinPanelClick;
@@ -816,8 +833,8 @@ end;
 
 procedure TfMain.ButtonVideoInfoClick(Sender: TObject);
 var
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
 
   OAuth2: TOAuth;
   vString: string;
@@ -828,47 +845,48 @@ begin
   OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  vResponceInfoVideo := OAuth2.VideoInfo(FrameMainChannel.Label2.text);
-  Memo1.Text := vResponceInfoVideo;
+  vResponceInfoVideo := OAuth2.videoInfo(FrameMainChannel.Label2.text);
+  Memo1.text := vResponceInfoVideo;
   OAuth2.Free;
 end;
 
 // обработка пароля
 procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
 var
-  {$IFDEF ANDROID}
+{$IFDEF ANDROID}
   Intent: JIntent;
-  {$ENDIF}
-  {$IFDEF IOS}
+{$ENDIF}
+{$IFDEF IOS}
   NSU: NSUrl;
-  {$ENDIF}
-  {$IFDEF MSWINDOWS}
-  Res: HINST;
-  {$ENDIF}
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  res: HINST;
+{$ENDIF}
 begin
-// подключение
-//  EditStatusConnect.Text := 'Waiting for connection ...';
+  // подключение
+  // EditStatusConnect.Text := 'Waiting for connection ...';
   // 1.Включить сервер
 
   if TCPServerYouTubeAnswers.Active = false then
   begin
     TCPServerYouTubeAnswers.Bindings.Add.Port := 1904;
     TCPServerYouTubeAnswers.Active := true;
-//    IdTCPServer1.OnExecute(true);
-//    AContext.Connection.Disconnect;
-//    AContext.Connection.IOHandler.Free;
+    // IdTCPServer1.OnExecute(true);
+    // AContext.Connection.Disconnect;
+    // AContext.Connection.IOHandler.Free;
 
   end;
   // 2. Открыть регистрацию
-    {$IFDEF MSWINDOWS}     // версия для винды
-  ShellExecute(0{Handle}, 'open',
+{$IFDEF MSWINDOWS}     // версия для винды
+  ShellExecute(0 { Handle } , 'open',
     PChar('https://accounts.google.com/o/oauth2/v2/auth?' +
     'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
     'access_type=offline&include_granted_scopes=true' + '&state=security_token'
     + '&response_type=code' + '&redirect_uri=http://127.0.0.1:1904' +
     '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com'
-    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil, 1{SW_SHOWNORMAL});
-    {$ENDIF}
+    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil,
+    1 { SW_SHOWNORMAL } );
+{$ENDIF}
 end;
 
 procedure TfMain.FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
@@ -903,8 +921,8 @@ begin
 
   // проверка на сервере подлинность
   OAuth2 := TOAuth.Create;
-  vResponce := OAuth2.UserGet('name='+vLog);
-  edit2.Text :=  vResponce;
+  vResponce := OAuth2.UserGet('name=' + vLog);
+  Edit2.text := vResponce;
   OAuth2.Free;
 
   // реакция
@@ -917,7 +935,7 @@ begin
   else
   // идентификация успешна
   begin
-    uQ.SaveReestr('Name',vLog);
+    uQ.SaveReestr('Name', vLog);
     LabelMail.text := fMain.FrameFirst.EditName.text;
     fMain.FrameFirst.LabelError.Visible := false;
     fMain.FrameFirst.LabelForgot.Visible := false;
@@ -930,22 +948,32 @@ end;
 // регистрация пользователя
 procedure TfMain.FrameFirstButtonRegClick(Sender: TObject);
 var
-  vFrameAddUser :TFrameAddUser;
-  vRes, vCountTry, vKey : integer;
-  vEnterText : string;
-  vLog, vPas : string;
+  vFrameAddUser: TFrameAddUser;
+  vRes, vCountTry, vKey: integer;
+  vEnterText: string;
+  vLog, vPas: string;
+  vAppLocalization: TAppLocalization;
 begin
-  // запрос новых данных пользователя
-  vFrameAddUser := TFrameAddUser.Create(self);
-  vFrameAddUser.Parent := fMain;
-  vFrameAddUser.status := - 1;
+  // грузануть языковые надписи для интерфейса
+  vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
 
-  while vFrameAddUser.status = - 1 do
+  // запрос новых данных пользователя
+  vFrameAddUser := TFrameAddUser.Create(Self);
+  // устанавливаем подписи
+  vFrameAddUser.SetLang(vAppLocalization.AddUser_LabelEmail,
+    vAppLocalization.AddUser_LabelPass1, vAppLocalization.AddUser_LabelPass2,
+    vAppLocalization.AddUser_ButtonSend, vAppLocalization.AddUser_MsgEmail,
+    vAppLocalization.AddUser_MsgPassword1,
+    vAppLocalization.AddUser_MsgPassword2);
+  vFrameAddUser.Parent := fMain;
+  vFrameAddUser.status := -1;
+
+  while vFrameAddUser.status = -1 do
     Application.ProcessMessages; // wait
 
   vRes := vFrameAddUser.status;
-  vLog := vFrameAddUser.EditEmail.Text;
-  vPas := vFrameAddUser.Pass1.Text;
+  vLog := vFrameAddUser.EditEmail.text;
+  vPas := vFrameAddUser.Pass1.text;
   vFrameAddUser.Destroy;
   // вышли по эскейпт
   if vRes = 0 then
@@ -954,7 +982,9 @@ begin
   // проверка на не существует ли уже такой пользователь
 
   // отправка кода на ящик почтовый пользователю
-  repeat vKey := Random(10000) until vKey < 1000;
+  repeat
+    vKey := Random(10000)
+  until vKey < 1000;
 
   vKey := 1111; // на время отладки
   // сообщение о том, что на ящик отправлен код, для авторизации
@@ -966,17 +996,17 @@ begin
   repeat
     vEnterText := FrameTextInput(Sender, 'Введите код из письма!');
     if vEnterText = '-9999' then
-     exit;
+      exit;
 
     if vEnterText = IntToStr(vKey) then
-        begin
-        vCountTry := -100
-        end
+    begin
+      vCountTry := -100
+    end
     else
-      begin
-        vCountTry := vCountTry - 1;
-        FrameInfo(Sender, 'Код неверен! Осталось попыток ' + intToStr(vCountTry));
-      end;
+    begin
+      vCountTry := vCountTry - 1;
+      FrameInfo(Sender, 'Код неверен! Осталось попыток ' + IntToStr(vCountTry));
+    end;
   until vCountTry <= 0;
 
   // выходим если не совпал
@@ -984,94 +1014,122 @@ begin
     exit;;
 
   // -- все вроде прошло ок
-   // помещаем чела в базу и авторизируемся
-   FrameInfo(Sender, 'Регистрация успешна!');
+  // помещаем чела в базу и авторизируемся
+  FrameInfo(Sender, 'Регистрация успешна!');
 
-   FrameFirst.EditName.Text := vlog;
-   FrameFirst.EditPas.text := vpas;
+  FrameFirst.EditName.text := vLog;
+  FrameFirst.EditPas.text := vPas;
 
-   FrameFirstButtonLogClick(Sender);
+  FrameFirstButtonLogClick(Sender);
 end;
 
 procedure TfMain.FrameFirstImage0Click(Sender: TObject);
-var vButton: TImage;
-    vN  : integer;
+var
+  vButton: TImage;
+  vN: integer;
+  vAppLocalization: TAppLocalization;
 begin
   vButton := Sender as TImage;
   vN := StrToInt(vButton.Name[6]);
-//  FrameFirst.Image0Click(Sender);
-//  vInterfaceLanguage :=  fMain.FrameFirst.LangCurrent;
+  // FrameFirst.Image0Click(Sender);
+  // vInterfaceLanguage :=  fMain.FrameFirst.LangCurrent;
   case vN of
-  0: vInterfaceLanguage := 'en';
-  1: vInterfaceLanguage := 'de';
-  2: vInterfaceLanguage := 'fr';
-  3: vInterfaceLanguage := 'es';
-  4: vInterfaceLanguage := 'pt';
-  5: vInterfaceLanguage := 'uk';
-  6: vInterfaceLanguage := 'ru';
+    0:
+      vInterfaceLanguage := 'en';
+    1:
+      vInterfaceLanguage := 'de';
+    2:
+      vInterfaceLanguage := 'fr';
+    3:
+      vInterfaceLanguage := 'es';
+    4:
+      vInterfaceLanguage := 'pt';
+    5:
+      vInterfaceLanguage := 'uk';
+    6:
+      vInterfaceLanguage := 'ru';
   end;
   // сдвиг панели на ту позицию которая выделена
   FrameFirst.PanelIsLang.Position.X := vButton.Position.X;
-  //  vInterfaceLanguage := vButton.Name;
-  //  showmessage(vInterfaceLanguage);
-  uQ.SaveReestr('Local',vInterfaceLanguage);
+  // vInterfaceLanguage := vButton.Name;
+  // showmessage(vInterfaceLanguage);
+  uQ.SaveReestr('Local', vInterfaceLanguage);
+
   // грузануть языковые надписи для интерфейса
+  vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
   // установить надписи на все панели!
-  FrameFirst.SetLang(Sender, 'Введите Email', 'Введите пароль', 'Войти', 'Регистрация');
+  MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
+  FrameFirst.SetLang(vAppLocalization.First_LabelName,
+    vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
+    vAppLocalization.First_ButtonReg);
+  FrameChannels.SetLang(vAppLocalization.Channels_LabelChannels,
+    vAppLocalization.Channels_ButtonAddChannel);
+  FrameMainChannel.SetLang(vAppLocalization.MainChannel_LabelNameChannel,
+    vAppLocalization.MainChannel_ButtonAddNextVideo);
+  FrameVideos.SetLang(vAppLocalization.MainVideos_LabelVideos,
+    vAppLocalization.MainVideos_LanguageCheckBox,
+    vAppLocalization.MainVideos_LabelTitle,
+    vAppLocalization.MainVideos_LabelDescription,
+    vAppLocalization.MainVideos_BTranslater);
+
 end;
 
 procedure TfMain.FrameVideosBTranslaterClick(Sender: TObject);
 var
   i, vCountLanguages: integer;
   vRes, vPosX, vPosY, vMod, vDiv: integer;
-  vWidth, vHeight : integer;
+  vWidth, vHeight: integer;
   vList: TListLanguages;
   vBitmap: TBitmap;
-  vSelected, vCount : integer; // 1- выбран,  0- не выбран
-  vSelLanguages : string;
+  vSelected, vCount: integer; // 1- выбран,  0- не выбран
+  vSelLanguages: string;
   NewThread: TNewThread;
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
   vList := vGlobalList;
-//  fMain.FrameVideos.Position.X := Round(fMain.Width +1);
-//  fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
-//  vWidth := 0; vHeight := 0;
-  vWidth := 236+1; vHeight := 36+1;
-    i := 1;
-    vCount := 0;
+  // fMain.FrameVideos.Position.X := Round(fMain.Width +1);
+  // fMain.FrameLanguages.Position.X := Round((fMain.Width - fMain.FrameLanguages.Width)/ 2);
+  // vWidth := 0; vHeight := 0;
+  vWidth := 236 + 1;
+  vHeight := 36 + 1;
+  i := 1;
+  vCount := 0;
   repeat
-      vDiv := (i-1) div 3; // номер строки
-      vMod := (i-1) mod 3; // номер столбца
-      vPosY := vDiv * vHeight;  // по высоте
-      vPosX := (vMod) * vWidth;  // по ширине
-      // определим есть ли данный язык в выбранных
-      vSelected := pos('/'+vList[i].LnCode+'/', PanChannels[vCurrentPanChannel].ChSelLang.text);
-      // res := SQLiteModule.InsRefreshToken(vChannel);
-      if vSelected > 0 then
-      begin
-        vSelected := 1;
-        inc(vCount);
-//        vSelLanguages := vSelLanguages + PanLanguages[vNPanel].ChLang + '/';
-      end;
-      //
-      PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX, vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
-        IntToStr(vList[i].Id),
-        vList[i].NameRussian, // русское отображение, наверное и нафиг надо
-//        vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
-        vList[i].NameLocal , // отображение на кнопках
-        vList[i].LnCode, vBitmap); //,
-//      vWidth := PanLanguages[i].Width;
-//      vHeight := PanLanguages[i].Height;
-      PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
-      PanLanguages[i].ButtonOnOff.OnClick := DinLanguageClick;
+    vDiv := (i - 1) div 3; // номер строки
+    vMod := (i - 1) mod 3; // номер столбца
+    vPosY := vDiv * vHeight; // по высоте
+    vPosX := (vMod) * vWidth; // по ширине
+    // определим есть ли данный язык в выбранных
+    vSelected := pos('/' + vList[i].LnCode + '/',
+      PanChannels[vCurrentPanChannel].ChSelLang.text);
+    // res := SQLiteModule.InsRefreshToken(vChannel);
+    if vSelected > 0 then
+    begin
+      vSelected := 1;
+      inc(vCount);
+      // vSelLanguages := vSelLanguages + PanLanguages[vNPanel].ChLang + '/';
+    end;
+    //
+    PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX,
+      vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
+      IntToStr(vList[i].id), vList[i].NameRussian,
+      // русское отображение, наверное и нафиг надо
+      // vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
+      vList[i].NameLocal, // отображение на кнопках
+      vList[i].LnCode, vBitmap); // ,
+    // vWidth := PanLanguages[i].Width;
+    // vHeight := PanLanguages[i].Height;
+    PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
+    PanLanguages[i].ButtonOnOff.OnClick := DinLanguageClick;
     inc(i);
   until (i >= 300) or (vList[i].LnCode = '');
   // отображаем сколько языков выбрано
-  fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelCount.text := IntToStr(vCount);
 
-  //showmessage('Что из базы по языкам ' + PanChannels[vCurrentPanChannel].ChSelLang.text);
-  fMain.FrameLanguages.LabelLanguages.Text :=  PanChannels[vCurrentPanChannel].ChSelLang.text;
+  // showmessage('Что из базы по языкам ' + PanChannels[vCurrentPanChannel].ChSelLang.text);
+  fMain.FrameLanguages.LabelLanguages.text := PanChannels[vCurrentPanChannel]
+    .ChSelLang.text;
   // сдвиг  формы на активную
   vEventMove := vState * 10 + 1;
   vState := 5;
@@ -1092,13 +1150,13 @@ procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
 const
   cNameFile: string = 'AccessCode';
 var
-  Port: Integer;
-  PeerPort: Integer;
+  Port: integer;
+  PeerPort: integer;
   PeerIP: string;
 
   msgFromClient: string;
-  vPosBegin, vPosEnd: Integer;
-  vAccessCode: string;  // код доступа к каналу
+  vPosBegin, vPosEnd: integer;
+  vAccessCode: string; // код доступа к каналу
 
   vPath: string;
   vFullNameFile: string;
@@ -1111,19 +1169,19 @@ begin
   PeerIP := AContext.Binding.PeerIP;
   PeerPort := AContext.Binding.PeerPort;
 
-  if Pos('GET', msgFromClient) > 0 then
+  if pos('GET', msgFromClient) > 0 then
   begin
-    if Pos('error=', msgFromClient) = 0 then
+    if pos('error=', msgFromClient) = 0 then
     begin
-      vPosBegin := Pos('code=', msgFromClient);
-      vPosEnd := Pos('scope=', msgFromClient);
+      vPosBegin := pos('code=', msgFromClient);
+      vPosEnd := pos('scope=', msgFromClient);
       if (vPosBegin > 0) and (vPosEnd > 0) then
       begin
         vPosBegin := vPosBegin + 5;
         vAccessCode := copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
-//        vAccessCode := msgFromClient;
+        // vAccessCode := msgFromClient;
         // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
-        Edit1.Text := vAccessCode;
+        Edit1.text := vAccessCode;
         if vAccessCode <> '' then
         begin
           vPath := GetCurrentDir();
@@ -1161,10 +1219,10 @@ begin
 
       AContext.Connection.IOHandler.write('</html>');
       AContext.Connection.IOHandler.WriteLn;
-      EdAccessCode :=  vAccessCode;
+      EdAccessCode := vAccessCode;
       // вызов процедуры запроса данных по каналу и их сохранение
-      //BGetTokkens.OnClick(fMain);
-      //BGetChannel.OnClick(fMain);
+      // BGetTokkens.OnClick(fMain);
+      // BGetChannel.OnClick(fMain);
     end
     else
     begin
@@ -1176,8 +1234,7 @@ begin
       AContext.Connection.IOHandler.write('<head>');
       AContext.Connection.IOHandler.
         write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
-      AContext.Connection.IOHandler.
-        write('<title>AssistIQ connected!</title>');
+      AContext.Connection.IOHandler.write('<title>AssistIQ connected!</title>');
       AContext.Connection.IOHandler.write('</head>');
 
       AContext.Connection.IOHandler.write('<body bgcolor="white">');
@@ -1195,26 +1252,25 @@ begin
 
       AContext.Connection.IOHandler.write('</html>');
       AContext.Connection.IOHandler.WriteLn;
-      EdAccessCode :=  '';
+      EdAccessCode := '';
     end;
     // IdTCPServer1.Active := false;
-    Edit2.Text := 'чудо !!';
+    Edit2.text := 'чудо !!';
   end
   else
   begin
-     Edit2.Text := msgFromClient;
+    Edit2.text := msgFromClient;
   end;
   // а вот тут танцы с бубнами как же прикрыть работу сервера
-//  AContext.Connection.IOHandler.CloseGracefully;
-//  AContext.Connection.Socket.CloseGracefully;
-//  AContext.Connection.Socket.Close;
+  // AContext.Connection.IOHandler.CloseGracefully;
+  // AContext.Connection.Socket.CloseGracefully;
+  // AContext.Connection.Socket.Close;
 
 end;
 
-
 procedure TfMain.TestAniingicatorClick(Sender: TObject);
 begin
-//AniIndicator1.
+  // AniIndicator1.
 end;
 
 // удaление канала
@@ -1232,10 +1288,9 @@ begin
   strQuestionDelete := 'Delete 3' + vNameChannel + ' ?';
 
   if FMX.Dialogs.MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
-    [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes
-  then
+    [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0, TMsgDlgBtn.mbNo) = mrYes then
   begin
-     SQLiteModule.DelChannel(vIdChannel);
+    SQLiteModule.DelChannel(vIdChannel);
 
     try
       for i := 1 to 50 do
@@ -1257,41 +1312,40 @@ var
   vNPanel: integer;
   NewThread: TNewThread;
 
-  vObjVideo : TObjvideo;
+  vObjVideo: TObjvideo;
   S: string;
   i, vPosY: integer;
-  vVideo : TVideo;
+  vVideo: TVideo;
 
   AAPIUrl: String;
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
   Bitimg: TBitmap;
-//  vPanVideo: array [1 .. 1000] of TVideoPanel;
+  // vPanVideo: array [1 .. 1000] of TVideoPanel;
 begin
   vNPanel := TButton(Sender).Tag;
   vCurrentPanChannel := vNPanel;
   vIdChannel := PanChannels[vNPanel].chId.text;
   // vToken := PanChannels[vNPanel].chToken.Caption;
   vNameChannel := PanChannels[vNPanel].ChName.text;
-  vToken := PanChannels[vNPanel].chToken.Text;
+  vToken := PanChannels[vNPanel].chToken.text;
   // Для сообщения при отладке что нажали
-  //  vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
-  //  IntToStr(vNPanel);
-  //  showmessage(vMessage);
+  // vMessage := 'Click ' + vNameChannel + ' !' + vIdChannel + ' ' +
+  // IntToStr(vNPanel);
+  // showmessage(vMessage);
   FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
   FrameMainChannel.Label1.text := vNameChannel;
   FrameMainChannel.Label2.text := vIdChannel;
   FrameMainChannel.Label3.text := vToken;
   // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
   fMain.Button200Click(Sender);
-  //  vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
-  //Наполняем панель видео
+  // vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
+  // Наполняем панель видео
 
-  s := '0';
-  vObjVideo:= TObjvideo.Create;
+  S := '0';
+  vObjVideo := TObjvideo.Create;
   // в мемо должен быть уже строка с канала
   vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
-
 
   for i := 0 to Length(vObjVideo.Items) - 1 do
   begin
@@ -1299,12 +1353,13 @@ begin
     vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
     vVideo.title := vObjVideo.Items[i].snippet.title;
     vVideo.description := vObjVideo.Items[i].snippet.description;
-    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.url;
+    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.URL;
     vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
     vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
-       // решил тут не грузить видео по урлу, сделаю это внутри панели
+    // решил тут не грузить видео по урлу, сделаю это внутри панели
     try
-      S := StringReplace(vVideo.urlDefault, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      S := StringReplace(vVideo.urlDefault, #13, '',
+        [rfReplaceAll, rfIgnoreCase]);
       AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
       FHTTPClient := THTTPClient.Create;
       FHTTPClient.UserAgent :=
@@ -1324,26 +1379,22 @@ begin
       vVideo.img := TBitmap.Create;
       vVideo.img := Bitimg;
     except
-       showmessage('Что except load video');
+      showmessage('Что except load video');
     end;
 
     vPosY := 30 + (i) * 120;
-                                                          //PanelVideos
-    PanVideos[i+1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY, i+1,
-        vVideo.videoId,
-        vVideo.channelId,
-        vVideo.title,
-        vVideo.description,
-        'нету',
-        vVideo.img);
-      PanVideos[i+1].Parent := FrameMainChannel.BoxVideos;
+    // PanelVideos
+    PanVideos[i + 1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY,
+      i + 1, vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.description,
+      'нету', vVideo.img);
+    PanVideos[i + 1].Parent := FrameMainChannel.BoxVideos;
 
-      //PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-      //PanChannels[i].OnMouseMove := DinPanelMouseMove;
-      PanVideos[i+1].OnClick := DinPanelVideoClick; // Type (sender, 'TPanel');
-      PanVideos[i+1].VdImage.OnClick := DinPanelVideoClick;
-      //vPanVideo[i+1].VdTitle.OnClick := DinPanelVideoClick;
-      //vPanVideo[i+1].VdDescription.OnClick := DinPanelVideoClick;
+    // PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
+    // PanChannels[i].OnMouseMove := DinPanelMouseMove;
+    PanVideos[i + 1].OnClick := DinPanelVideoClick; // Type (sender, 'TPanel');
+    PanVideos[i + 1].VdImage.OnClick := DinPanelVideoClick;
+    // vPanVideo[i+1].VdTitle.OnClick := DinPanelVideoClick;
+    // vPanVideo[i+1].VdDescription.OnClick := DinPanelVideoClick;
 
   end;
   //
@@ -1357,7 +1408,6 @@ begin
 
 end;
 
-
 // Нажатие по заставке видео для выбора видео
 procedure TfMain.DinPanelVideoClick(Sender: TObject);
 const
@@ -1367,20 +1417,20 @@ var
   vNPanel: integer; // это номер канала в панеле видео  PanVideos[vNPanel]
   NewThread: TNewThread;
 
-  vObjVideo : TObjvideoInfo;
+  vObjVideo: TObjvideoInfo;
   S: string;
   i, vPosY: integer;
-  vVideo : TVideo;
+  vVideo: TVideo;
 
-  vVdId : string;
+  vVdId: string;
 
   AAPIUrl: String;
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
   Bitimg: TBitmap;
 
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
   OAuth2: TOAuth;
   vString: string;
 begin
@@ -1388,11 +1438,11 @@ begin
   vTitle := PanVideos[vNPanel].VdTitle.text;
   vDescription := PanVideos[vNPanel].VdDescription.text;
   vVdId := PanVideos[vNPanel].VdId.text;
-//  vIdChannel := PanVideos[vNPanel].chId.text;
+  // vIdChannel := PanVideos[vNPanel].chId.text;
   // vToken := PanChannels[vNPanel].chToken.Caption;
   // Для сообщения при отладке что нажали
-//  vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
-//  showmessage(vMessage);
+  // vMessage := 'Click ' + vTitle + ' !' + vDescription + ' ' + IntToStr(vNPanel);
+  // showmessage(vMessage);
 
   // данные о видео запросить
   OAuth2 := TOAuth.Create;
@@ -1401,16 +1451,15 @@ begin
   OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  vResponceInfoVideo := OAuth2.VideoInfo(vVdId);
-  Memo1.Text := vResponceInfoVideo;
+  vResponceInfoVideo := OAuth2.videoInfo(vVdId);
+  Memo1.text := vResponceInfoVideo;
   OAuth2.Free;
 
   // данные о видео разобарть
-  s := '0';
-  vObjVideo:= TObjvideoInfo.Create;
+  S := '0';
+  vObjVideo := TObjvideoInfo.Create;
   // в мемо должен быть уже строка с канала
   vObjVideo := TJson.JsonToObject<TObjvideoInfo>(vResponceInfoVideo);
-
 
   for i := 0 to Length(vObjVideo.Items) - 1 do
   begin
@@ -1418,13 +1467,14 @@ begin
     vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
     vVideo.title := vObjVideo.Items[i].snippet.title;
     vVideo.description := vObjVideo.Items[i].snippet.description;
-    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.url;
+    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.URL;
     vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
     vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
     vVideo.language := vObjVideo.Items[i].snippet.defaultLanguage;
-       // решил тут не грузить видео по урлу, сделаю это внутри панели
+    // решил тут не грузить видео по урлу, сделаю это внутри панели
     try
-      S := StringReplace(vVideo.urlDefault, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      S := StringReplace(vVideo.urlDefault, #13, '',
+        [rfReplaceAll, rfIgnoreCase]);
       AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
       FHTTPClient := THTTPClient.Create;
       FHTTPClient.UserAgent :=
@@ -1444,7 +1494,7 @@ begin
       vVideo.img := TBitmap.Create;
       vVideo.img := Bitimg;
     except
-       showmessage('Что except load video');
+      showmessage('Что except load video');
     end;
 
   end;
@@ -1452,11 +1502,12 @@ begin
 
   FrameVideos.LanguageVideoLabel.text := vVideo.language;
 
-  FrameVideos.ImageVideo.Bitmap := vVideo.img;//PanVideos[vNPanel].VdImage.Bitmap;
-  FrameVideos.MemoTitle.Text := vVideo.title;
-  FrameVideos.MemoDescription.Text := vVideo.description;
+  FrameVideos.ImageVideo.Bitmap := vVideo.img;
+  // PanVideos[vNPanel].VdImage.Bitmap;
+  FrameVideos.MemoTitle.text := vVideo.title;
+  FrameVideos.MemoDescription.text := vVideo.description;
 
-  FrameVideos.LabelVideoId.Text := vVideo.videoId;
+  FrameVideos.LabelVideoId.text := vVideo.videoId;
 
   vEventMove := vState * 10 + 1;
   vState := 4;
@@ -1474,32 +1525,35 @@ var
   strQuestionDelete, vIdLanguage: string;
   vNPanel: integer;
   i, vCount: integer;
-  vSelLanguages : string;
+  vSelLanguages: string;
 begin
   lastPanel := nil;
   vNPanel := TButton(Sender).Tag;
-  PanLanguages[vNPanel].ChImage.Visible := not(PanLanguages[vNPanel].ChImage.Visible);
-  if PanLanguages[vNPanel].ChImage.Visible = TRUE then
-    PanLanguages[vNPanel].ButtonOnOff.TextSettings.Font.Style := [TFontStyle.fsBold]
+  PanLanguages[vNPanel].ChImage.Visible :=
+    not(PanLanguages[vNPanel].ChImage.Visible);
+  if PanLanguages[vNPanel].ChImage.Visible = true then
+    PanLanguages[vNPanel].ButtonOnOff.TextSettings.Font.Style :=
+      [TFontStyle.fsBold]
   else
     PanLanguages[vNPanel].ButtonOnOff.TextSettings.Font.Style := [];
   vCount := 0;
   vSelLanguages := '/';
   for i := 1 to 300 do
+  begin
+    if PanLanguages[i] = nil then
+      break;
+    if PanLanguages[i].ChImage.Visible = true then
     begin
-      if PanLanguages[i] = nil then
-        break;
-      if PanLanguages[i].ChImage.Visible = TRUE then
-      begin
-        inc(vCount);
-        vSelLanguages := vSelLanguages + PanLanguages[i].ChLang.Text + '/';
-      end;
+      inc(vCount);
+      vSelLanguages := vSelLanguages + PanLanguages[i].ChLang.text + '/';
     end;
+  end;
   vSelLanguages := vSelLanguages + '/';
-  fMain.FrameLanguages.LabelCount.Text := IntToStr(vCount);
-  fMain.FrameLanguages.LabelLanguages.Text :=  vSelLanguages;
+  fMain.FrameLanguages.LabelCount.text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelLanguages.text := vSelLanguages;
   PanChannels[vCurrentPanChannel].ChSelLang.text := vSelLanguages;
-  i:= SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel].ChId.Text, vSelLanguages);
+  i := SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel]
+    .chId.text, vSelLanguages);
 
 end;
 
@@ -1507,103 +1561,102 @@ end;
 // пример вызова   showmessage(IntToStr(FrameAsk(self, 'Кто же кто же кто же крыльями трясет')));
 function TfMain.FrameAsk(Sender: TObject; AskText: string): integer;
 var
-  vResult : integer;
-  vFrameAsk :TFrameAsk;
+  vResult: integer;
+  vFrameAsk: TFrameAsk;
 begin
   vResult := 0;
-  vFrameAsk := TFrameAsk.Create(self);
-//  vFrameAsk.Position.X := Round(fMain.Width/2 + 1);
-//  vFrameAsk.Position.Y := Round(fMain.Height/2 + 1);
+  vFrameAsk := TFrameAsk.Create(Self);
+  // vFrameAsk.Position.X := Round(fMain.Width/2 + 1);
+  // vFrameAsk.Position.Y := Round(fMain.Height/2 + 1);
   vFrameAsk.MemoMessage.Visible := false;
-  vFrameAsk.LabelMessage.Text := AskText;
+  vFrameAsk.LabelMessage.text := AskText;
   vFrameAsk.Parent := fMain;
   vFrameAsk.status := -1;
 
-  while vFrameAsk.status = - 1 do
+  while vFrameAsk.status = -1 do
     Application.ProcessMessages; // wait
   vResult := vFrameAsk.status;
   vFrameAsk.Destroy;
 
-  Result  := vResult;
+  Result := vResult;
 end;
 
 function TfMain.FrameTextInput(Sender: TObject; AskText: string): string;
 var
-  vResult : string;
-  vStatus : integer;
-  vFrameTextInput :TFrameTextInput;
+  vResult: string;
+  vStatus: integer;
+  vFrameTextInput: TFrameTextInput;
 begin
   vResult := '';
   vStatus := -1;
-  vFrameTextInput := TFrameTextInput.Create(self);
+  vFrameTextInput := TFrameTextInput.Create(Self);
 
-  vFrameTextInput.LabelMessage.Text := AskText;
+  vFrameTextInput.LabelMessage.text := AskText;
   vFrameTextInput.Parent := fMain;
   vFrameTextInput.status := -1;
 
-  while vFrameTextInput.status = - 1 do
+  while vFrameTextInput.status = -1 do
     Application.ProcessMessages; // wait
   vStatus := vFrameTextInput.status;
   vResult := vFrameTextInput.EditText.text;
   vFrameTextInput.Destroy;
   if vStatus = 0 then
     vResult := '-9999';
-  Result  := vResult;
+  Result := vResult;
 end;
 
 // поднимаем окно с сообщением
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
 procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
 var
-  vFrameInfo :TFrameInfo;
+  vFrameInfo: TFrameInfo;
 begin
-  vFrameInfo := TFrameInfo.Create(self);
-//  vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
-//  vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
+  vFrameInfo := TFrameInfo.Create(Self);
+  // vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
+  // vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
   vFrameInfo.MemoMessage.Visible := false;
-  vFrameInfo.LabelMessage.Text := InfoText;
+  vFrameInfo.LabelMessage.text := InfoText;
   vFrameInfo.Parent := fMain;
-  vFrameInfo.status := - 1;
+  vFrameInfo.status := -1;
 
-  while vFrameInfo.status = - 1 do
+  while vFrameInfo.status = -1 do
     Application.ProcessMessages; // wait
   vFrameInfo.Destroy;
 end;
-
 
 // грузим субтитры пока
 procedure TfMain.FrameLanguagesButtonSubtitlesClick(Sender: TObject);
 var
   // есть ли выбранные языки для перевода
-  vLength : integer;
-  vPosBegin, vPosEnd: Integer;
-  vTransCount : integer;
+  vLength: integer;
+  vPosBegin, vPosEnd: integer;
+  vTransCount: integer;
   // для сохранения в файл
   vPath: string;
   vFullNameFile: string;
   vFileText: TStringList;
 
   // подключение к YT3
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
   OAuth2: TOAuth;
   vResponceSubtitleList: string;
 
   // получаем список титров
-  vObjSubtitles : TObjSubtitleList;
-  vIndexMainLanguage, i : integer;
+  vObjSubtitles: TObjSubtitleList;
+  vIndexMainLanguage, i: integer;
   vSubtitles: array [1 .. 300] of TSubtitle;
-  vSCount : integer; // количество уже существующих субтитров.
+  vSCount: integer; // количество уже существующих субтитров.
 
   // удаление
-  vResponceDelSubtitle : string;
+  vResponceDelSubtitle: string;
   // перевод
   vResponceLoadSubtitle: string;
   vResponceInsSubtitle: string;
 
 begin
-  vLength := length(fMain.FrameLanguages.LabelLanguages.Text);
-  if  vLength > 2 then
+  vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
+  if vLength > 2 then
   begin
     if FrameAsk(Sender, 'Начать перевод Субтитров?') = 1 then
     begin
@@ -1612,32 +1665,35 @@ begin
       OAuth2.ClientID :=
         '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
       OAuth2.ClientSecret := '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';
-        // крайне важно
+      // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  //    vString := OAuth2.SubtitleDownload(CaptionID, 'en');
-      vResponceSubtitleList := OAuth2.SubtitleList(FrameVideos.LabelVideoId.Text);
+      // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
+      vResponceSubtitleList := OAuth2.subtitlelist
+        (FrameVideos.LabelVideoId.text);
 
       // сохраним в файл
       vPath := GetCurrentDir();
       vFullNameFile := vPath + '/' + 'sub';
-  //    showmessage('vFullNameFile = ' + vFullNameFile);
+      // showmessage('vFullNameFile = ' + vFullNameFile);
       vFileText := TStringList.Create;
       vFileText.Add(vResponceSubtitleList);
       vFileText.SaveToFile(vFullNameFile);
-  //    showmessage('Перевели');
+      // showmessage('Перевели');
 
       vIndexMainLanguage := 0; // пока нет субтитров главных заданных
       vSCount := 0; // кол-во уже существующих субтитров
-      vObjSubtitles:= TObjSubtitleList.Create;
+      vObjSubtitles := TObjSubtitleList.Create;
       // в мемо должен быть уже строка с канала
-      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>(vResponceSubtitleList);
+      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>
+        (vResponceSubtitleList);
       for i := 0 to Length(vObjSubtitles.Items) - 1 do
       begin
         inc(vSCount);
         vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
         if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-          then  vIndexMainLanguage := vSCount; // задан субтитр основного языка
+        then
+          vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
 
       // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
@@ -1649,44 +1705,47 @@ begin
       begin
 
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
-        vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
-        {vFullNameFile := vPath + '/' + 'subload';
-        vFileText := TStringList.Create;
-        vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
-        vFileText.SaveToFile(vFullNameFile);}
-
+        vResponceLoadSubtitle := OAuth2.SubtitleDownload
+          (vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
+        { vFullNameFile := vPath + '/' + 'subload';
+          vFileText := TStringList.Create;
+          vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
+          vFileText.SaveToFile(vFullNameFile); }
 
         // начинаем удаление
         for i := 1 to vSCount do
         begin
-  //        if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
+          // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
           if vSCount <> vIndexMainLanguage then
           begin
-            vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
+            vResponceDelSubtitle := OAuth2.SubtitleDelete
+              (FrameVideos.LabelVideoId.text);
             vFullNameFile := vPath + '/' + 'subDel';
             vFileText := TStringList.Create;
-            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
+            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId +
+              vResponceDelSubtitle);
             vFileText.SaveToFile(vFullNameFile);
           end;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + intToStr(vSCount - 1));
+        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount - 1));
         // начинаем разбор языков
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
         begin
           if PanLanguages[i] = nil then
             break;
-          if (PanLanguages[i].ChImage.Visible = TRUE)
-          and (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text) then
+          if (PanLanguages[i].ChImage.Visible = true) and
+            (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
+          then
           begin
             inc(vTransCount);
             // загружаем в этом языке субтитры
-//            vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
+            // vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
             // сохраняем результат в субтитры новые
-//            vResponceInsSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
+            // vResponceInsSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
           end;
         end;
-        FrameInfo(Sender, 'Перевели на ' + intToStr(vSCount - 1));
+        FrameInfo(Sender, 'Перевели на ' + IntToStr(vSCount - 1));
       end;
       OAuth2.Free;
     end
@@ -1702,28 +1761,28 @@ end;
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
 var
   // есть ли выбранные языки для перевода
-  vLength : integer;
-  vPosBegin, vPosEnd: Integer;
-  vTransCount : integer;
+  vLength: integer;
+  vPosBegin, vPosEnd: integer;
+  vTransCount: integer;
 
   // подключение к YT3
-  Access_token: string;      // токен выполнения операций
-  Refresh_token: string;     // токен получения следующего токена на выполнение
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
   OAuth2: TOAuth;
   vResponceSubtitleList: string;
 
   // получаем список титров
-  vObjSubtitles : TObjSubtitleList;
-  vIndexMainLanguage, i : integer;
+  vObjSubtitles: TObjSubtitleList;
+  vIndexMainLanguage, i: integer;
   vSubtitles: array [1 .. 300] of TSubtitle;
-  vSCount : integer; // количество уже существующих субтитров.
+  vSCount: integer; // количество уже существующих субтитров.
 
   vResponceInsTitle: string;
   vJSON: string;
 begin
 
-  vLength := length(fMain.FrameLanguages.LabelLanguages.Text);
-  if  vLength > 2 then
+  vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
+  if vLength > 2 then
   begin
     if FrameAsk(Sender, 'Начать перевод Названий и описаний?') = 1 then
     begin
@@ -1732,25 +1791,27 @@ begin
       OAuth2.ClientID :=
         '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
       OAuth2.ClientSecret := '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';
-        // крайне важно
+      // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  //    vString := OAuth2.SubtitleDownload(CaptionID, 'en');
+      // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
       vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
 
       showmessage('Перевели');
 
       vIndexMainLanguage := 0; // пока нет субтитров главных заданных
       vSCount := 0; // кол-во уже существующих субтитров
-      vObjSubtitles:= TObjSubtitleList.Create;
+      vObjSubtitles := TObjSubtitleList.Create;
       // в мемо должен быть уже строка с канала
-      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>(vResponceSubtitleList);
+      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>
+        (vResponceSubtitleList);
       for i := 0 to Length(vObjSubtitles.Items) - 1 do
       begin
         inc(vSCount);
         vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
         if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-          then  vIndexMainLanguage := vSCount; // задан субтитр основного языка
+        then
+          vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
 
       // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
@@ -1763,52 +1824,51 @@ begin
 
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
         // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
-        {vFullNameFile := vPath + '/' + 'subload';
-        vFileText := TStringList.Create;
-        vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
-        vFileText.SaveToFile(vFullNameFile);}
-
+        { vFullNameFile := vPath + '/' + 'subload';
+          vFileText := TStringList.Create;
+          vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
+          vFileText.SaveToFile(vFullNameFile); }
 
         // начинаем удаление -- не знаю нужно ли это, но возможно для тех языков которые не меняем это важно
         for i := 1 to vSCount do
         begin
-  //        if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
+          // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
           if vSCount <> vIndexMainLanguage then
           begin
-  {          vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
-            vFullNameFile := vPath + '/' + 'subDel';
-            vFileText := TStringList.Create;
-            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
-            vFileText.SaveToFile(vFullNameFile);}
+            { vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
+              vFullNameFile := vPath + '/' + 'subDel';
+              vFileText := TStringList.Create;
+              vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
+              vFileText.SaveToFile(vFullNameFile); }
           end;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + intToStr(vSCount - 1));
+        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount - 1));
         // начинаем разбор языков
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
         begin
           if PanLanguages[i] = nil then
             break;
-          if (PanLanguages[i].ChImage.Visible = TRUE)
-          and (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text) then
+          if (PanLanguages[i].ChImage.Visible = true) and
+            (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
+          then
           begin
             inc(vTransCount);
             // формируем JSON
-            vJSON := '{  "id": "'+
-            FrameVideos.LabelVideoId.Text //YOUR_VIDEO_ID
-            +'",  "localizations": {"'+
-            PanLanguages[i].ChLang.text // на какой язык
-            + '" : {"title": "'
-            + FrameVideos.MemoTitle.Text // название
-            + '","description": "'
-            + FrameVideos.MemoDescription.Text // описание
-            +'"}}}"';
+            vJSON := '{  "id": "' + FrameVideos.LabelVideoId.text
+            // YOUR_VIDEO_ID
+              + '",  "localizations": {"' + PanLanguages[i].ChLang.text
+            // на какой язык
+              + '" : {"title": "' + FrameVideos.MemoTitle.text // название
+              + '","description": "' + FrameVideos.MemoDescription.text
+            // описание
+              + '"}}}"';
             // загружаем в этом языке наименование и описание
             vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
 
           end;
         end;
-        FrameInfo(Sender, 'Перевели на ' + intToStr(vSCount - 1));
+        FrameInfo(Sender, 'Перевели на ' + IntToStr(vSCount - 1));
       end;
       OAuth2.Free;
     end
