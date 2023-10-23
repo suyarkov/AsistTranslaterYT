@@ -1,7 +1,7 @@
 object fMain: TfMain
   Left = 0
   Top = 0
-  Caption = 'AsistYou'
+  Caption = 'AssistIQ'
   ClientHeight = 612
   ClientWidth = 900
   Position = Designed
