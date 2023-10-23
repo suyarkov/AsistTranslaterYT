@@ -161,9 +161,6 @@ Coordinates=555,87,183,51
 [Button5]
 Coordinates=407,232,53,51
 
-[StyleBook1]
-Coordinates=402,398,70,33
-
 [FrameFirst.LabelPas]
 Coordinates=73,534,115,51
 
@@ -281,4 +278,7 @@ Coordinates=407,1,80,51
 
 [FrameFirst.EditPas]
 Coordinates=906,87,108,51
+
+[MyStyleBook]
+Coordinates=402,398,70,33
 

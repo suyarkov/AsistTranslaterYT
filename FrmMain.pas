@@ -54,7 +54,7 @@ type
     Memo1: TMemo;
     ButtonQ: TButton;
     ButtonEmail2: TButton;
-    StyleBook1: TStyleBook;
+    MyStyleBook: TStyleBook;
     AniIndicator1: TAniIndicator;
     TestAniingicator: TButton;
     procedure Button1Click(Sender: TObject);
