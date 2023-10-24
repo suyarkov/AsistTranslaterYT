@@ -21,7 +21,8 @@ uses
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo, Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
-  FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors;
+  FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
+  FmHelp, FmAddMoney;
 
 type
   TfMain = class(TForm)
@@ -64,6 +65,7 @@ type
     LabelScore: TLabel;
     ButtonMonеy: TButton;
     ButtonMoneyInfo: TButton;
+    ImageDel: TImage;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -96,6 +98,9 @@ type
     procedure FrameLanguagesButtonSubtitlesClick(Sender: TObject);
     procedure FrameFirstButtonRegClick(Sender: TObject);
     procedure TestAniingicatorClick(Sender: TObject);
+    procedure ButtonMoneyInfoClick(Sender: TObject);
+    procedure ButtonHelpClick(Sender: TObject);
+    procedure ButtonMonеyClick(Sender: TObject);
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
@@ -105,6 +110,9 @@ type
     function FrameAsk(Sender: TObject; AskText: string): integer;
     function FrameTextInput(Sender: TObject; AskText: string): string;
     procedure FrameInfo(Sender: TObject; InfoText: string);
+    procedure FrameHelp(Sender: TObject; InfoText: string);
+    procedure FrameAddMoney(Sender: TObject; InfoText: string);
+
   end;
 
   TNewThread = class(TThread)
@@ -766,6 +774,24 @@ begin
   SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
     'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
     'Привет от асиста', '', true);
+end;
+
+procedure TfMain.ButtonHelpClick(Sender: TObject);
+begin
+FrameHelp (Sender, 'Тебе обязательно ПОМОГУТ! ');
+end;
+
+procedure TfMain.ButtonMoneyInfoClick(Sender: TObject);
+begin
+
+  FrameInfo(Sender, '1 балансовая единица равна переводу названия и описания или субтитров на 1 язык. '
+  + #10
+  + 'Если вы переведете и заголов и субтитры на 50 языков,то потратите 100 единиц!');
+end;
+
+procedure TfMain.ButtonMonеyClick(Sender: TObject);
+begin
+  FrameAddMoney(Sender, 'Пополним по полной!');
 end;
 
 procedure TfMain.ButtonPaintClick(Sender: TObject);
@@ -1614,6 +1640,22 @@ begin
   Result := vResult;
 end;
 
+// поднимаем окно с сообщением о возможности сделать платеж и как пополнить счет
+procedure TfMain.FrameAddMoney(Sender: TObject; InfoText: string);
+var
+  vFrameInfo: TFrameAddMoney;
+begin
+  vFrameInfo := TFrameAddMoney.Create(Self);
+  vFrameInfo.MemoMessage.Visible := false;
+  vFrameInfo.LabelMessage.text := InfoText;
+  vFrameInfo.Parent := fMain;
+  vFrameInfo.status := -1;
+
+  while vFrameInfo.status = -1 do
+    Application.ProcessMessages; // wait
+  vFrameInfo.Destroy;
+end;
+
 // поднимаем окно с сообщением
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
 procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
@@ -1625,6 +1667,24 @@ begin
   // vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
   vFrameInfo.MemoMessage.Visible := false;
   vFrameInfo.LabelMessage.text := InfoText;
+  vFrameInfo.Parent := fMain;
+  vFrameInfo.status := -1;
+
+  while vFrameInfo.status = -1 do
+    Application.ProcessMessages; // wait
+  vFrameInfo.Destroy;
+end;
+
+// поднимаем окно с сообщением о валюте - единице
+// пример вызова   FrameInfo(self, 'Денег просто нет')));
+procedure TfMain.FrameHelp(Sender: TObject; InfoText: string);
+var
+  vFrameInfo: TFrameHelp;
+begin
+  vFrameInfo := TFrameHelp.Create(Self);
+//  vFrameInfo.LabelMessage.Visible := false;
+  vFrameInfo.LabelMessage.text := InfoText;
+  vFrameInfo.MemoMessage.text := InfoText;
   vFrameInfo.Parent := fMain;
   vFrameInfo.status := -1;
 

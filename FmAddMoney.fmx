@@ -1,42 +1,41 @@
-object FrameInfo: TFrameInfo
+object FrameAddMoney: TFrameAddMoney
   Align = Client
-  Size.Width = 390.000000000000000000
-  Size.Height = 268.000000000000000000
+  Size.Width = 897.000000000000000000
+  Size.Height = 325.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Center
-    Size.Width = 337.000000000000000000
-    Size.Height = 217.000000000000000000
+    Size.Width = 701.000000000000000000
+    Size.Height = 242.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object BtnOk: TButton
-      Position.X = 208.000000000000000000
-      Position.Y = 171.000000000000000000
-      TabOrder = 0
-      Text = 'Ok'
-      OnClick = BtnOkClick
-    end
     object LabelMessage: TLabel
-      Position.X = 8.000000000000000000
-      Position.Y = 68.000000000000000000
-      Size.Width = 321.000000000000000000
-      Size.Height = 90.000000000000000000
+      Position.X = 56.000000000000000000
+      Position.Y = 104.000000000000000000
+      Size.Width = 577.000000000000000000
+      Size.Height = 65.000000000000000000
       Size.PlatformDefault = False
       TextSettings.HorzAlign = Center
-      Text = 'LabelMessage'
+      Text = 
+        '1 '#1073#1072#1083#1072#1085#1089#1086#1074#1072#1103' '#1077#1076#1080#1085#1080#1094#1072' '#1088#1072#1074#1085#1072' '#1087#1077#1088#1077#1074#1086#1076#1091' '#1085#1072#1079#1074#1072#1085#1080#1103' '#1080' '#1086#1087#1080#1089#1072#1085#1080#1103' '#1080#1083#1080' '#1089#1091#1073#1090 +
+        #1080#1090#1088#1086#1074' '#1085#1072' 1 '#1103#1079#1099#1082
       TabOrder = 2
     end
     object MemoMessage: TMemo
       Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
       DataDetectorTypes = []
-      Position.X = 8.000000000000000000
-      Position.Y = 166.000000000000000000
-      Size.Width = 121.000000000000000000
-      Size.Height = 27.000000000000000000
+      TextSettings.HorzAlign = Center
+      Enabled = False
+      EnabledScroll = False
+      EnableDragHighlight = False
+      Position.X = 552.000000000000000000
+      Position.Y = 33.000000000000000000
+      Size.Width = 129.000000000000000000
+      Size.Height = 41.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
-      Viewport.Width = 117.000000000000000000
-      Viewport.Height = 23.000000000000000000
+      Viewport.Width = 125.000000000000000000
+      Viewport.Height = 37.000000000000000000
     end
     object Image1: TImage
       MultiResBitmap.Height = 125
@@ -165,8 +164,15 @@ object FrameInfo: TFrameInfo
             B144CF3B88FE0F29E22F93B0141E9F0000000049454E44AE426082}
           FileName = 'D:\Tmp\'#1047#1085#1072#1095#1082#1080'\'#1042#1085#1080#1084#1072#1085#1080#1077' '#1089#1080#1085#1080#1081'.png'
         end>
-      Position.X = 144.000000000000000000
-      Position.Y = 10.000000000000000000
+      Position.X = 328.000000000000000000
+      Position.Y = 33.000000000000000000
+    end
+    object BtnOk: TButton
+      Position.X = 577.000000000000000000
+      Position.Y = 212.000000000000000000
+      TabOrder = 0
+      Text = 'Ok'
+      OnClick = BtnOkClick
     end
   end
 end

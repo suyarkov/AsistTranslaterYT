@@ -45,7 +45,9 @@ uses
   Classes.subtitlelist in 'Classes.subtitlelist.pas',
   Classes.subtitlelist.snippet in 'Classes.subtitlelist.snippet.pas',
   FmAddUser in 'FmAddUser.pas' {FrameAddUser: TFrame},
-  FmTextInput in 'FmTextInput.pas' {FrameTextInput: TFrame};
+  FmTextInput in 'FmTextInput.pas' {FrameTextInput: TFrame},
+  FmHelp in 'FmHelp.pas' {FrameHelp: TFrame},
+  FmAddMoney in 'FmAddMoney.pas' {FrameAddMoney: TFrame};
 
 {$R *.res}
 
