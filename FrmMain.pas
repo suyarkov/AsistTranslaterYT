@@ -57,6 +57,9 @@ type
     MyStyleBook: TStyleBook;
     AniIndicator1: TAniIndicator;
     TestAniingicator: TButton;
+    ButtonUpdate: TButton;
+    LabelYouTube: TLabel;
+    ButtonHelp: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -174,7 +177,7 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := '∆‡‡‡ı!'; // 'AssistIQ 0.0.1';
+  fMain.Caption := '∆‡‡‡ı! 1.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   fMain.PanelAlpha_ForTest.visible := false;
   fMain.Width := 871;
   lastPanel := nil;

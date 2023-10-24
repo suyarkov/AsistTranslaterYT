@@ -1,10 +1,12 @@
 object fMain: TfMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize, biHelp]
+  BorderStyle = Single
   Caption = 'AssistIQ'
   ClientHeight = 612
   ClientWidth = 900
-  Position = Designed
+  Position = ScreenCenter
   StyleBook = MyStyleBook
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -20,12 +22,13 @@ object fMain: TfMain
     TabOrder = 1
     object LabelMail: TLabel
       StyledSettings = [Family, Style, FontColor]
-      Position.X = 456.000000000000000000
+      Position.X = 41.000000000000000000
       Position.Y = 8.000000000000000000
-      Size.Width = 161.000000000000000000
+      Size.Width = 223.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       TextSettings.Font.Size = 15.000000000000000000
+      Text = 'Name'
       TabOrder = 0
     end
     object ButtonBack: TButton
@@ -40,6 +43,30 @@ object fMain: TfMain
       Text = #65513
       TextSettings.Font.Size = 40.000000000000000000
       OnClick = ButtonBackClick
+    end
+    object ButtonUpdate: TButton
+      Position.X = 738.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 4
+      Text = 'Update'
+    end
+    object LabelYouTube: TLabel
+      Position.X = 352.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 137.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Developed with YouTube'
+      TabOrder = 5
+    end
+    object ButtonHelp: TButton
+      Position.X = 818.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 31.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = '?'
     end
   end
   inline FrameFirst: TFrameFirst
@@ -25887,6 +25914,8 @@ object fMain: TfMain
           4E6F726D616C436F6C6F720708636C6157686974650C50726573736564436F6C
           6F720708636C615768697465000000}
       end>
+    Left = 16
+    Top = 48
   end
   object TCPServerYouTubeAnswers: TIdTCPServer
     Bindings = <>
