@@ -21,7 +21,7 @@ uses
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo, Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
-  FmAsk, FmInfo, FmAddUser, FmTextInput;
+  FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors;
 
 type
   TfMain = class(TForm)
@@ -60,6 +60,10 @@ type
     ButtonUpdate: TButton;
     LabelYouTube: TLabel;
     ButtonHelp: TButton;
+    Panel1: TPanel;
+    LabelScore: TLabel;
+    ButtonMonåy: TButton;
+    ButtonMoneyInfo: TButton;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -179,6 +183,8 @@ procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'Æàààõ! 1.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   fMain.PanelAlpha_ForTest.visible := false;
+  fMain.ButtonUpdate.Visible := false;
+  fMain.LabelMail.Text  := '';
   fMain.Width := 871;
   lastPanel := nil;
   vState := 1; // ïàðîëü

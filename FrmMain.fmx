@@ -1,4 +1,4 @@
-object fMain: TfMain
+﻿object fMain: TfMain
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize, biHelp]
@@ -45,13 +45,13 @@ object fMain: TfMain
       OnClick = ButtonBackClick
     end
     object ButtonUpdate: TButton
-      Position.X = 738.000000000000000000
-      Position.Y = 8.000000000000000000
+      Position.X = 736.000000000000000000
+      Position.Y = 7.000000000000000000
       TabOrder = 4
       Text = 'Update'
     end
     object LabelYouTube: TLabel
-      Position.X = 352.000000000000000000
+      Position.X = 322.000000000000000000
       Position.Y = 8.000000000000000000
       Size.Width = 137.000000000000000000
       Size.Height = 17.000000000000000000
@@ -61,12 +61,54 @@ object fMain: TfMain
     end
     object ButtonHelp: TButton
       Position.X = 818.000000000000000000
-      Position.Y = 8.000000000000000000
+      Position.Y = 7.000000000000000000
       Size.Width = 31.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 6
       Text = '?'
+    end
+    object Panel1: TPanel
+      Position.X = 573.000000000000000000
+      Position.Y = 4.000000000000000000
+      Size.Width = 158.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      object LabelScore: TLabel
+        StyledSettings = [Family, Style]
+        Hint = 'Number of transfers!'
+        Position.X = 27.000000000000000000
+        Position.Y = 4.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Size = 16.000000000000000000
+        TextSettings.FontColor = claAqua
+        TextSettings.HorzAlign = Center
+        Text = '40000'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 8
+      end
+      object ButtonMonеy: TButton
+        Position.X = 94.000000000000000000
+        Position.Y = 3.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        Text = 'Add $'
+      end
+      object ButtonMoneyInfo: TButton
+        Position.X = 10.000000000000000000
+        Position.Y = 3.000000000000000000
+        Size.Width = 20.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        Text = '!'
+      end
     end
   end
   inline FrameFirst: TFrameFirst
@@ -82,7 +124,7 @@ object fMain: TfMain
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited EditName: TEdit
@@ -210,25 +252,25 @@ object fMain: TfMain
   end
   inline FrameVideos: TFrameVideos
     Position.X = 538.000000000000000000
-    Position.Y = 41.000000000000000000
+    Position.Y = 74.000000000000000000
     Size.Width = 800.000000000000000000
     Size.Height = 500.000000000000000000
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
       inherited LabelVideoId: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -2119,7 +2161,7 @@ object fMain: TfMain
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 2
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -2155,8 +2197,8 @@ object fMain: TfMain
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 880.000000000000000000
-      Viewport.Height = 55.000000000000000000
+      Viewport.Width = 884.000000000000000000
+      Viewport.Height = 59.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000

@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo;
+  FMX.Controls.Presentation, FMX.Memo.Types, FMX.ScrollBox, FMX.Memo,
+  FMX.Objects;
 
 type
   TFrameAsk = class(TFrame)
@@ -14,6 +15,7 @@ type
     BtnYes: TButton;
     LabelMessage: TLabel;
     MemoMessage: TMemo;
+    Image1: TImage;
     procedure BtnYesClick(Sender: TObject);
     procedure BtnNoClick(Sender: TObject);
   private
