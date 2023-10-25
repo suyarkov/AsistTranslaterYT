@@ -18,6 +18,9 @@ type
     Label3: TLabel;
     BoxVideos: TVertScrollBox;
     ButtonAddNextVideo: TButton;
+    Image1: TImage;
+    Image2: TImage;
+    Image3: TImage;
   private
     { Private declarations }
   public
