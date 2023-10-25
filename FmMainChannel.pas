@@ -11,7 +11,6 @@ uses
 
 type
   TFrameMainChannel = class(TFrame)
-    LabelNameChannel: TLabel;
     ImageChannel: TImage;
     Label1: TLabel;
     Label2: TLabel;
@@ -21,6 +20,9 @@ type
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
+    Label4: TLabel;
+    Label5: TLabel;
+    LabelNameChannel: TLabel;
   private
     { Private declarations }
   public

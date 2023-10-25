@@ -127,7 +127,7 @@
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited EditName: TEdit
@@ -224,20 +224,6 @@
       Viewport.Height = 496.000000000000000000
     end
   end
-  inline FrameProgressBar: TFrameProgressBar
-    Position.X = 554.000000000000000000
-    Position.Y = 282.000000000000000000
-    Size.Width = 320.000000000000000000
-    Size.Height = 305.000000000000000000
-    Size.PlatformDefault = False
-    inherited Layout1: TLayout
-      inherited Circle1: TCircle
-        inherited Text1: TText
-          TextSettings.Font.StyleExt = {00070000000000000004000000}
-        end
-      end
-    end
-  end
   inline FrameMainChannel: TFrameMainChannel
     Position.X = 688.000000000000000000
     Position.Y = 66.000000000000000000
@@ -245,6 +231,7 @@
     Size.Height = 538.000000000000000000
     Size.PlatformDefault = False
     inherited LabelNameChannel: TLabel
+      Position.X = 16.000000000000000000
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
     inherited BoxVideos: TVertScrollBox
@@ -252,28 +239,37 @@
       Viewport.Width = 561.000000000000000000
       Viewport.Height = 449.000000000000000000
     end
+    inherited Image1: TImage
+      MultiResBitmap.Height = 128
+      MultiResBitmap.Width = 128
+    end
+    inherited Image2: TImage
+      MultiResBitmap.Height = 128
+      MultiResBitmap.Width = 128
+      inherited Image3: TImage
+        MultiResBitmap.Height = 128
+        MultiResBitmap.Width = 128
+      end
+    end
   end
   inline FrameVideos: TFrameVideos
-    Position.X = 538.000000000000000000
+    Position.X = 764.000000000000000000
     Position.Y = 74.000000000000000000
     Size.Width = 800.000000000000000000
     Size.Height = 500.000000000000000000
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      inherited LabelVideoId: TLabel
-        TabOrder = 3
-      end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -2164,7 +2160,7 @@
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 2
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -2203,8 +2199,8 @@
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 880.000000000000000000
-      Viewport.Height = 55.000000000000000000
+      Viewport.Width = 884.000000000000000000
+      Viewport.Height = 59.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000
@@ -3053,12 +3049,13 @@
     end
   end
   object AniIndicator1: TAniIndicator
-    Position.X = 248.000000000000000000
+    Position.X = 240.000000000000000000
     Position.Y = 409.000000000000000000
     Size.Width = 153.000000000000000000
     Size.Height = 132.000000000000000000
     Size.PlatformDefault = False
     Style = Circular
+    Visible = False
   end
   object MyStyleBook: TStyleBook
     Styles = <

@@ -51,6 +51,7 @@ type
     function VideoUpdate(JSON: string): string;
     function MyVideos(AChannelID: string; NextToken: string = ''): string; // данные о всех виде
     function MyChannels: string;       // данные о канале
+    function ChannelInfo(AChannelID: string ): string; // об одном канале
     function AccessURL: string;        // урл подключения
     function GetAccessToken: string;   // получить соединительный токен подключения
     function RefreshToken: string;     // постоянный ключ
@@ -290,6 +291,29 @@ var
   Headers: TDictionary<String, String>;
 begin
   Params := TDictionary<String, String>.Create;
+  Params.Add('part', 'snippet,statistics');
+  Params.Add('mine', 'true');
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Accept', 'application/json');
+
+  Result := SendRequest(URL, Params, Headers, '', rmGet);
+
+  Params.Free;
+  Headers.Free
+end;
+
+// channel
+function TOAuth.ChannelInfo(AChannelID: string ): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/channels';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+begin
+  Params := TDictionary<String, String>.Create;
+  Params.Add('id', AChannelID);
   Params.Add('part', 'snippet,statistics');
   Params.Add('mine', 'true');
 

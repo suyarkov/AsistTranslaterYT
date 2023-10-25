@@ -33,7 +33,6 @@ type
     LabelCopyrigth: TLabel;
     ButtonBack: TButton;
     FrameChannels: TFrameChannels;
-    FrameProgressBar: TFrameProgressBar;
     TCPServerYouTubeAnswers: TIdTCPServer;
     FrameMainChannel: TFrameMainChannel;
     FrameVideos: TFrameVideos;
@@ -143,7 +142,6 @@ var
   vDefaultColor: TAlphaColor;
   vProgressBarStatus: integer;
   GlobalProgressThread: TProgressThread;
-  FrameProgressEndLess: TFrameProgressEndLess;
   vResponceChannel: string;
   vResponceVideo: string;
   vResponceInfoVideo: string;
@@ -219,8 +217,7 @@ begin
   fMain.FrameLanguages.Position.X := Round(fMain.Width + 1);
   fMain.FrameLanguages.Position.Y := 56;
 
-  FrameProgressBar.Visible := false;
-
+  {
   if not Assigned(FrameProgressEndLess) then
   begin
     FrameProgressEndLess := TFrameProgressEndLess.Create(Self);
@@ -228,6 +225,7 @@ begin
     FrameProgressEndLess.Parent := fMain;
     FrameProgressEndLess.Align := TAlignLayout.Center;
   end;
+  }
 
   fMain.FrameFirst.EditName.text := uQ.LoadReestr('Name');
 
@@ -398,11 +396,16 @@ begin
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
   OAuth2.ClientSecret := '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';
   // крайне важно
-  OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label2.text);
+  OAuth2.refresh_token := FrameMainChannel.Label4.text;
+//  vResponceVideo := OAuth2.ChannelInfo(FrameMainChannel.Label5.text);
+//  showmessage(vResponceVideo);
+  vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text);
+    showmessage(vResponceVideo);
   // Memo1.Text := vResponceVideo;
   OAuth2.Free;
 end;
+
+
 
 // поток для прогресс бара
 procedure TProgressThread.Execute;
@@ -427,9 +430,9 @@ end;
 procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
-  fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
+//  fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
 
-  FrameProgressEndLess.SetProgress(vProgressBarStatus);
+//  FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -722,8 +725,8 @@ begin
     GlobalProgressThread.Resume;
   end;
 
-  FrameProgressBar.Visible := true;
-  FrameProgressEndLess.Visible := true;
+//  FrameProgressBar.Visible := true;
+//  FrameProgressEndLess.Visible := true;
 end;
 
 procedure TfMain.Button6Click(Sender: TObject);
@@ -745,8 +748,8 @@ begin
   end;
   vProgressBarStatus := 0;
 
-  FrameProgressBar.Visible := false;
-  FrameProgressEndLess.Visible := false;
+//  FrameProgressBar.Visible := false;
+//  FrameProgressEndLess.Visible := false;
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);
@@ -786,7 +789,7 @@ begin
 
   FrameInfo(Sender, '1 балансовая единица равна переводу названия и описания или субтитров на 1 язык. '
   + #10
-  + 'Если вы переведете и заголов и субтитры на 50 языков,то потратите 100 единиц!');
+  + 'Если вы переведете заголовок и субтитры на 100 языков,то потратите 200 единиц!');
 end;
 
 procedure TfMain.ButtonMonеyClick(Sender: TObject);
@@ -879,8 +882,8 @@ begin
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
   OAuth2.ClientSecret := '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';
   // крайне важно
-  OAuth2.refresh_token := FrameMainChannel.Label3.text;
-  vResponceInfoVideo := OAuth2.videoInfo(FrameMainChannel.Label2.text);
+  OAuth2.refresh_token := FrameMainChannel.Label4.text;
+  vResponceInfoVideo := OAuth2.videoInfo(FrameMainChannel.Label5.text);
   Memo1.text := vResponceInfoVideo;
   OAuth2.Free;
 end;
@@ -1369,9 +1372,12 @@ begin
   // IntToStr(vNPanel);
   // showmessage(vMessage);
   FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
-  FrameMainChannel.Label1.text := vNameChannel;
-  FrameMainChannel.Label2.text := vIdChannel;
-  FrameMainChannel.Label3.text := vToken;
+  FrameMainChannel.LabelNameChannel.text := vNameChannel;
+  FrameMainChannel.Label1.text := '3';//vNameChannel;
+  FrameMainChannel.Label2.text := '22';//vIdChannel;
+  FrameMainChannel.Label3.text := '33';//vToken;
+  FrameMainChannel.Label4.text := vToken;
+  FrameMainChannel.Label5.text := vIdChannel;
   // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
   fMain.Button200Click(Sender);
   // vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
@@ -1485,7 +1491,7 @@ begin
     '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
   OAuth2.ClientSecret := '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';
   // крайне важно
-  OAuth2.refresh_token := FrameMainChannel.Label3.text;
+  OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceInfoVideo := OAuth2.videoInfo(vVdId);
   Memo1.text := vResponceInfoVideo;
   OAuth2.Free;
@@ -1735,7 +1741,7 @@ begin
         '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
       OAuth2.ClientSecret := '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';
       // крайне важно
-      OAuth2.refresh_token := FrameMainChannel.Label3.text;
+      OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
       vResponceSubtitleList := OAuth2.subtitlelist
         (FrameVideos.LabelVideoId.text);
@@ -1861,7 +1867,7 @@ begin
         '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
       OAuth2.ClientSecret := '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';
       // крайне важно
-      OAuth2.refresh_token := FrameMainChannel.Label3.text;
+      OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
       vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
 

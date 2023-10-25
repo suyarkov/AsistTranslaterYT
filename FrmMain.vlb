@@ -28,14 +28,8 @@ Coordinates=759,10,144,51
 [FrameVideos.MemoTitle]
 Coordinates=796,438,132,51
 
-[FrameProgressBar]
-Coordinates=331,620,107,33
-
 [FrameFirst1.EditName]
 Coordinates=189,370,144,58
-
-[FrameProgressBar.Pie1]
-Coordinates=10,620,131,33
 
 [FrameLanguages.Button1]
 Coordinates=586,10,163,58
@@ -48,9 +42,6 @@ Coordinates=361,302,207,51
 
 [FrameVideos.ImageVideo]
 Coordinates=989,234,139,51
-
-[FrameProgressBar.Layout1]
-Coordinates=778,574,149,33
 
 [FrameChannels.ImageAddChannel]
 Coordinates=527,166,184,51
@@ -69,9 +60,6 @@ Coordinates=658,234,180,51
 
 [FrameVideos.LabelVideos]
 Coordinates=590,370,142,51
-
-[FrameProgressBar.Text1]
-Coordinates=765,370,136,51
 
 [LabelCopyrigth]
 Coordinates=878,234,89,51
@@ -99,9 +87,6 @@ Coordinates=10,370,144,51
 
 [FrameVideos.PanelDescription]
 Coordinates=10,574,166,33
-
-[FrameProgressBar.Circle1]
-Coordinates=902,506,144,33
 
 [FrameVideos.MemoDescription]
 Coordinates=930,166,168,51
