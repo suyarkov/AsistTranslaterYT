@@ -33,7 +33,7 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 305;
+  Width := 585;
   Height := 105;
   Left := 8;
 //  ParentColor := false;
@@ -76,9 +76,9 @@ begin
     Text := pVideoTitle;
     Visible := true;
     Width := 449;
-    Position.y:=  25;
     Height :=  21;
-    Position.x := 120;
+    Position.x := 150;
+    Position.y:=  35;
     Font.Size := 12;
     //Font.Style := [fsBold];
     Tag :=  pN;
@@ -89,18 +89,18 @@ begin
   with VdDescription do
   begin
     Parent := Self;
-    Text := pVideoTitle;
+    Text := pVideoDescription;
     Name := 'T' + IntToStr(pN);
     Width := 449;
-    Position.y:=  25;
     Height :=  21;
-    Position.x := 120;
+    Position.x := 150;
+    Position.y:=  10;
     Font.Size := 12;
     //Font.Style := [fsBold];
     Tag :=  pN;
     Visible := True;
   end;
-
+{
   VdLang := TLabel.Create(Self);
   with VdLang do
   begin
@@ -115,15 +115,15 @@ begin
     Tag :=  pN;
     Visible := True;
   end;
-
+}
   VdImage := TImage.Create(Self);
   with VdImage do
   begin
     Parent := Self;
     Height := 90;
-    Left := 8;
-    Top := 8;
     Width := 120;
+    Position.x := 8;
+    Position.y := 8;
     Tag :=  pN;
     vdImage.Bitmap := pImage;
 {      try

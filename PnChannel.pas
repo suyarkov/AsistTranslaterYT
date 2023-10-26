@@ -36,7 +36,7 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 485;
+  Width := 685;
   Height := 105;
   Left := 8;
 //  ParentColor := false;

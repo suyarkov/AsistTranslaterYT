@@ -23,6 +23,7 @@ type
     Label4: TLabel;
     Label5: TLabel;
     LabelNameChannel: TLabel;
+    LabelCount: TLabel;
   private
     { Private declarations }
   public

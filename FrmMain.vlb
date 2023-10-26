@@ -22,9 +22,6 @@ Coordinates=816,302,188,51
 [FrameVideos.LabelTitle]
 Coordinates=77,302,129,51
 
-[FrameMainChannel.Label1]
-Coordinates=759,10,144,51
-
 [FrameVideos.MemoTitle]
 Coordinates=796,438,132,51
 
@@ -37,17 +34,11 @@ Coordinates=586,10,163,58
 [FrameChannels.BoxChannels]
 Coordinates=960,574,160,33
 
-[FrameMainChannel.LabelNameChannel]
-Coordinates=361,302,207,51
-
 [FrameVideos.ImageVideo]
 Coordinates=989,234,139,51
 
 [FrameChannels.ImageAddChannel]
 Coordinates=527,166,184,51
-
-[FrameMainChannel.ButtonAddNextVideo]
-Coordinates=267,166,215,51
 
 [FrameVideos.LanguageComboBox]
 Coordinates=10,10,185,123
@@ -64,26 +55,14 @@ Coordinates=590,370,142,51
 [LabelCopyrigth]
 Coordinates=878,234,89,51
 
-[FrameMainChannel.Label3]
-Coordinates=310,234,144,51
-
 [FrameVideos.BTranslater]
 Coordinates=306,438,139,51
 
 [LabelMail]
 Coordinates=938,10,61,51
 
-[FrameMainChannel.BoxVideos]
-Coordinates=511,574,165,33
-
 [FrameVideos.PanelTitle]
 Coordinates=349,574,130,33
-
-[FrameMainChannel]
-Coordinates=212,574,109,33
-
-[FrameMainChannel.Label2]
-Coordinates=10,370,144,51
 
 [FrameVideos.PanelDescription]
 Coordinates=10,574,166,33
@@ -108,9 +87,6 @@ Coordinates=10,234,148,58
 
 [FrameLanguages.BoxLanguages]
 Coordinates=572,506,176,33
-
-[FrameMainChannel.ImageChannel]
-Coordinates=934,370,182,51
 
 [TCPServerYouTubeAnswers]
 Coordinates=1072,626,154,33

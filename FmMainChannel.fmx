@@ -25,8 +25,8 @@ object FrameMainChannel: TFrameMainChannel
     Size.PlatformDefault = False
   end
   object Label1: TLabel
-    Position.X = 75.000000000000000000
-    Position.Y = 216.000000000000000000
+    Position.X = 74.000000000000000000
+    Position.Y = 230.000000000000000000
     Size.Width = 114.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
@@ -34,8 +34,8 @@ object FrameMainChannel: TFrameMainChannel
     TabOrder = 3
   end
   object Label2: TLabel
-    Position.X = 75.000000000000000000
-    Position.Y = 246.000000000000000000
+    Position.X = 74.000000000000000000
+    Position.Y = 263.000000000000000000
     Size.Width = 115.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
@@ -44,8 +44,8 @@ object FrameMainChannel: TFrameMainChannel
   end
   object Label3: TLabel
     StyledSettings = [Family, Size, FontColor]
-    Position.X = 75.000000000000000000
-    Position.Y = 279.000000000000000000
+    Position.X = 74.000000000000000000
+    Position.Y = 296.000000000000000000
     Size.Width = 114.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
@@ -65,7 +65,7 @@ object FrameMainChannel: TFrameMainChannel
   object ButtonAddNextVideo: TButton
     Position.X = 248.000000000000000000
     Position.Y = 465.000000000000000000
-    Size.Width = 505.000000000000000000
+    Size.Width = 617.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5
@@ -548,8 +548,8 @@ object FrameMainChannel: TFrameMainChannel
           C6699CC669FC0E83E8FF03DC411248C465B2100000000049454E44AE426082}
         FileName = 'D:\'#1044#1080#1084#1072'\! '#1052#1086#1081' '#1082#1072#1085#1072#1083'\'#1051#1086#1075#1086#1090#1080#1087'\'#1055#1086#1076#1087#1080#1089#1095#1080#1082#1080' 2.png'
       end>
-    Position.X = 42.000000000000000000
-    Position.Y = 210.000000000000000000
+    Position.X = 41.000000000000000000
+    Position.Y = 226.000000000000000000
     Size.Width = 25.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
@@ -997,8 +997,8 @@ object FrameMainChannel: TFrameMainChannel
           FA57BF0328700000000049454E44AE426082}
         FileName = 'D:\'#1044#1080#1084#1072'\! '#1052#1086#1081' '#1082#1072#1085#1072#1083'\'#1051#1086#1075#1086#1090#1080#1087'\'#1042#1080#1076#1077#1086'.png'
       end>
-    Position.X = 42.000000000000000000
-    Position.Y = 243.000000000000000000
+    Position.X = 41.000000000000000000
+    Position.Y = 259.000000000000000000
     Size.Width = 25.000000000000000000
     Size.Height = 25.000000000000000000
     Size.PlatformDefault = False
@@ -1612,7 +1612,6 @@ object FrameMainChannel: TFrameMainChannel
             4E44AE426082}
           FileName = 'D:\'#1044#1080#1084#1072'\! '#1052#1086#1081' '#1082#1072#1085#1072#1083'\'#1051#1086#1075#1086#1090#1080#1087'\'#1055#1088#1086#1089#1084#1086#1090#1088#1099'.png'
         end>
-      Position.X = 1.000000000000000000
       Position.Y = 33.000000000000000000
       Size.Width = 25.000000000000000000
       Size.Height = 25.000000000000000000
@@ -1620,15 +1619,27 @@ object FrameMainChannel: TFrameMainChannel
     end
   end
   object Label4: TLabel
-    Position.X = 43.000000000000000000
-    Position.Y = 311.000000000000000000
+    Position.X = 42.000000000000000000
+    Position.Y = 327.000000000000000000
     Text = 'Label4'
     TabOrder = 6
   end
   object Label5: TLabel
-    Position.X = 43.000000000000000000
-    Position.Y = 336.000000000000000000
+    Position.X = 42.000000000000000000
+    Position.Y = 352.000000000000000000
     Text = 'Label5'
     TabOrder = 7
+  end
+  object LabelCount: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 761.000000000000000000
+    Position.Y = 468.000000000000000000
+    Size.Width = 88.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    TextSettings.HorzAlign = Trailing
+    Text = '22/255'
+    TabOrder = 8
   end
 end

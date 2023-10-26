@@ -34,7 +34,6 @@ type
     ButtonBack: TButton;
     FrameChannels: TFrameChannels;
     TCPServerYouTubeAnswers: TIdTCPServer;
-    FrameMainChannel: TFrameMainChannel;
     FrameVideos: TFrameVideos;
     FrameLanguages: TFrameLanguages;
     PanelAlpha_ForTest: TPanel;
@@ -65,6 +64,7 @@ type
     ButtonMonеy: TButton;
     ButtonMoneyInfo: TButton;
     ImageDel: TImage;
+    FrameMainChannel: TFrameMainChannel;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -1380,7 +1380,6 @@ begin
   // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
   fMain.Button200Click(Sender);
   // прилетело и vResponceChannel - дополним статистику на страничке
-
   S := '0';
   vObj := Tchannel.Create;
   // в мемо должен быть уже строка с канала
@@ -1420,7 +1419,6 @@ begin
 
   // vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
   // Наполняем панель видео
-
   S := '0';
   vObjVideo := TObjvideo.Create;
   // в мемо должен быть уже строка с канала
@@ -1435,6 +1433,8 @@ begin
     vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.URL;
     vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
     vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
+    vVideo.publishTime := StringReplace(vVideo.publishTime, 'Z', '', [rfReplaceAll, rfIgnoreCase]);
+    vVideo.publishTime := StringReplace(vVideo.publishTime, 'T', ' ', [rfReplaceAll, rfIgnoreCase]);
     // решил тут не грузить видео по урлу, сделаю это внутри панели
     try
       S := StringReplace(vVideo.urlDefault, #13, '',
@@ -1464,7 +1464,7 @@ begin
     vPosY := 30 + (i) * 120;
     // PanelVideos
     PanVideos[i + 1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY,
-      i + 1, vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.description,
+      i + 1, vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.publishTime,
       'нету', vVideo.img);
     PanVideos[i + 1].Parent := FrameMainChannel.BoxVideos;
 
