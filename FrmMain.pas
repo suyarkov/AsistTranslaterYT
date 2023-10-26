@@ -397,10 +397,9 @@ begin
   OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
-//  vResponceVideo := OAuth2.ChannelInfo(FrameMainChannel.Label5.text);
-//  showmessage(vResponceVideo);
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text);
-    showmessage(vResponceVideo);
+  vResponceChannel := OAuth2.MyChannels;
+  //showmessage(vResponceChannel);
   // Memo1.Text := vResponceVideo;
   OAuth2.Free;
 end;
@@ -1359,7 +1358,10 @@ var
   FHTTPClient: THTTPClient;
   AResponce: IHTTPResponse;
   Bitimg: TBitmap;
-  // vPanVideo: array [1 .. 1000] of TVideoPanel;
+
+  vObj: Tchannel; // Tchannel;
+  vImgUrl: string;
+
 begin
   vNPanel := TButton(Sender).Tag;
   vCurrentPanChannel := vNPanel;
@@ -1373,13 +1375,49 @@ begin
   // showmessage(vMessage);
   FrameMainChannel.ImageChannel.Bitmap := PanChannels[vNPanel].ChImage.Bitmap;
   FrameMainChannel.LabelNameChannel.text := vNameChannel;
-  FrameMainChannel.Label1.text := '3';//vNameChannel;
-  FrameMainChannel.Label2.text := '22';//vIdChannel;
-  FrameMainChannel.Label3.text := '33';//vToken;
   FrameMainChannel.Label4.text := vToken;
   FrameMainChannel.Label5.text := vIdChannel;
   // запрос на сервер по видео на канале, но нужно бы ещЄ перед этим и рисунок грузануть
   fMain.Button200Click(Sender);
+  // прилетело и vResponceChannel - дополним статистику на страничке
+
+  S := '0';
+  vObj := Tchannel.Create;
+  // в мемо должен быть уже строка с канала
+  vObj := TJson.JsonToObject<Tchannel>(vResponceChannel);
+
+  for i := 0 to Length(vObj.Items) - 1 do
+  begin
+    FrameMainChannel.Label1.text := IntToStr(vObj.Items[i].statistics.subscriberCount);
+    FrameMainChannel.Label2.text := IntToStr(vObj.Items[i].statistics.videoCount);
+    FrameMainChannel.Label3.text := IntToStr(vObj.Items[i].statistics.viewCount);
+
+    vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
+    try
+      S := StringReplace(vImgUrl, #13, '', [rfReplaceAll, rfIgnoreCase]);
+      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+      FHTTPClient := THTTPClient.Create;
+      FHTTPClient.UserAgent :=
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+      try
+        AResponce := FHTTPClient.Get(AAPIUrl);
+      except
+        showmessage('нет подключени€');
+      end;
+      if Not Assigned(AResponce) then
+      begin
+        showmessage('ѕусто');
+      end;
+
+      Bitimg := TBitmap.Create;
+      Bitimg.LoadFromStream(AResponce.ContentStream);
+      FrameMainChannel.ImageChannel.Bitmap := Bitimg;
+    except
+      showmessage('„то except');
+    end;
+
+  end;
+
   // vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
   // Ќаполн€ем панель видео
 

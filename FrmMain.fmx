@@ -127,7 +127,7 @@
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 2
+        TabOrder = 3
       end
     end
     inherited EditName: TEdit
@@ -225,31 +225,55 @@
     end
   end
   inline FrameMainChannel: TFrameMainChannel
-    Position.X = 688.000000000000000000
-    Position.Y = 66.000000000000000000
+    Position.X = 545.000000000000000000
+    Position.Y = 38.000000000000000000
     Size.Width = 800.000000000000000000
     Size.Height = 538.000000000000000000
     Size.PlatformDefault = False
     inherited LabelNameChannel: TLabel
-      Position.X = 16.000000000000000000
+      Position.X = 2.000000000000000000
+      Position.Y = 186.000000000000000000
+      Size.Width = 218.000000000000000000
       TextSettings.Font.StyleExt = {00070000000000000004000000}
     end
+    inherited ImageChannel: TImage
+      Position.X = 38.000000000000000000
+      Position.Y = 25.000000000000000000
+    end
+    inherited Label1: TLabel
+      Position.Y = 235.000000000000000000
+    end
+    inherited Label2: TLabel
+      Position.Y = 265.000000000000000000
+    end
+    inherited Label3: TLabel
+      Position.Y = 298.000000000000000000
+    end
     inherited BoxVideos: TVertScrollBox
-      Position.X = 199.000000000000000000
-      Viewport.Width = 561.000000000000000000
+      Position.X = 241.000000000000000000
+      Size.Width = 487.000000000000000000
+      Viewport.Width = 487.000000000000000000
       Viewport.Height = 449.000000000000000000
     end
     inherited Image1: TImage
       MultiResBitmap.Height = 128
       MultiResBitmap.Width = 128
+      Position.Y = 229.000000000000000000
     end
     inherited Image2: TImage
       MultiResBitmap.Height = 128
       MultiResBitmap.Width = 128
+      Position.Y = 262.000000000000000000
       inherited Image3: TImage
         MultiResBitmap.Height = 128
         MultiResBitmap.Width = 128
       end
+    end
+    inherited Label4: TLabel
+      Position.Y = 330.000000000000000000
+    end
+    inherited Label5: TLabel
+      Position.Y = 355.000000000000000000
     end
   end
   inline FrameVideos: TFrameVideos
@@ -263,13 +287,13 @@
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 48.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 44.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 503.000000000000000000
-      Viewport.Height = 355.000000000000000000
+      Viewport.Width = 499.000000000000000000
+      Viewport.Height = 351.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -2160,7 +2184,7 @@
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 2
+        TabOrder = 3
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -2199,8 +2223,8 @@
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 884.000000000000000000
-      Viewport.Height = 59.000000000000000000
+      Viewport.Width = 880.000000000000000000
+      Viewport.Height = 55.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000
