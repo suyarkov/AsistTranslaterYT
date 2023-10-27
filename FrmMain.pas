@@ -200,14 +200,16 @@ begin
   // по центру поместим форму
   fMain.FrameFirst.Position.X :=
     Round((fMain.Width - fMain.FrameFirst.Width) / 2);
-  fMain.FrameFirst.Position.Y := 56;
+  fMain.FrameFirst.Position.Y := //56;
+    Round((fMain.Height - fMain.FrameFirst.Height-200) / 2);
+
   // спр€чем второй фрейм за границу видимости
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
   fMain.FrameChannels.Position.Y := 56;
 
   // спр€чем третий фрейм за границу видимости
   fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
-  fMain.FrameMainChannel.Position.Y := 56;
+  fMain.FrameMainChannel.Position.Y := 20;
 
   // спр€чем четвертый фрейм за границу видимости
   fMain.FrameVideos.Position.X := Round(fMain.Width + 1);
@@ -1461,7 +1463,8 @@ begin
       showmessage('„то except load video');
     end;
 
-    vPosY := 30 + (i) * 120;
+    vPosY := 1 + (i) * 120;
+    //—оздаем
     // PanelVideos
     PanVideos[i + 1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY,
       i + 1, vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.publishTime,

@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, FMX.Objects;
+  FMX.Controls.Presentation, FMX.Objects, FMX.Memo;
 
 type
   TVideoPanel = class(TPanel)
     VdImage: TImage;
     VdId: TLabel;
     VdToken: TLabel;
-    VdTitle: TLabel;
+    VdTitle: Tmemo; //TLabel;
     VdDescription  : TLabel;
     VdLang  : TLabel;
   public
@@ -33,9 +33,9 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 585;
+  Width := 570;
   Height := 105;
-  Left := 8;
+  Left := 0;
 //  ParentColor := false;
 //  StyleElements := [seFont,seBorder];
 //  BevelOuter :=  bvNone;
@@ -69,14 +69,17 @@ begin
     tag :=  pN;
   end;
 
-  VdTitle := TLabel.Create(Self);
+  // название
+  VdTitle := TMemo.Create(Self);
+  VdTitle.Enabled := false;
   with VdTitle do
   begin
+    WordWrap := true;
     Parent := Self;
     Text := pVideoTitle;
     Visible := true;
-    Width := 449;
-    Height :=  21;
+    Width := 410;
+    Height :=  51;
     Position.x := 150;
     Position.y:=  35;
     Font.Size := 12;
@@ -85,6 +88,7 @@ begin
     Visible := True;
   end;
 
+  // время когда загрузили или опубликовали ролик
   VdDescription := TLabel.Create(Self);
   with VdDescription do
   begin
