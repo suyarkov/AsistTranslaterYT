@@ -79,7 +79,7 @@ begin
 
     // -- решаем вопрос кодировки тела письма
     idtTextPart := TIdText.Create(lMessage.MessageParts, nil);
-    idtTextPart.ContentType := 'text/plain';
+    idtTextPart.ContentType := 'text/plain';  // а нам нужен веб
     idtTextPart.CharSet := 'Windows-1251';
 
     idtTextPart.Body.Text := aMessageText;

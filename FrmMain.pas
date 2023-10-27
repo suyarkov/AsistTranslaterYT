@@ -188,7 +188,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'Жааах! 1.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  fMain.PanelAlpha_ForTest.visible := false;
+//  fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.Text  := '';
   fMain.Width := 871;
@@ -774,10 +774,22 @@ begin
 end;
 
 procedure TfMain.ButtonEmail2Click(Sender: TObject);
+var vBodyMail : string;
 begin
-  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
+ vBodyMail := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">'
++ '  <p style="text-align:center"><img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px"></p>'
++ '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения YouClicker Desktop.</strong></p>'
++ '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения YouClicker Desktop.</p>'
++ '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
++ '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
+
+{  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
     'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
-    'Привет от асиста', '', true);
+    'Привет от асиста', '', true);}
+
+  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
+    'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'AceIQ registration',
+    vBodyMail, '', true);
 end;
 
 procedure TfMain.ButtonHelpClick(Sender: TObject);
