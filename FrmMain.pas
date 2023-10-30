@@ -783,12 +783,12 @@ begin
 + '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
 + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-{  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
-    'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
+{  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', 'HDYWVZcaB8sbAr49jBmd',
+    'brest20133@mail.ru', 'YouTranslate', 'suyarkov@gmail.com', 'Тема пирога',
     'Привет от асиста', '', true);}
 
-  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
-    'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'AceIQ registration',
+  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', 'HDYWVZcaB8sbAr49jBmd',
+    'brest20133@mail.ru', 'YouTranslate', 'suyarkov@gmail.com', 'AceIQ registration',
     vBodyMail, '', true);
 end;
 
