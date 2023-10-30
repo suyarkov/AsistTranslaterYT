@@ -11,7 +11,7 @@ type
 
   public
     property totalResults: integer read FtotalResults write FtotalResults;
-
+    property resultsPerPage: integer read FresultsPerPage write FresultsPerPage;
   end;
 
 implementation

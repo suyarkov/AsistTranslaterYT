@@ -100,6 +100,7 @@ type
     procedure ButtonMoneyInfoClick(Sender: TObject);
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonMonеyClick(Sender: TObject);
+    procedure FrameMainChannelButtonAddNextVideoClick(Sender: TObject);
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
@@ -151,6 +152,8 @@ var
   vCurrentPanChannel: integer;
   vGlobalList: TListLanguages;
   vInterfaceLanguage: string;
+  vTotalCountVideo, vNowCountVideo : integer;
+  vnextPageTokenVideo : string;
 
 implementation
 
@@ -188,7 +191,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'Жааах! 1.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-//  fMain.PanelAlpha_ForTest.visible := false;
+  fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.Text  := '';
   fMain.Width := 871;
@@ -400,6 +403,7 @@ begin
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text);
+  // и по каналу данные тоже подтянем, чтоб статистику по каналу свежую знать
   vResponceChannel := OAuth2.MyChannels;
   //showmessage(vResponceChannel);
   // Memo1.Text := vResponceVideo;
@@ -1391,6 +1395,8 @@ begin
   FrameMainChannel.LabelNameChannel.text := vNameChannel;
   FrameMainChannel.Label4.text := vToken;
   FrameMainChannel.Label5.text := vIdChannel;
+  FrameMainChannel.ButtonAddNextVideo.Enabled := true;
+  FrameMainChannel.ButtonAddNextVideo.Text := 'V  V';
   // запрос на сервер по видео на канале, но нужно бы ещё перед этим и рисунок грузануть
   fMain.Button200Click(Sender);
   // прилетело и vResponceChannel - дополним статистику на страничке
@@ -1437,6 +1443,11 @@ begin
   vObjVideo := TObjvideo.Create;
   // в мемо должен быть уже строка с канала
   vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
+  // сколько из скольки мы запоминаем!!!
+  vNextPageTokenVideo := vObjVideo.nextPageToken;
+  vNowCountVideo := vObjVideo.pageInfo.resultsPerPage;
+  vTotalCountVideo := vObjVideo.pageInfo.totalResults;
+  FrameMainChannel.LabelCount.text := IntToStr(vNowCountVideo) + '/' + IntToStr(vTotalCountVideo);
 
   for i := 0 to Length(vObjVideo.Items) - 1 do
   begin
@@ -1924,7 +1935,7 @@ begin
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
       vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
 
-      showmessage('Перевели');
+      showmessage('Перевели ' + vResponceInsTitle);
 
       vIndexMainLanguage := 0; // пока нет субтитров главных заданных
       vSCount := 0; // кол-во уже существующих субтитров
@@ -2007,6 +2018,111 @@ begin
   end
   else
     FrameInfo(Sender, 'Нет языков на которые нужно перевести');
+end;
+
+
+// запрос для следующего токена (части) по видео
+procedure TfMain.FrameMainChannelButtonAddNextVideoClick(Sender: TObject);
+var
+  Access_token: string; // токен выполнения операций
+  refresh_token: string; // токен получения следующего токена на выполнение
+  OAuth2: TOAuth;
+  vString: string;
+
+  vObjVideo: TObjvideo;
+  S: string;
+  i, vPosY: integer;
+  vVideo: TVideo;
+
+  AAPIUrl: String;
+  FHTTPClient: THTTPClient;
+  AResponce: IHTTPResponse;
+  Stream: TStream;
+
+  Bitimg: TBitmap;
+
+  vCountVideoCreate : integer ;
+begin
+  // только если ещё не все загрузили
+  if vNowCountVideo >= vTotalCountVideo then
+    exit;
+  // грузим следующую партию
+  vCountVideoCreate := vNowCountVideo;
+  OAuth2 := TOAuth.Create;
+  OAuth2.ClientID :=
+    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  OAuth2.ClientSecret := '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';
+  // крайне важно
+  OAuth2.refresh_token := FrameMainChannel.Label4.text;
+  vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text, vNextPageTokenVideo);
+  //showmessage(vResponceChannel);
+  OAuth2.Free;
+
+  // vResponceVideo -- проверить на первые символы есть ли они до {, если есть то обработать ошибку
+  // ДОполняем панель видео
+  S := '0';
+  vObjVideo := TObjvideo.Create;
+  vObjVideo := TJson.JsonToObject<TObjvideo>(vResponceVideo);
+  vNextPageTokenVideo := vObjVideo.nextPageToken;
+  vNowCountVideo := vObjVideo.pageInfo.resultsPerPage + vNowCountVideo;
+  vTotalCountVideo := vObjVideo.pageInfo.totalResults;
+  if vNowCountVideo >= vTotalCountVideo then
+  begin
+    vNowCountVideo := vTotalCountVideo;
+    FrameMainChannel.ButtonAddNextVideo.Enabled := false;
+    FrameMainChannel.ButtonAddNextVideo.Text := '';
+  end;
+  FrameMainChannel.LabelCount.text := IntToStr(vNowCountVideo) + '/' + IntToStr(vTotalCountVideo);
+
+  for i := 0 to Length(vObjVideo.Items) - 1 do
+  begin
+    vVideo.videoId := vObjVideo.Items[i].id.videoId;
+    vVideo.channelId := vObjVideo.Items[i].snippet.channelId;
+    vVideo.title := vObjVideo.Items[i].snippet.title;
+    vVideo.description := vObjVideo.Items[i].snippet.description;
+    vVideo.urlDefault := vObjVideo.Items[i].snippet.thumbnails.default.URL;
+    vVideo.publishedAt := vObjVideo.Items[i].snippet.publishedAt;
+    vVideo.publishTime := vObjVideo.Items[i].snippet.publishTime;
+    vVideo.publishTime := StringReplace(vVideo.publishTime, 'Z', '', [rfReplaceAll, rfIgnoreCase]);
+    vVideo.publishTime := StringReplace(vVideo.publishTime, 'T', ' ', [rfReplaceAll, rfIgnoreCase]);
+    // решил тут не грузить видео по урлу, сделаю это внутри панели
+    try
+      S := StringReplace(vVideo.urlDefault, #13, '',
+        [rfReplaceAll, rfIgnoreCase]);
+      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+      FHTTPClient := THTTPClient.Create;
+      FHTTPClient.UserAgent :=
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+      try
+        AResponce := FHTTPClient.Get(AAPIUrl);
+      except
+        showmessage('нет подключения');
+      end;
+      if Not Assigned(AResponce) then
+      begin
+        showmessage('Пусто');
+      end;
+
+      Bitimg := TBitmap.Create;
+      Bitimg.LoadFromStream(AResponce.ContentStream);
+      vVideo.img := TBitmap.Create;
+      vVideo.img := Bitimg;
+    except
+      showmessage('Что except load video');
+    end;
+
+    vPosY := 1 + (i+vCountVideoCreate) * 120;
+    //Создаем
+    // PanelVideos
+    PanVideos[vCountVideoCreate + i + 1] := TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY,
+      i + 1, vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.publishTime,
+      'нету', vVideo.img);
+    PanVideos[vCountVideoCreate + i + 1].Parent := FrameMainChannel.BoxVideos;
+    PanVideos[vCountVideoCreate + i + 1].OnClick := DinPanelVideoClick; // Type (sender, 'TPanel');
+    PanVideos[vCountVideoCreate + i + 1].VdImage.OnClick := DinPanelVideoClick;
+
+  end;
+
 end;
 
 end.
