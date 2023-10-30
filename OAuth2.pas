@@ -49,6 +49,7 @@ type
 
     function VideoInfo(AVideoID: string): string;   // об одном видео
     function VideoUpdate(JSON: string): string;
+
     function MyVideos(AChannelID: string; NextToken: string = ''): string; // данные о всех виде
     function MyChannels: string;       // данные о канале
     function ChannelInfo(AChannelID: string ): string; // об одном канале

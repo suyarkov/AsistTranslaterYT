@@ -1139,6 +1139,7 @@ var
   vSelected, vCount: integer; // 1- выбран,  0- не выбран
   vSelLanguages: string;
   NewThread: TNewThread;
+  vEnabled : boolean;
 begin
   vBitmap := Image3.Bitmap;
   FrameVideos.BTranslaterClick(Sender);
@@ -1166,8 +1167,10 @@ begin
       // vSelLanguages := vSelLanguages + PanLanguages[vNPanel].ChLang + '/';
     end;
     //
+    vEnabled := (FrameVideos.LanguageVideoLabel.text <> vList[i].LnCode);
+
     PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX,
-      vPosY, i, vSelected, // временно, потом вставить анализ выбранных языков
+      vPosY, i, vSelected, vEnabled, // временно, потом вставить анализ выбранных языков
       IntToStr(vList[i].id), vList[i].NameRussian,
       // русское отображение, наверное и нафиг надо
       // vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
@@ -1897,6 +1900,7 @@ begin
     FrameInfo(Sender, 'Нет языков на которые нужно перевести');
 end;
 
+// создаем переводов наименований и описаний
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
 var
   // есть ли выбранные языки для перевода
@@ -1918,7 +1922,17 @@ var
 
   vResponceInsTitle: string;
   vJSON: string;
+
+  vTitle :string;
+  vDescription : string;
+
+  vTranslateTitle :string;
+  vTranslateDescription : string;
+
 begin
+
+  vTitle := FrameVideos.MemoTitle.text;
+  vDescription := FrameVideos.MemoDescription.text;
 
   vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
   if vLength > 2 then
@@ -1933,13 +1947,13 @@ begin
       // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
-      vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+      // vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
 
-      showmessage('Перевели ' + vResponceInsTitle);
+      //showmessage('Перевели ' + vResponceInsTitle);
 
       vIndexMainLanguage := 0; // пока нет субтитров главных заданных
       vSCount := 0; // кол-во уже существующих субтитров
-      vObjSubtitles := TObjSubtitleList.Create;
+{      vObjSubtitles := TObjSubtitleList.Create;
       // в мемо должен быть уже строка с канала
       vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>
         (vResponceSubtitleList);
@@ -1952,9 +1966,10 @@ begin
         then
           vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
-
+                                                                                  }
       // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
-      if vIndexMainLanguage = 0 then
+
+      if 1 = 0 then //       if vIndexMainLanguage = 0 then
       begin
         FrameInfo(Sender, 'Нет основного языка, переводить не с чего!');
       end
@@ -1981,7 +1996,8 @@ begin
               vFileText.SaveToFile(vFullNameFile); }
           end;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount - 1));
+        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
+
         // начинаем разбор языков
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
@@ -1993,21 +2009,25 @@ begin
           then
           begin
             inc(vTransCount);
+            vTranslateTitle := GoogleTranslate(vTitle,FrameVideos.LanguageVideoLabel.text,PanLanguages[i].ChLang.text);
+            vTranslateDescription := GoogleTranslate(vDescription,FrameVideos.LanguageVideoLabel.text,PanLanguages[i].ChLang.text);
+
             // формируем JSON
-            vJSON := '{  "id": "' + FrameVideos.LabelVideoId.text
             // YOUR_VIDEO_ID
-              + '",  "localizations": {"' + PanLanguages[i].ChLang.text
+            vJSON := '{  "id": "' + FrameVideos.LabelVideoId.text
             // на какой язык
-              + '" : {"title": "' + FrameVideos.MemoTitle.text // название
-              + '","description": "' + FrameVideos.MemoDescription.text
+              + '",  "localizations": {"' + PanLanguages[i].ChLang.text
+            // наименование
+              + '" : {"title": "' + vTranslateTitle // название
             // описание
+              + '","description": "' + vTranslateDescription
               + '"}}}"';
             // загружаем в этом языке наименование и описание
             vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-
+            showmessage(vTranslateDescription);
           end;
         end;
-        FrameInfo(Sender, 'Перевели на ' + IntToStr(vSCount - 1));
+        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;
     end

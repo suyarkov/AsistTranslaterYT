@@ -47,7 +47,8 @@ uses
   FmAddUser in 'FmAddUser.pas' {FrameAddUser: TFrame},
   FmTextInput in 'FmTextInput.pas' {FrameTextInput: TFrame},
   FmHelp in 'FmHelp.pas' {FrameHelp: TFrame},
-  FmAddMoney in 'FmAddMoney.pas' {FrameAddMoney: TFrame};
+  FmAddMoney in 'FmAddMoney.pas' {FrameAddMoney: TFrame},
+  MimeMy in 'MimeMy.pas';
 
 {$R *.res}
 

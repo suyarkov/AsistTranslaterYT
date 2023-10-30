@@ -2135,7 +2135,7 @@
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 2
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -2174,8 +2174,8 @@
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 880.000000000000000000
-      Viewport.Height = 55.000000000000000000
+      Viewport.Width = 884.000000000000000000
+      Viewport.Height = 59.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000

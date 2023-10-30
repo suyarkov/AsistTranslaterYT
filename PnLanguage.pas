@@ -21,7 +21,7 @@ type
     chToken  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;
+    constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer; pEnabled : boolean;
                 pChId, pChToken, pChName, pChLang : string;  ABitmap : TBitmap
     ); reintroduce;
       overload; virtual;
@@ -44,7 +44,7 @@ begin
   //Top := 8;
 end;
 
-constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;
+constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer; pEnabled : boolean;
       pChId, pChToken, pChName, pChLang : string  ; ABitmap : TBitmap
       );
 begin
@@ -71,6 +71,7 @@ begin
 //    if pSelected = 1 then
       TextSettings.Font.Style := [TFontStyle.fsBold];
     Visible := True;
+    Enabled := pEnabled;
     Tag :=  pN;
   end;
 
