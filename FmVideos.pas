@@ -25,6 +25,9 @@ type
     BTranslater: TButton;
     LabelVideoId: TLabel;
     procedure BTranslaterClick(Sender: TObject);
+    procedure MemoTitleChange(Sender: TObject);
+    procedure MemoTitleKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -35,6 +38,23 @@ type
 implementation
 
 {$R *.fmx}
+
+procedure TFrameVideos.MemoTitleChange(Sender: TObject);
+begin
+if length(MemoTitle.Text)> 100 then
+begin
+  MemoTitle.Text := copy(MemoTitle.Text,1,100);
+  MemoTitle.SelStart := 100;
+end;
+
+TitleLengthLabel.Text := IntToStr(length(MemoTitle.Text)) +'/100';
+end;
+
+procedure TFrameVideos.MemoTitleKeyUp(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+   MemoTitleChange(Sender);
+end;
 
 procedure TFrameVideos.SetLang(pLabelVideos, pLanguageCheckBox, pLabelTitle, pLabelDescription, pBTranslater: string);
 begin

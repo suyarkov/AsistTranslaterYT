@@ -37,7 +37,7 @@ begin
   inherited Create(AOwner);
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
-  Width := 685;
+  Width := 400;
   Height := 105;
   Left := 8;
 //  ParentColor := false;
@@ -78,7 +78,7 @@ begin
     Parent := Self;
     Text := 'Delete';
     name := 'D' + IntToStr(pN);
-    Position.x := 400;
+    Position.x := 310;
     Position.y := 10;
     Width := 60;
     Visible := false;
@@ -90,7 +90,7 @@ begin
   with ImageDel do
   begin
     Parent := Self;
-    Position.x := 400;
+    Position.x := 370;
     Position.y := 25;
     Height := 20;
     Width := 20;

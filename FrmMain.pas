@@ -210,7 +210,7 @@ begin
 
   // спр€чем второй фрейм за границу видимости
   fMain.FrameChannels.Position.X := Round(fMain.Width + 1);
-  fMain.FrameChannels.Position.Y := 56;
+  fMain.FrameChannels.Position.Y := 35;
 
   // спр€чем третий фрейм за границу видимости
   fMain.FrameMainChannel.Position.X := Round(fMain.Width + 1);
@@ -460,7 +460,7 @@ var
   vLeftBorderFrame, vStepSize, vLeftBorderFrame2, vLeftBorderFrame3,
     vLeftBorderFrame4, vLeftBorderFrame5: integer;
 begin
-  vStepSize := 10;
+  vStepSize := fMain.Width;//10;
   vLeftBorderFrame := Round((fMain.Width - fMain.FrameFirst.Width) / 2);
   vLeftBorderFrame2 := Round((fMain.Width - fMain.FrameChannels.Width) / 2);
   vLeftBorderFrame3 := Round((fMain.Width - fMain.FrameMainChannel.Width) / 2);
@@ -835,6 +835,7 @@ begin
 
 end;
 
+// прорисовываю каналы что ли
 procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
   //
@@ -860,7 +861,7 @@ begin
         // vBitmap := vDefaulBitmap;
       end;
 
-      vPos := 30 + (i - 1) * 120;
+      vPos := 3 + (i - 1) * 120;
       PanChannels[i] := TChannelPanel.Create(FrameChannels.BoxChannels, vPos, i,
         results.FieldByName('id_channel').AsString,
         results.FieldByName('refresh_token').AsString,

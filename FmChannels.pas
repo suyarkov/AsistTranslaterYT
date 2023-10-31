@@ -15,6 +15,11 @@ type
     ButtonAddChannel: TButton;
     ImageAddChannel: TImage;
     BoxChannels: TVertScrollBox;
+    Panel1: TPanel;
+    Image1: TImage;
+    Label1: TLabel;
+    Image2: TImage;
+    Image3: TImage;
   private
     { Private declarations }
   public

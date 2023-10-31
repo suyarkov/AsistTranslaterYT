@@ -21,12 +21,14 @@ object FrameVideos: TFrameVideos
     ShowScrollBars = False
     StyledSettings = [Family, Size, FontColor]
     TextSettings.Font.StyleExt = {00070000000000000004000000}
+    OnChange = MemoTitleChange
     Position.X = 280.000000000000000000
     Position.Y = 34.000000000000000000
     Size.Width = 503.000000000000000000
     Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
+    OnKeyUp = MemoTitleKeyUp
     Viewport.Width = 499.000000000000000000
     Viewport.Height = 44.000000000000000000
   end
