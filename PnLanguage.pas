@@ -21,7 +21,7 @@ type
     chToken  : TLabel;
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer; pEnabled : boolean;
+    constructor Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer;vEnabled :boolean;
                 pChId, pChToken, pChName, pChLang : string;  ABitmap : TBitmap
     ); reintroduce;
       overload; virtual;
@@ -36,7 +36,7 @@ begin
 //  Parent := AOwner;
 //  ControlStyle := ControlStyle + [csReplicatable];
   Width := 236;
-  Height := 46;
+  Height := 37;
   Left := 8;
 //  ParentColor := false;
 //  StyleElements := [seFont,seBorder];
@@ -44,7 +44,7 @@ begin
   //Top := 8;
 end;
 
-constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer; pEnabled : boolean;
+constructor TLanguagePanel.Create(AOwner: TComponent; pPosX, pPosY, pN, pSelected: integer; vEnabled: boolean;
       pChId, pChToken, pChName, pChLang : string  ; ABitmap : TBitmap
       );
 begin
@@ -71,7 +71,6 @@ begin
 //    if pSelected = 1 then
       TextSettings.Font.Style := [TFontStyle.fsBold];
     Visible := True;
-    Enabled := pEnabled;
     Tag :=  pN;
   end;
 
@@ -128,10 +127,10 @@ begin
   with ChImage do
   begin
     Parent := Self;
-    Position.x := 8;
-    Position.y := 16;
-    Height := 16;
-    Width := 16;
+    Position.x := 16;
+    Position.y := 7;
+    Height := 20;
+    Width := 20;
     Tag :=  pN;
     try
     ChImage.Bitmap := ABitmap;

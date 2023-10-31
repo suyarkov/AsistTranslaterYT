@@ -22,7 +22,7 @@ uses
   Classes.videoInfo, Classes.subtitlelist,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
-  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList;
+  FmHelp, FmAddMoney;
 
 type
   TfMain = class(TForm)
@@ -65,8 +65,6 @@ type
     ButtonMoneyInfo: TButton;
     ImageDel: TImage;
     FrameMainChannel: TFrameMainChannel;
-    SpeedButton1: TSpeedButton;
-    ImageList1: TImageList;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -780,19 +778,22 @@ begin
 end;
 
 procedure TfMain.ButtonEmail2Click(Sender: TObject);
-var vBody : string;
+var vBodyMail : string;
 begin
-  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  <p style="text-align:center">'
-  +'<img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px"></p>'
-  +'<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AceIQ Desktop.</strong></p>'
-  +'<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения Ace Desktop.</p>'
-  +'<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
-  +'<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
+ vBodyMail := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">'
++ '  <p style="text-align:center"><img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px"></p>'
++ '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения YouClicker Desktop.</strong></p>'
++ '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения YouClicker Desktop.</p>'
++ '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
++ '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
-//    'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
-    'brest20133@mail.ru', 'AceIQ Desktop', 'suyarkov+4561@gmail.com', 'AceIQ : Confirm your email address',
-    vBody, '', true);
+{  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', 'HDYWVZcaB8sbAr49jBmd',
+    'brest20133@mail.ru', 'YouTranslate', 'suyarkov@gmail.com', 'Тема пирога',
+    'Привет от асиста', '', true);}
+
+  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', 'HDYWVZcaB8sbAr49jBmd',
+    'brest20133@mail.ru', 'YouTranslate', 'suyarkov@gmail.com', 'AceIQ registration',
+    vBodyMail, '', true);
 end;
 
 procedure TfMain.ButtonHelpClick(Sender: TObject);
@@ -866,10 +867,9 @@ begin
         results.FieldByName('refresh_token').AsString,
         results.FieldByName('name_channel').AsString,
         results.FieldByName('lang').AsString, results.FieldByName('sel_lang')
-        .AsString, vBitmap, ImageDel.Bitmap);
+        .AsString, vBitmap);
       PanChannels[i].Parent := FrameChannels.BoxChannels;
       PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-      PanChannels[i].ImageDel.OnClick := DinButtonDeleteChannelClick;
       // PanChannels[i].OnMouseMove := DinPanelMouseMove;
       PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
       PanChannels[i].ChImage.OnClick := DinPanelClick;
@@ -1175,7 +1175,7 @@ begin
       // русское отображение, наверное и нафиг надо
       // vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
       vList[i].NameLocal, // отображение на кнопках
-      vList[i].LnCode,  vBitmap); // ,            ,
+      vList[i].LnCode, vBitmap); // ,
     // vWidth := PanLanguages[i].Width;
     // vHeight := PanLanguages[i].Height;
     PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
@@ -1996,11 +1996,9 @@ begin
               vFileText.SaveToFile(vFullNameFile); }
           end;
         end;
-//        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
+        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
-        AniIndicator1.Visible := true;
-        AniIndicator1.Enabled := true;
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
         begin
@@ -2016,23 +2014,19 @@ begin
 
             // формируем JSON
             // YOUR_VIDEO_ID
-            vJSON := '{"id":"' + FrameVideos.LabelVideoId.text
+            vJSON := '{  "id": "' + FrameVideos.LabelVideoId.text
             // на какой язык
               + '",  "localizations": {"' + PanLanguages[i].ChLang.text
             // наименование
-              + '" : {"title":"' + vTranslateTitle // название
+              + '" : {"title": "' + vTranslateTitle // название
             // описание
               + '","description": "' + vTranslateDescription
-              + '"}}}';
+              + '"}}}"';
             // загружаем в этом языке наименование и описание
             vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-//          сделать если есть ошибку то вывести мне для отладки
-            showmessage(vJSON + #13 + #10 + vResponceInsTitle + ' ' + #13 + #10 + vTranslateDescription);
+            showmessage(vTranslateDescription);
           end;
         end;
-        AniIndicator1.Visible := false;
-        AniIndicator1.Enabled := false;
-
         FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;

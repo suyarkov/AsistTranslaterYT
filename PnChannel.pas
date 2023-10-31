@@ -14,6 +14,7 @@ type
 //  TChannelPanel = class(TPanel)
   TChannelPanel = class(TPanel)
     ChImage: TImage;
+    ImageDel: TImage;
     ChName: TLabel;
     ChLang: TLabel;
     ChSelLang: TLabel;
@@ -24,7 +25,7 @@ type
     constructor Create(AOwner: TComponent); overload; override;
     constructor Create(AOwner: TComponent; pPos, pN: integer;
                 pChId, pChToken, pChName, pChLang, pChSelLang : string;
-                ABitmap : TBitmap); reintroduce;
+                ABitmap, ADelBitmal : TBitmap); reintroduce;
       overload; virtual;
 //    procedure DinButtonDeleteChannelClick(Sender: TObject);
   end;
@@ -46,7 +47,7 @@ begin
 end;
 
 constructor TChannelPanel.Create(AOwner: TComponent;  pPos, pN: integer;
-      pChId, pChToken, pChName, pChLang, pChSelLang : string; ABitmap : TBitmap);
+      pChId, pChToken, pChName, pChLang, pChSelLang : string; ABitmap, ADelBitmal : TBitmap);
 begin
   Create(AOwner);
   Self.Position.y := 8 + pPos;
@@ -80,8 +81,27 @@ begin
     Position.x := 400;
     Position.y := 10;
     Width := 60;
-    Visible := True;
+    Visible := false;
     Tag :=  pN;
+    Cursor := crHandPoint;
+  end;
+
+  ImageDel := TImage.Create(Self);
+  with ImageDel do
+  begin
+    Parent := Self;
+    Position.x := 400;
+    Position.y := 30;
+    Height := 40;
+    Width := 40;
+    Tag :=  pN;
+    try
+    ImageDel.Bitmap := ADelBitmal;
+    except
+       null;
+    end;
+    Cursor := crHandPoint;
+    Visible := True;
   end;
 
   ChName := TLabel.Create(Self);
