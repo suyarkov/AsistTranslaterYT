@@ -91,9 +91,9 @@ begin
   begin
     Parent := Self;
     Position.x := 400;
-    Position.y := 30;
-    Height := 40;
-    Width := 40;
+    Position.y := 25;
+    Height := 20;
+    Width := 20;
     Tag :=  pN;
     try
     ImageDel.Bitmap := ADelBitmal;
