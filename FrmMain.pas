@@ -1996,9 +1996,11 @@ begin
               vFileText.SaveToFile(vFullNameFile); }
           end;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
+//        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
+        AniIndicator1.Visible := true;
+        AniIndicator1.Enabled := true;
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
         begin
@@ -2014,19 +2016,23 @@ begin
 
             // формируем JSON
             // YOUR_VIDEO_ID
-            vJSON := '{  "id": "' + FrameVideos.LabelVideoId.text
+            vJSON := '{"id":"' + FrameVideos.LabelVideoId.text
             // на какой язык
               + '",  "localizations": {"' + PanLanguages[i].ChLang.text
             // наименование
-              + '" : {"title": "' + vTranslateTitle // название
+              + '" : {"title":"' + vTranslateTitle // название
             // описание
               + '","description": "' + vTranslateDescription
-              + '"}}}"';
+              + '"}}}';
             // загружаем в этом языке наименование и описание
             vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-            showmessage(vTranslateDescription);
+//          сделать если есть ошибку то вывести мне для отладки
+            showmessage(vJSON + #13 + #10 + vResponceInsTitle + ' ' + #13 + #10 + vTranslateDescription);
           end;
         end;
+        AniIndicator1.Visible := false;
+        AniIndicator1.Enabled := false;
+
         FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;

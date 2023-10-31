@@ -418,7 +418,8 @@ begin
   Headers.Add('Accept', 'application/json');
 
   Response := SendRequest(URL, Params, Headers, JSON, rmPUT);
-  Result := TRIM(ParamValue('channelId', Response));
+  Result := Response;
+//  Result := TRIM(ParamValue('channelId', Response));
 end;
 
 // Subtitle list
@@ -609,6 +610,7 @@ begin
   Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmPost);
 end;
 
+// вытаскиваем результат из ответа
 function TOAuth.ParamValue(ParamName, JSONString: string): string;
 const
   StripChars: set of char = ['"', ':', ','];
