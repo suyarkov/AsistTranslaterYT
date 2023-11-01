@@ -12,7 +12,7 @@ object FrameVideos: TFrameVideos
     object LabelVideoId: TLabel
       Position.X = 56.000000000000000000
       Text = 'LabelVideoId'
-      TabOrder = 4
+      TabOrder = 3
     end
   end
   object MemoTitle: TMemo
@@ -29,8 +29,8 @@ object FrameVideos: TFrameVideos
     Size.PlatformDefault = False
     TabOrder = 1
     OnKeyUp = MemoTitleKeyUp
-    Viewport.Width = 499.000000000000000000
-    Viewport.Height = 44.000000000000000000
+    Viewport.Width = 503.000000000000000000
+    Viewport.Height = 48.000000000000000000
   end
   object MemoDescription: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -43,8 +43,8 @@ object FrameVideos: TFrameVideos
     Size.Height = 355.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
-    Viewport.Width = 499.000000000000000000
-    Viewport.Height = 351.000000000000000000
+    Viewport.Width = 503.000000000000000000
+    Viewport.Height = 355.000000000000000000
   end
   object LanguageCheckBox: TCheckBox
     StyledSettings = [Family, Size, FontColor]
