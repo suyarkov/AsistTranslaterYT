@@ -20,6 +20,7 @@ uses
   uEmailSend, uQ,
   Classes.channel.statistics, FmMainChannel, FmVideos,
   Classes.videoInfo, Classes.subtitlelist,
+  Classes.title,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
   FmHelp, FmAddMoney, System.ImageList, FMX.ImgList;
@@ -1929,12 +1930,15 @@ var
 
   vResponceInsTitle: string;
   vJSON: string;
+  vJSON_tmp: string;
 
   vTitle: string;
   vDescription: string;
 
   vTranslateTitle: string;
   vTranslateDescription: string;
+
+  vObjTitle: Ttitle; // Tchannel;
 
 begin
 
@@ -2039,11 +2043,16 @@ begin
             // наполняем языком JSON
             if vTransCount > 0 then   // разделяем, если это уже список
               vJSON := vJSON + ',';
-            vJSON := vJSON + '"' + PanLanguages[i].ChLang.text
-            // наименование
-              + '" : {"title":"' + vTranslateTitle // название
-            // описание
-              + '","description": "' + vTranslateDescription + '"}';
+            vObjTitle := Ttitle.Create;
+            vObjTitle.title :=  vTranslateTitle;
+            vObjTitle.description :=  vTranslateDescription;
+            vJSON_tmp := TJson.ObjectToJsonString(vObjTitle);
+            //showmessage(vJSON_tmp);
+            vObjTitle.Free;
+            vJSON := vJSON + '"' + PanLanguages[i].ChLang.text + '" :' + vJSON_tmp;
+            // как он выглядит в объекте!!!
+            //   {"title":"' + vTranslateTitle // название
+            //  + '","description": "' + vTranslateDescription + '"}';
             inc(vTransCount);
           end;
         end;
