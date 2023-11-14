@@ -197,12 +197,16 @@ begin
 
   try
     FRequest.Execute;
+//    showmessage('выполенение' + IntToStr(FResponse.StatusCode));
     case FResponse.StatusCode of
       200:
         begin
           if Pos('captions/', URL) <> 0 then
             if Length(FResponse.RawBytes) <> 0 then
-              ServerResponseToFile(FResponse, 'default.sbv');
+            begin
+              showmessage('что то есть для сохранения! captions');
+              ServerResponseToFile(FResponse, GetCurrentDir() +'/default.sbv');
+            end;
           Result := FResponse.JSONText; // '200' +  + URL
 
         end;
@@ -210,9 +214,10 @@ begin
         begin
           Result := '403' + FResponse.JSONText;
         end;
-        else
+        else // 404 и другие
         begin
           Result := IntToStr(FResponse.StatusCode) + FResponse.JSONText;
+          showmessage('Ошибка ' + Result);
         end;
     end;
   finally

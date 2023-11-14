@@ -193,7 +193,7 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := 'Жааах! 1.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
+  fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
@@ -1797,6 +1797,7 @@ var
   vIndexMainLanguage, i: integer;
   vSubtitles: array [1 .. 300] of TSubtitle;
   vSCount: integer; // количество уже существующих субтитров.
+  vDeleteTranslate: integer; // количество уже существующих субтитров.
 
   // удаление
   vResponceDelSubtitle: string;
@@ -1818,12 +1819,13 @@ begin
       // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
+      // получаем список субтитров
       vResponceSubtitleList := OAuth2.subtitlelist
         (FrameVideos.LabelVideoId.text);
 
       // сохраним в файл
       vPath := GetCurrentDir();
-      vFullNameFile := vPath + '/' + 'sub';
+      vFullNameFile := vPath + '/' + 'sub.txt';
       // showmessage('vFullNameFile = ' + vFullNameFile);
       vFileText := TStringList.Create;
       vFileText.Add(vResponceSubtitleList);
@@ -1841,6 +1843,7 @@ begin
         inc(vSCount);
         vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
+        showmessage('язык ' + vSubtitles[vSCount].language);
         if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
         then
           vIndexMainLanguage := vSCount; // задан субтитр основного языка
@@ -1863,21 +1866,23 @@ begin
           vFileText.SaveToFile(vFullNameFile); }
 
         // начинаем удаление
+        vDeleteTranslate := 0;
         for i := 1 to vSCount do
         begin
           // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
-          if vSCount <> vIndexMainLanguage then
+          if i <> vIndexMainLanguage then
           begin
-            vResponceDelSubtitle := OAuth2.SubtitleDelete
-              (FrameVideos.LabelVideoId.text);
-            vFullNameFile := vPath + '/' + 'subDel';
+            inc(vDeleteTranslate);
+            showmessage('удаляем язык ' + vSubtitles[i].subtitleId);
+            vResponceDelSubtitle := OAuth2.SubtitleDelete (vSubtitles[i].subtitleId);
+            vFullNameFile := vPath + '/' + 'subDel.txt';
             vFileText := TStringList.Create;
-            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId +
+            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + ' и ответ ='+
               vResponceDelSubtitle);
             vFileText.SaveToFile(vFullNameFile);
           end;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount - 1));
+        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vDeleteTranslate));
         // начинаем разбор языков
         vTransCount := 0; // количество переведенных языков
         for i := 1 to 300 do
@@ -1889,13 +1894,15 @@ begin
           then
           begin
             inc(vTransCount);
+            showmessage('добавляем язык ' + FrameVideos.LabelVideoId.Text + ' на ' + PanLanguages[i].ChLang.Text);
+            //            vString := OAuth2.SubtitleDownload(PanLanguages[i].ChLang.text, 'en');
             // загружаем в этом языке субтитры
-            // vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
+//             vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
             // сохраняем результат в субтитры новые
             // vResponceInsSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
           end;
         end;
-        FrameInfo(Sender, 'Перевели на ' + IntToStr(vSCount - 1));
+        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;
     end
