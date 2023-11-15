@@ -204,8 +204,8 @@ begin
           if Pos('captions/', URL) <> 0 then
             if Length(FResponse.RawBytes) <> 0 then
             begin
-              showmessage('что то есть для сохранения! captions');
-              ServerResponseToFile(FResponse, GetCurrentDir() +'/default.sbv');
+//              showmessage('что то есть для сохранения! captions');
+              ServerResponseToFile(FResponse, 'default.sbv');  // он сам автоматом прибавит текущую дирректорию
             end;
           Result := FResponse.JSONText; // '200' +  + URL
 
@@ -216,8 +216,8 @@ begin
         end;
         else // 404 и другие
         begin
-          Result := IntToStr(FResponse.StatusCode) + FResponse.JSONText;
-          showmessage('Ошибка ' + Result);
+          Result := IntToStr(FResponse.StatusCode) + ' JSON ' + FResponse.JSONText + ' TEXT ' + FResponse.StatusText + ' ???';
+          showmessage(Result);
         end;
     end;
   finally
@@ -449,12 +449,15 @@ end;
 // Subtitle download
 function TOAuth.SubtitleDownload(CaptionID, TargetLang: string): string;
 const
-  URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+    URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+//    URL = 'https://youtube.googleapis.com/youtube/v3/captions/';
+//    URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
 begin
   Params := TDictionary<String, String>.Create;
+//  Params.Add('id', CaptionID);  // по идее это лишнее
   Params.Add('tfmt', 'sbv');
   if TargetLang <> '' then
     Params.Add('tlang', 'TargetLang');
@@ -463,7 +466,8 @@ begin
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
   Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-
+//  showmessage('Куда стучимся =  ' + Format(URL, [CaptionID]));
+//  Result := SendRequest(URL, Params, Headers, '', rmGet);
   Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
 end;
 
@@ -499,7 +503,9 @@ begin
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
-  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
 end;

@@ -14,7 +14,8 @@ interface
 {$SCOPEDENUMS ON}
 
 uses
-  System.Classes, System.Sysutils, System.Generics.Collections, System.Generics.Defaults;
+  System.Classes, System.Sysutils, System.Generics.Collections, System.Generics.Defaults,
+  FMX.Dialogs;
 
 type
   /// <summary>Class to manage multipart form data</summary>
@@ -210,6 +211,7 @@ begin
   inherited Create;
   FOwnsOutputStream := AOwnsOutputStream;
   FBoundary := 'AA0512';//'AA2023';
+  showmessage('выполенение' + FBoundary);
   FStream := TMemoryStream.Create;
 end;
 
