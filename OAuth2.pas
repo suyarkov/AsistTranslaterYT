@@ -189,7 +189,7 @@ begin
   if JSON <> '' then
   begin
     FRequest.AddBody(JSON, 'application/json');
-     showmessage('в тело вставляем JSON:' + JSON);
+//     showmessage('в тело вставляем JSON:' + JSON);
     if AFile <> '' then
     begin
       FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);

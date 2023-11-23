@@ -106,7 +106,9 @@ type
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonMonеyClick(Sender: TObject);
     procedure FrameMainChannelButtonAddNextVideoClick(Sender: TObject);
-    function TestScore(Sender: TObject; pCount: integer): integer;
+    function  TestScore(Sender: TObject; pCount: integer): integer;
+    procedure StartProgressBar(Sender: TObject);
+    procedure FinishProgressBar(Sender: TObject);
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
@@ -167,6 +169,70 @@ var
 implementation
 
 {$R *.fmx}
+
+// начало работы прогресс бара!!!
+procedure  TfMain.FinishProgressBar(Sender: TObject);
+begin
+  if Assigned(GlobalProgressThread) then
+  begin
+    Label1.text := BoolToStr(GlobalProgressThread.Terminated);
+    if GlobalProgressThread.Terminated = false then
+      GlobalProgressThread.Terminate;
+    Label1.text := Label1.text + '  ' +
+      BoolToStr(GlobalProgressThread.Terminated);
+    if GlobalProgressThread.Terminated = null then
+      Label1.text := Label1.text + ' null';
+
+  end;
+  if Assigned(GlobalProgressThread) then
+  begin
+    GlobalProgressThread.Free;
+  end;
+  vProgressBarStatus := 0;
+
+   FrameProgressBar.Visible := false;
+   showmessage('FinishBar');
+end;
+
+// начало работы прогресс бара!!!
+procedure  TfMain.StartProgressBar(Sender: TObject);
+var
+  aShape: TShape;
+  r, x0, y0: integer;
+  ProgressThread: TProgressThread;
+begin
+  // r:=100;     // радиус
+  // x0:=300;   // координата центра
+  // y0:=200;   // координата центра
+  // image1.Canvas.(FMX.Objects.DrawEllipse(x0, y0, r)); //.Ellipse(x0-r,y0-r,x0+r,y0+r);
+  //
+  // image1.canvas.
+  if Assigned(GlobalProgressThread) then
+  begin
+    if GlobalProgressThread.Terminated = false or
+      GlobalProgressThread.Terminated = true then
+    begin
+      if GlobalProgressThread.Terminated = true then
+      begin
+        GlobalProgressThread.Free;
+      end
+    end
+  end;
+  if not Assigned(GlobalProgressThread) then
+  begin
+    GlobalProgressThread := TProgressThread.Create(true);
+  end;
+  if BoolToStr(GlobalProgressThread.Terminated) = '-1' then
+    GlobalProgressThread := TProgressThread.Create(true);
+  if vProgressBarStatus = 0 then
+  begin
+    vProgressBarStatus := 0;
+    GlobalProgressThread.FreeOnTerminate := true;
+    GlobalProgressThread.Resume;
+  end;
+   FrameProgressBar.Visible := true;
+   showmessage('startBar');
+end;
 
 // загрузка данных по не удаленным каналам
 function TfMain.TestScore(Sender: TObject; pCount: integer): integer;
@@ -464,7 +530,7 @@ begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
    fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
 
-   FrameProgressEndLess.SetProgress(vProgressBarStatus);
+//   FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -2100,15 +2166,19 @@ begin
         // FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
-        AniIndicator1.Visible := true;
-        AniIndicator1.Enabled := true;
+        StartProgressBar(sender);
+        showmessage('startBar 2');
+//        AniIndicator1.Visible := true;
+//        AniIndicator1.Enabled := true;
         vTransCount := 0; // количество переведенных языков
 
         // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
         vJSON := '{"id":"' + FrameVideos.LabelVideoId.text +
           '",  "localizations": {';
+        showmessage('startBar 3');
         for i := 1 to 300 do
         begin
+          showmessage('startBar 00' + inttostr(i));
           if PanLanguages[i] = nil then
             break;
           if (PanLanguages[i].ChImage.Visible = true) and
@@ -2138,6 +2208,7 @@ begin
           end;
         end;
         vJSON := vJSON + '}}';
+        showmessage('startBar 5 уходим в обновление!');
         if vTransCount > 0 then
         begin
           vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
@@ -2146,9 +2217,10 @@ begin
           // + vTranslateDescription);
           Memo1.text := vResponceInsTitle;
         end;
-
-        AniIndicator1.Visible := false;
-        AniIndicator1.Enabled := false;
+        showmessage('startBar 6 а вот и финиш на носу!');
+//        AniIndicator1.Visible := false;
+//        AniIndicator1.Enabled := false;
+        FinishProgressBar(sender);
         iScore := iScore - vTransCount;
         LabelScore.Text := IntToStr(iScore);
         FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
