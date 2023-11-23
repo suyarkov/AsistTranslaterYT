@@ -127,6 +127,8 @@ type
     { Private declarations }
   public
     { Public declarations }
+    function GetScore(): integer;
+    Procedure SetScore(i : integer);
     function SelRefreshToken(): tDataSet;
     function SelInfoChannels(): TShortChannels;
     function InsRefreshToken(pShortChanel: TShortChannel): integer;
@@ -147,6 +149,61 @@ implementation
 
 {%CLASSGROUP 'FMX.Controls.TControl'}
 {$R *.dfm}
+
+// загрузка данных по очкам
+function TSQLiteModule.GetScore(): integer;
+var
+  res, i: integer;
+  results: tDataSet;
+begin
+  try
+    // затем поменять запрос
+    SQLiteModule.SQL.ExecSQL('select * from refresh_token where deleted = 0',
+      nil, results);
+  except
+    on E: Exception do
+      showmessage('Exception raised with message: ' + E.Message);
+  end;
+  if not results.IsEmpty then
+  begin
+    results.First;
+    i := 0;
+    while not results.Eof do
+    begin
+//      i := results.FieldByName('deleted').AsInteger;
+      i := 100; // что делать
+      res := i * 1;
+      results.Next;
+    end;
+  end;
+
+  Result := res;
+end;
+
+// сохранение данных по очкам
+Procedure TSQLiteModule.SetScore(i : integer);
+
+begin
+  try
+    // !!! поменять запрос на реальные данные
+    SQLQuery.SQL.Text :=
+      'update refresh_token set img_channel= :photo where id_channel = "UCta8Fu2bQ9uVNr4VzARiwLA";';
+     SQLQuery.Params[0].AsInteger := i;
+    // SQLQuery.Params[0].Assign(i);
+    SQLQuery.ExecSQL;
+    SQLiteModule.SQL.Commit;
+
+  except
+    on E: Exception do
+    begin
+      SQLiteModule.SQL.Rollback;
+      showmessage('Exception insert with message: ' + E.Message);
+    end;
+  end;
+
+  SQLiteModule.SQL.Commit;
+
+end;
 
 // загрузка данных по не удаленным каналам
 function TSQLiteModule.SelRefreshToken(): tDataSet;

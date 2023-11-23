@@ -23,7 +23,8 @@ uses
   Classes.title, Classes.snippet, Classes.snippetInsert,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
-  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList;
+  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList,
+  MimeDelpta;
 
 type
   TfMain = class(TForm)
@@ -104,15 +105,18 @@ type
     procedure ButtonHelpClick(Sender: TObject);
     procedure ButtonMonеyClick(Sender: TObject);
     procedure FrameMainChannelButtonAddNextVideoClick(Sender: TObject);
+    function TestScore(Sender: TObject; pCount: integer): integer;
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
+    iScore: integer;
 
   public
     { Public declarations }
     function FrameAsk(Sender: TObject; AskText: string): integer;
     function FrameTextInput(Sender: TObject; AskText: string): string;
     procedure FrameInfo(Sender: TObject; InfoText: string);
+    procedure FrameInfoError(Sender: TObject; InfoText: string);
     procedure FrameHelp(Sender: TObject; InfoText: string);
     procedure FrameAddMoney(Sender: TObject; InfoText: string);
 
@@ -161,6 +165,23 @@ var
 implementation
 
 {$R *.fmx}
+
+// загрузка данных по не удаленным каналам
+function TfMain.TestScore(Sender: TObject; pCount: integer): integer;
+var
+  res, i: integer;
+  results: tDataSet;
+begin
+  res := 0;
+  if pCount > iScore then
+  begin
+    res := pCount - iScore;
+    // добавить перевод
+    FrameInfo(Sender, 'Недостает ' + IntToStr(res) + ' переводов!' + #13 +#10 +' Пополните баланс!');
+  end;
+
+  Result := res;
+end;
 
 procedure TfMain.DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Single);
@@ -253,6 +274,8 @@ begin
     vInterfaceLanguage);;
   // загрузим известные языки перевод
   vGlobalList := SQLiteModule.LoadLanguage();
+  iScore := SQLiteModule.GetScore();
+  LabelScore.text := IntToStr(iScore);
   // переведем названия языков на язык программы
   // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
   // переведем интерфейс
@@ -840,7 +863,7 @@ procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
   //
   i: integer;
-  results: TDataSet;
+  results: tDataSet;
   vPos: integer;
   vBitmap: TBitmap;
   vDefaulBitmap: TBitmap;
@@ -977,7 +1000,7 @@ begin
 
   // проверка на сервере подлинность
   OAuth2 := TOAuth.Create;
-  vResponce := OAuth2.UserGet('name=' + vLog);
+  // vResponce := OAuth2.UserGet('name=' + vLog);
   Edit2.text := vResponce;
   OAuth2.Free;
 
@@ -1756,6 +1779,25 @@ begin
   vFrameInfo.Destroy;
 end;
 
+// поднимаем окно с ошибкой
+// пример вызова   FrameInfo(self, 'Денег нет! Дай денег!')));
+procedure TfMain.FrameInfoError(Sender: TObject; InfoText: string);
+var
+  vFrameInfo: TFrameInfo;
+begin
+  vFrameInfo := TFrameInfo.Create(Self);
+  // vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
+  // vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
+  vFrameInfo.MemoMessage.Visible := false;
+  vFrameInfo.LabelMessage.text := InfoText;
+  vFrameInfo.Parent := fMain;
+  vFrameInfo.status := -1;
+
+  while vFrameInfo.status = -1 do
+    Application.ProcessMessages; // wait
+  vFrameInfo.Destroy;
+end;
+
 // поднимаем окно с сообщением о валюте - единице
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
 procedure TfMain.FrameHelp(Sender: TObject; InfoText: string);
@@ -1805,8 +1847,9 @@ var
   vResponceLoadSubtitle: string;
   vResponceInsSubtitle: string;
 
-  vObj: TsnippetInsert;
-  vAddCaptionJSON : string;
+  // vObj: TsnippetInsert;
+  vObj: Tsnippet;
+  vAddCaptionJSON: string;
 
 begin
   vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
@@ -1846,10 +1889,10 @@ begin
         inc(vSCount);
         vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
-//        showmessage('язык ' + vSubtitles[vSCount].language);
-//        if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-        if vSubtitles[vSCount].language = Copy(FrameVideos.LanguageVideoLabel.text,1,2)
-        then
+        // showmessage('язык ' + vSubtitles[vSCount].language);
+        // if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
+        if vSubtitles[vSCount].language = copy
+          (FrameVideos.LanguageVideoLabel.text, 1, 2) then
           vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
 
@@ -1860,10 +1903,11 @@ begin
       end
       else
       begin
-//        FrameInfo(Sender, 'ID дорожки с которой будем преводить = ' + vSubtitles[vIndexMainLanguage].subtitleId);
+        // FrameInfo(Sender, 'ID дорожки с которой будем преводить = ' + vSubtitles[vIndexMainLanguage].subtitleId);
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
-        vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, '');
-//          (vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
+        vResponceLoadSubtitle := OAuth2.SubtitleDownload
+          (vSubtitles[vIndexMainLanguage].subtitleId, '');
+        // (vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
         { vFullNameFile := vPath + '/' + 'subload';
           vFileText := TStringList.Create;
           vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
@@ -1877,13 +1921,13 @@ begin
           if i <> vIndexMainLanguage then
           begin
             inc(vDeleteTranslate);
-//            showmessage('удаляем язык ' + vSubtitles[i].subtitleId);
-{            vResponceDelSubtitle := OAuth2.SubtitleDelete (vSubtitles[i].subtitleId);
-            vFullNameFile := vPath + '/' + 'subDel.txt';
-            vFileText := TStringList.Create;
-            vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + ' и ответ ='+
+            // showmessage('удаляем язык ' + vSubtitles[i].subtitleId);
+            { vResponceDelSubtitle := OAuth2.SubtitleDelete (vSubtitles[i].subtitleId);
+              vFullNameFile := vPath + '/' + 'subDel.txt';
+              vFileText := TStringList.Create;
+              vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + ' и ответ ='+
               vResponceDelSubtitle);
-            vFileText.SaveToFile(vFullNameFile);
+              vFileText.SaveToFile(vFullNameFile);
             }
           end;
         end;
@@ -1899,24 +1943,32 @@ begin
           then
           begin
             inc(vTransCount);
-            showmessage('добавляем язык ' + FrameVideos.LabelVideoId.Text + ' на ' + PanLanguages[i].ChLang.Text);
-            //            vString := OAuth2.SubtitleDownload(PanLanguages[i].ChLang.text, 'en');
+            showmessage('добавляем язык ' + FrameVideos.LabelVideoId.text +
+              ' на ' + PanLanguages[i].ChLang.text);
+            // vString := OAuth2.SubtitleDownload(PanLanguages[i].ChLang.text, 'en');
             // загружаем в этом языке субтитры
-//             vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
+            // vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
             // сохраняем результат в субтитры новые
-//            JSON: string; FileName: String
-            vObj := TsnippetInsert.Create;
-            vObj.snippet := Tsnippet.Create;
-            vObj.snippet.videoId := FrameVideos.LabelVideoId.text;
-            vObj.snippet.language := PanLanguages[i].ChLang.text; //'en';
-            vObj.snippet.name := PanLanguages[i].ChName.text; // '';//
+            // JSON: string; FileName: String
+            // vObj := TsnippetInsert.Create;
+            vObj := Tsnippet.Create;
+            vObj.videoId := FrameVideos.LabelVideoId.text;
+            vObj.language := PanLanguages[i].ChLang.text; // 'en';
+            vObj.Name := PanLanguages[i].ChName.text; // '';//
+            { vObj.snippet := Tsnippet.Create;
+              vObj.snippet.videoId := FrameVideos.LabelVideoId.text;
+              vObj.snippet.language := PanLanguages[i].ChLang.text; //'en';
+              vObj.snippet.name := PanLanguages[i].ChName.text; // '';// }
             vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
-            showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
-            //vAddCaptionJSON := '{}';
-            vAddCaptionJSON :=  '{  "snippet": { "language": "es", "name": "Spanish captions", "videoId": "' +
-            FrameVideos.LabelVideoId.text + '","isDraft": true }}';
-            vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, 'default.sbv');
+            // showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
+            // vAddCaptionJSON := '{language:es,name:465,videoId:' + FrameVideos.LabelVideoId.text + '}';
+            // vAddCaptionJSON :=  '{snippet:{ language:es, name:Spanish captions, videoId:' +
+            // FrameVideos.LabelVideoId.text + ',isDraft:true}}';
+            // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, '');
+            vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
+              'default.sbv');
             FrameInfo(Sender, 'Ответ от перевода ' + vResponceInsSubtitle);
+            Memo1.text := vResponceInsSubtitle;
             vObj.Free;
           end;
         end;
@@ -1932,7 +1984,6 @@ begin
   else
     FrameInfo(Sender, 'Выберите языки для перевода');
 end;
-
 
 // создаем переводов наименований и описаний
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
@@ -2008,19 +2059,19 @@ begin
       vTransCount := 0;
       for i := 1 to 300 do
       begin
-          if PanLanguages[i] = nil then
-            break;
-          if (PanLanguages[i].ChImage.Visible = true) and
-            (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
-          then
-            inc(vTransCount);
+        if PanLanguages[i] = nil then
+          break;
+        if (PanLanguages[i].ChImage.Visible = true) and
+          (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
+        then
+          inc(vTransCount);
       end;
 
       if vTransCount = 0 then // if vIndexMainLanguage = 0 then
       begin
         FrameInfo(Sender, 'Нет выбранных языков!');
       end
-      else
+      else if TestScore(Sender, vTransCount) = 0 then
       begin
 
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
@@ -2067,34 +2118,36 @@ begin
               FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
 
             // наполняем языком JSON
-            if vTransCount > 0 then   // разделяем, если это уже список
+            if vTransCount > 0 then // разделяем, если это уже список
               vJSON := vJSON + ',';
             vObjTitle := Ttitle.Create;
-            vObjTitle.title :=  vTranslateTitle;
-            vObjTitle.description :=  vTranslateDescription;
+            vObjTitle.title := vTranslateTitle;
+            vObjTitle.description := vTranslateDescription;
             vJSON_tmp := TJson.ObjectToJsonString(vObjTitle);
-            //showmessage(vJSON_tmp);
+            // showmessage(vJSON_tmp);
             vObjTitle.Free;
-            vJSON := vJSON + '"' + PanLanguages[i].ChLang.text + '" :' + vJSON_tmp;
+            vJSON := vJSON + '"' + PanLanguages[i].ChLang.text + '" :' +
+              vJSON_tmp;
             // как он выглядит в объекте!!!
-            //   {"title":"' + vTranslateTitle // название
-            //  + '","description": "' + vTranslateDescription + '"}';
+            // {"title":"' + vTranslateTitle // название
+            // + '","description": "' + vTranslateDescription + '"}';
             inc(vTransCount);
           end;
         end;
         vJSON := vJSON + '}}';
         if vTransCount > 0 then
         begin
-            vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-            // сделать если есть ошибку то вывести мне для отладки
-            //showmessage(vJSON + #13 + #10 + vResponceInsTitle + ' ' + #13 + #10
-            //  + vTranslateDescription);
-            Memo1.text := vResponceInsTitle;
+          vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+          // сделать если есть ошибку то вывести мне для отладки
+          // showmessage(vJSON + #13 + #10 + vResponceInsTitle + ' ' + #13 + #10
+          // + vTranslateDescription);
+          Memo1.text := vResponceInsTitle;
         end;
-
 
         AniIndicator1.Visible := false;
         AniIndicator1.Enabled := false;
+        iScore := iScore - vTransCount;
+        LabelScore.Text := IntToStr(iScore);
         FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;
@@ -2107,7 +2160,6 @@ begin
   else
     FrameInfo(Sender, 'Выберите языки для перевода!');
 end;
-
 
 // запрос для следующего токена (части) по видео
 procedure TfMain.FrameMainChannelButtonAddNextVideoClick(Sender: TObject);

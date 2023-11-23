@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.StrUtils,
   //FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   JSON, Rest.Client, Rest.Types, Generics.Collections,
-  FMX.Dialogs;
+  FMX.Dialogs, MimeDelpta;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -189,6 +189,7 @@ begin
   if JSON <> '' then
   begin
     FRequest.AddBody(JSON, 'application/json');
+     showmessage('в тело вставляем JSON:' + JSON);
     if AFile <> '' then
     begin
       FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);
@@ -492,7 +493,9 @@ end;
 // Subtitle insert
 function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
 const
-  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
+//  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
+//    URL = 'https://youtube.googleapis.com/youtube/v3/captions?part=snippet&key=[YOUR_API_KEY]';
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
@@ -504,7 +507,11 @@ begin
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+//  Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+//  Headers.Add('Content-Type', 'application/json');
 
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);

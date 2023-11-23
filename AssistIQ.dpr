@@ -48,10 +48,10 @@ uses
   FmTextInput in 'FmTextInput.pas' {FrameTextInput: TFrame},
   FmHelp in 'FmHelp.pas' {FrameHelp: TFrame},
   FmAddMoney in 'FmAddMoney.pas' {FrameAddMoney: TFrame},
-  MimeMy in 'MimeMy.pas',
   Classes.title in 'Classes.title.pas',
   Classes.snippet in 'Classes.snippet.pas',
-  Classes.snippetInsert in 'Classes.snippetInsert.pas';
+  Classes.snippetInsert in 'Classes.snippetInsert.pas',
+  MimeDelpta in 'MimeDelpta.pas';
 
 {$R *.res}
 
