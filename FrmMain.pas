@@ -35,6 +35,7 @@ type
     LabelCopyrigth: TLabel;
     ButtonBack: TButton;
     FrameChannels: TFrameChannels;
+    FrameProgressBar: TFrameProgressBar;
     TCPServerYouTubeAnswers: TIdTCPServer;
     FrameVideos: TFrameVideos;
     FrameLanguages: TFrameLanguages;
@@ -150,6 +151,7 @@ var
   vDefaultColor: TAlphaColor;
   vProgressBarStatus: integer;
   GlobalProgressThread: TProgressThread;
+  FrameProgressEndLess: TFrameProgressEndLess;
   vResponceChannel: string;
   vResponceVideo: string;
   vResponceInfoVideo: string;
@@ -245,8 +247,9 @@ begin
   // спр€чем п€тый (€зыки) фрейм за границу видимости
   fMain.FrameLanguages.Position.X := Round(fMain.Width + 1);
   fMain.FrameLanguages.Position.Y := 56;
+  FrameProgressBar.Visible := false;
 
-  {
+  
     if not Assigned(FrameProgressEndLess) then
     begin
     FrameProgressEndLess := TFrameProgressEndLess.Create(Self);
@@ -254,7 +257,7 @@ begin
     FrameProgressEndLess.Parent := fMain;
     FrameProgressEndLess.Align := TAlignLayout.Center;
     end;
-  }
+  
 
   fMain.FrameFirst.EditName.text := uQ.LoadReestr('Name');
 
@@ -459,9 +462,9 @@ end;
 procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
-  // fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
+   fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
 
-  // FrameProgressEndLess.SetProgress(vProgressBarStatus);
+   FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
 procedure TNewThread.Execute;
@@ -754,8 +757,8 @@ begin
     GlobalProgressThread.Resume;
   end;
 
-  // FrameProgressBar.Visible := true;
-  // FrameProgressEndLess.Visible := true;
+   FrameProgressBar.Visible := true;
+   FrameProgressEndLess.Visible := true;
 end;
 
 procedure TfMain.Button6Click(Sender: TObject);
@@ -777,8 +780,8 @@ begin
   end;
   vProgressBarStatus := 0;
 
-  // FrameProgressBar.Visible := false;
-  // FrameProgressEndLess.Visible := false;
+   FrameProgressBar.Visible := false;
+   FrameProgressEndLess.Visible := false;
 end;
 
 procedure TfMain.ButtonBackClick(Sender: TObject);
