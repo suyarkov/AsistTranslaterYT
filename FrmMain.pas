@@ -118,7 +118,7 @@ type
     { Public declarations }
     function FrameAsk(Sender: TObject; AskText: string): integer;
     function FrameTextInput(Sender: TObject; AskText: string): string;
-    procedure FrameInfo(Sender: TObject; InfoText: string);
+    procedure FrameInfo(Sender: TObject; InfoText: string; Status : integer = 0);
     procedure FrameInfoError(Sender: TObject; InfoText: string);
     procedure FrameHelp(Sender: TObject; InfoText: string);
     procedure FrameAddMoney(Sender: TObject; InfoText: string);
@@ -231,7 +231,7 @@ begin
     GlobalProgressThread.Resume;
   end;
    FrameProgressBar.Visible := true;
-   showmessage('startBar');
+//   showmessage('startBar');
 end;
 
 // загрузка данных по не удаленным каналам
@@ -508,28 +508,61 @@ end;
 // поток для прогресс бара
 procedure TProgressThread.Execute;
 var
-  i: integer;
+  i, vTransCount: integer;
+  vTitle, vDescription, vTranslateTitle, vTranslateDescription : string;
+  vObjTitle: Ttitle; // Tchannel;
+  vJSON: string;
+  vJSON_tmp: string;
 begin
-  while not Terminated do
+{  for i := 0 to fMain.Width do
   begin
-    sleep(1);
-    inc(vProgressBarStatus);
-    if vProgressBarStatus > 4000 then
-      vProgressBarStatus := 1;
-    Synchronize(SetActualProgress);
-  end;
-  { for i := 0 to 2000 do
+    // sleep(1);
+    Progress := i;
+    Synchronize(SetActualFrame);
+  end;}
+  fMain.FrameProgressBar.Visible  := true;
+  Application.ProcessMessages;
+  vTitle := fMain.FrameVideos.MemoTitle.text;
+  vDescription := fMain.FrameVideos.MemoDescription.text;
+  vTransCount := 0;
+  for i := 1 to 300 do
+  begin
+    if PanLanguages[i] = nil then
+      break;
+    if (PanLanguages[i].ChImage.Visible = true) and
+      (PanLanguages[i].ChLang.text <> fMain.FrameVideos.LanguageVideoLabel.text)
+    then
     begin
-    inc(vProgressBarStatus);
-    Synchronize(SetActualProgress);
-    end; }
+      vTranslateTitle := GoogleTranslate(vTitle,
+        fMain.FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
+      vTranslateDescription := GoogleTranslate(vDescription,
+        fMain.FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
+
+      // наполняем языком JSON
+      if vTransCount > 0 then // разделяем, если это уже список
+        vJSON := vJSON + ',';
+      vObjTitle := Ttitle.Create;
+      vObjTitle.title := vTranslateTitle;
+      vObjTitle.description := vTranslateDescription;
+      vJSON_tmp := TJson.ObjectToJsonString(vObjTitle);
+      // showmessage(vJSON_tmp);
+      vObjTitle.Free;
+      vJSON := vJSON + '"' + PanLanguages[i].ChLang.text + '" :' +
+        vJSON_tmp;
+      // как он выглядит в объекте!!!
+      // {"title":"' + vTranslateTitle // название
+      // + '","description": "' + vTranslateDescription + '"}';
+      inc(vTransCount);
+    end;
+  end;
+  showmessage('df');
+  fMain.FrameProgressBar.Visible  := false;
 end;
 
 procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
    fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
-
 //   FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
@@ -543,6 +576,11 @@ begin
     Progress := i;
     Synchronize(SetActualFrame);
   end;
+  { for i := 0 to 2000 do
+    begin
+    inc(vProgressBarStatus);
+    Synchronize(SetActualProgress);
+    end; }
 end;
 
 // установка актаульного фрейма
@@ -1831,11 +1869,23 @@ end;
 
 // поднимаем окно с сообщением
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
-procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
+//procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
+procedure TfMain.FrameInfo(Sender: TObject; InfoText: string; Status : integer = 0);
 var
   vFrameInfo: TFrameInfo;
 begin
   vFrameInfo := TFrameInfo.Create(Self);
+  if Status = 0 then
+  begin
+    vFrameInfo.Image1.Visible := true;
+    vFrameInfo.Image2.Visible := false;
+  end
+  else
+  begin
+    vFrameInfo.Image1.Visible := false;
+    vFrameInfo.Image2.Visible := true;
+  end;
+
   // vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
   // vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
   vFrameInfo.MemoMessage.Visible := false;
@@ -2105,7 +2155,6 @@ begin
       OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
       // vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-
       // showmessage('Перевели ' + vResponceInsTitle);
 
       vIndexMainLanguage := 0; // пока нет субтитров главных заданных
@@ -2166,19 +2215,20 @@ begin
         // FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
-        StartProgressBar(sender);
-        showmessage('startBar 2');
+          StartProgressBar(sender);
+//        showmessage('startBar 2');
 //        AniIndicator1.Visible := true;
 //        AniIndicator1.Enabled := true;
+//        FrameProgressBar.Visible := true;
         vTransCount := 0; // количество переведенных языков
 
         // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
         vJSON := '{"id":"' + FrameVideos.LabelVideoId.text +
           '",  "localizations": {';
-        showmessage('startBar 3');
+//        showmessage('startBar 3');
         for i := 1 to 300 do
         begin
-          showmessage('startBar 00' + inttostr(i));
+//          showmessage('startBar 00' + inttostr(i));
           if PanLanguages[i] = nil then
             break;
           if (PanLanguages[i].ChImage.Visible = true) and
@@ -2208,7 +2258,8 @@ begin
           end;
         end;
         vJSON := vJSON + '}}';
-        showmessage('startBar 5 уходим в обновление!');
+
+//        showmessage('startBar 5 уходим в обновление!');
         if vTransCount > 0 then
         begin
           vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
@@ -2217,13 +2268,15 @@ begin
           // + vTranslateDescription);
           Memo1.text := vResponceInsTitle;
         end;
-        showmessage('startBar 6 а вот и финиш на носу!');
+//        showmessage('startBar 6 а вот и финиш на носу!');
 //        AniIndicator1.Visible := false;
 //        AniIndicator1.Enabled := false;
         FinishProgressBar(sender);
+        FrameProgressBar.Visible := false;
         iScore := iScore - vTransCount;
         LabelScore.Text := IntToStr(iScore);
-        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+        FrameInfo(Sender, 'Успешно перевели на ' + IntToStr(vTransCount), 1);
+//        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;
     end

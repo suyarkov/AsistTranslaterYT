@@ -15,6 +15,7 @@ type
     LabelMessage: TLabel;
     MemoMessage: TMemo;
     Image1: TImage;
+    Image2: TImage;
     procedure BtnOkClick(Sender: TObject);
   private
     { Private declarations }
