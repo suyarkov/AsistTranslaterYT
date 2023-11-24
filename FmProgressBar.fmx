@@ -2,6 +2,7 @@ object FrameProgressBar: TFrameProgressBar
   Size.Width = 252.000000000000000000
   Size.Height = 243.000000000000000000
   Size.PlatformDefault = False
+  OnResize = FrameResize
   object Layout1: TLayout
     Align = Center
     Size.Width = 209.000000000000000000
@@ -33,5 +34,13 @@ object FrameProgressBar: TFrameProgressBar
         TextSettings.FontColor = claRoyalblue
       end
     end
+  end
+  object Circle2: TCircle
+    Fill.Color = claRoyalblue
+    Position.X = 112.000000000000000000
+    Position.Y = 25.000000000000000000
+    Size.Width = 17.000000000000000000
+    Size.Height = 18.000000000000000000
+    Size.PlatformDefault = False
   end
 end

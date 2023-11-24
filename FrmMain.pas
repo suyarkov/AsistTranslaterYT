@@ -35,7 +35,6 @@ type
     LabelCopyrigth: TLabel;
     ButtonBack: TButton;
     FrameChannels: TFrameChannels;
-    FrameProgressBar: TFrameProgressBar;
     TCPServerYouTubeAnswers: TIdTCPServer;
     FrameVideos: TFrameVideos;
     FrameLanguages: TFrameLanguages;
@@ -70,6 +69,7 @@ type
     FrameMainChannel: TFrameMainChannel;
     SpeedButton1: TSpeedButton;
     ImageList1: TImageList;
+    FrameProgressBar: TFrameProgressBar;
     procedure Button1Click(Sender: TObject);
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
@@ -2215,11 +2215,14 @@ begin
         // FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
-          StartProgressBar(sender);
+        //  StartProgressBar(sender);
+
 //        showmessage('startBar 2');
 //        AniIndicator1.Visible := true;
 //        AniIndicator1.Enabled := true;
 //        FrameProgressBar.Visible := true;
+          FrameProgressBar.Visible := true;
+          Application.ProcessMessages;
         vTransCount := 0; // количество переведенных языков
 
         // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
@@ -2228,6 +2231,8 @@ begin
 //        showmessage('startBar 3');
         for i := 1 to 300 do
         begin
+          FrameProgressBar.SetProgress(TRUNC(i/5));
+          Application.ProcessMessages;
 //          showmessage('startBar 00' + inttostr(i));
           if PanLanguages[i] = nil then
             break;
@@ -2271,7 +2276,7 @@ begin
 //        showmessage('startBar 6 а вот и финиш на носу!');
 //        AniIndicator1.Visible := false;
 //        AniIndicator1.Enabled := false;
-        FinishProgressBar(sender);
+//        FinishProgressBar(sender);
         FrameProgressBar.Visible := false;
         iScore := iScore - vTransCount;
         LabelScore.Text := IntToStr(iScore);
