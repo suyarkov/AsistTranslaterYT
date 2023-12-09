@@ -248,7 +248,7 @@ begin
     FrameInfo(Sender, 'Недостает ' + IntToStr(res) + ' переводов!' + #13 +#10 +' Пополните баланс!');
   end;
 
-  Result := res;
+  Result :=0;// res;
 end;
 
 procedure TfMain.DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
@@ -283,7 +283,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  // fMain.PanelAlpha_ForTest.visible := false;
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
   fMain.Width := 871;
@@ -2200,18 +2200,19 @@ begin
           vFileText.SaveToFile(vFullNameFile); }
 
         // начинаем удаление -- не знаю нужно ли это, но возможно для тех языков которые не меняем это важно
-        for i := 1 to vSCount do
-        begin
+
+//        for i := 1 to vSCount do
+//        begin
           // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
-          if vSCount <> vIndexMainLanguage then
-          begin
+//          if vSCount <> vIndexMainLanguage then
+//          begin
             { vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
               vFullNameFile := vPath + '/' + 'subDel';
               vFileText := TStringList.Create;
               vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
               vFileText.SaveToFile(vFullNameFile); }
-          end;
-        end;
+//          end;
+//        end;
         // FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
 
         // начинаем разбор языков
@@ -2221,18 +2222,19 @@ begin
 //        AniIndicator1.Visible := true;
 //        AniIndicator1.Enabled := true;
 //        FrameProgressBar.Visible := true;
-          FrameProgressBar.Visible := true;
-          Application.ProcessMessages;
-        vTransCount := 0; // количество переведенных языков
+//          FrameProgressBar.Visible := true;
+//          Application.ProcessMessages;
+//        vTransCount := 0; // количество переведенных языков
 
         // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
         vJSON := '{"id":"' + FrameVideos.LabelVideoId.text +
           '",  "localizations": {';
 //        showmessage('startBar 3');
+        vTransCount :=0;
         for i := 1 to 300 do
         begin
-          FrameProgressBar.SetProgress(TRUNC(i/5));
-          Application.ProcessMessages;
+//          FrameProgressBar.SetProgress(TRUNC(i/5));
+//          Application.ProcessMessages;
 //          showmessage('startBar 00' + inttostr(i));
           if PanLanguages[i] = nil then
             break;
