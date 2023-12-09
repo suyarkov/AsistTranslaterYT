@@ -170,7 +170,7 @@ implementation
 
 {$R *.fmx}
 
-// начало работы прогресс бара!!!
+// окончания работы прогресс бара!!!
 procedure  TfMain.FinishProgressBar(Sender: TObject);
 begin
   if Assigned(GlobalProgressThread) then
@@ -2133,9 +2133,11 @@ var
 
   vTranslateTitle: string;
   vTranslateDescription: string;
+  vTransCountMax : integer;
 
   vObjTitle: Ttitle; // Tchannel;
 
+  vСutTitle: string;
 begin
 
   vTitle := FrameVideos.MemoTitle.text;
@@ -2191,7 +2193,7 @@ begin
       end
       else if TestScore(Sender, vTransCount) = 0 then
       begin
-
+         vTransCountMax :=  vTransCount;
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
         // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
         { vFullNameFile := vPath + '/' + 'subload';
@@ -2221,9 +2223,9 @@ begin
 //        showmessage('startBar 2');
 //        AniIndicator1.Visible := true;
 //        AniIndicator1.Enabled := true;
+        FrameProgressBar.Visible := true;
 //        FrameProgressBar.Visible := true;
-//          FrameProgressBar.Visible := true;
-//          Application.ProcessMessages;
+        Application.ProcessMessages;
 //        vTransCount := 0; // количество переведенных языков
 
         // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
@@ -2231,10 +2233,11 @@ begin
           '",  "localizations": {';
 //        showmessage('startBar 3');
         vTransCount :=0;
+        vСutTitle := '';
         for i := 1 to 300 do
         begin
-//          FrameProgressBar.SetProgress(TRUNC(i/5));
-//          Application.ProcessMessages;
+          FrameProgressBar.SetProgress(TRUNC((i*100/vTransCountMax))); // сейчас просто, но можно делить
+          Application.ProcessMessages;
 //          showmessage('startBar 00' + inttostr(i));
           if PanLanguages[i] = nil then
             break;
@@ -2242,10 +2245,28 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
+//          showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
+//           + ' на ' + PanLanguages[i].ChLang.text);
             vTranslateTitle := GoogleTranslate(vTitle,
               FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
+//          showmessage('Было ' + vTitle
+//           + ' , стало ' + vTranslateTitle +
+//           ' , стало2 ' + copy( vTranslateTitle, 1, 100));
+             if vTranslateTitle.Length > 100 then
+             begin
+             vTranslateTitle := copy( vTranslateTitle, 1, 100);
+             vСutTitle := vСutTitle + ' , ' + PanLanguages[i].ChLang.text;
+             end;
+
+             // если сократили то нужно такие языки запоминать!!!
+
+
             vTranslateDescription := GoogleTranslate(vDescription,
               FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
+
+           //showmessage('Было ' + vDescription
+           //  + ' , стало ' + vTranslateDescription);
+
 
             // наполняем языком JSON
             if vTransCount > 0 then // разделяем, если это уже список
@@ -2265,6 +2286,7 @@ begin
           end;
         end;
         vJSON := vJSON + '}}';
+//        showmessage( vJSON);
 
 //        showmessage('startBar 5 уходим в обновление!');
         if vTransCount > 0 then
@@ -2282,7 +2304,7 @@ begin
         FrameProgressBar.Visible := false;
         iScore := iScore - vTransCount;
         LabelScore.Text := IntToStr(iScore);
-        FrameInfo(Sender, 'Успешно перевели на ' + IntToStr(vTransCount), 1);
+        FrameInfo(Sender, 'Попытались перевести на ' + IntToStr(vTransCount), 1);
 //        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
       end;
       OAuth2.Free;
