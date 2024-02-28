@@ -127,7 +127,7 @@
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited EditName: TEdit
@@ -250,13 +250,13 @@
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -304,6 +304,7 @@
     end
     inherited LabelLanguages: TLabel
       inherited ButtonAddAllLanguages: TButton
+        TabOrder = 2
         OnClick = FrameLanguagesButtonAddAllLanguagesClick
       end
     end
@@ -594,7 +595,7 @@
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 2
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -633,8 +634,8 @@
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 880.000000000000000000
-      Viewport.Height = 55.000000000000000000
+      Viewport.Width = 884.000000000000000000
+      Viewport.Height = 59.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000

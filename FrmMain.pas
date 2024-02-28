@@ -2082,8 +2082,9 @@ begin
         // FrameInfo(Sender, 'ID дорожки с которой будем преводить = ' + vSubtitles[vIndexMainLanguage].subtitleId);
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
         vResponceLoadSubtitle := OAuth2.SubtitleDownload
-          (vSubtitles[vIndexMainLanguage].subtitleId, '');
-        // (vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
+          (vSubtitles[vIndexMainLanguage].subtitleId, ''); // пока только в языке оригинала и грузит
+//         (vSubtitles[vIndexMainLanguage].subtitleId, 'ru'); //почему то не подгрузил
+//         ('ru', ''); //почему то не подгрузил
         { vFullNameFile := vPath + '/' + 'subload';
           vFileText := TStringList.Create;
           vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
