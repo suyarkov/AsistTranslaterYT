@@ -15,6 +15,8 @@ type
     LabelCount: TLabel;
     LabelLanguages: TLabel;
     ButtonSubtitles: TButton;
+    ButtonAddAllLanguages: TButton;
+    ButtonDelAllLanguages: TButton;
   private
     { Private declarations }
   public

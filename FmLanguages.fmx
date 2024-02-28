@@ -47,11 +47,23 @@ object FrameLanguages: TFrameLanguages
     Position.Y = 480.000000000000000000
     Text = 'LabelLanguages'
     TabOrder = 9
+    object ButtonAddAllLanguages: TButton
+      Position.X = 120.000000000000000000
+      Position.Y = -13.000000000000000000
+      TabOrder = 4
+      Text = 'ButtonAddAllLanguages'
+    end
   end
   object ButtonSubtitles: TButton
     Position.X = 568.000000000000000000
     Position.Y = 475.000000000000000000
     TabOrder = 5
     Text = 'ButtonSubtitles'
+  end
+  object ButtonDelAllLanguages: TButton
+    Position.X = 320.000000000000000000
+    Position.Y = 505.000000000000000000
+    TabOrder = 10
+    Text = 'ButtonDelAllLanguages'
   end
 end

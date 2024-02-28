@@ -109,6 +109,8 @@ type
     function  TestScore(Sender: TObject; pCount: integer): integer;
     procedure StartProgressBar(Sender: TObject);
     procedure FinishProgressBar(Sender: TObject);
+    procedure FrameLanguagesButtonAddAllLanguagesClick(Sender: TObject);
+    procedure FrameLanguagesButtonDelAllLanguagesClick(Sender: TObject);
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
@@ -283,7 +285,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-   fMain.PanelAlpha_ForTest.visible := false;
+//   fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
   fMain.Width := 871;
@@ -1933,6 +1935,61 @@ begin
   while vFrameInfo.status = -1 do
     Application.ProcessMessages; // wait
   vFrameInfo.Destroy;
+end;
+
+
+procedure TfMain.FrameLanguagesButtonAddAllLanguagesClick(Sender: TObject);
+var
+  i, vCount: integer;
+  vSelLanguages: string;
+begin
+  lastPanel := nil;
+  vCount := 0;
+  vSelLanguages := '/';
+  for i := 1 to 300 do
+  begin
+    if PanLanguages[i] = nil then
+      break;
+    PanLanguages[i].ChImage.Visible := true;
+
+    PanLanguages[i].ButtonOnOff.TextSettings.Font.Style :=
+      [TFontStyle.fsBold];
+
+    if PanLanguages[i].ChImage.Visible = true then
+    begin
+      inc(vCount);
+      vSelLanguages := vSelLanguages + PanLanguages[i].ChLang.text + '/';
+    end;
+  end;
+  vSelLanguages := vSelLanguages + '/';
+  fMain.FrameLanguages.LabelCount.text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelLanguages.text := vSelLanguages;
+  PanChannels[vCurrentPanChannel].ChSelLang.text := vSelLanguages;
+  i := SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel]
+    .chId.text, vSelLanguages);
+end;
+
+procedure TfMain.FrameLanguagesButtonDelAllLanguagesClick(Sender: TObject);
+var
+  i, vCount: integer;
+  vSelLanguages: string;
+begin
+  lastPanel := nil;
+  vCount := 0;
+  vSelLanguages := '/';
+  for i := 1 to 300 do
+  begin
+    if PanLanguages[i] = nil then
+      break;
+    PanLanguages[i].ChImage.Visible := false;
+    PanLanguages[i].ButtonOnOff.TextSettings.Font.Style := [];
+  end;
+  vSelLanguages := vSelLanguages + '/';
+  fMain.FrameLanguages.LabelCount.text := IntToStr(vCount);
+  fMain.FrameLanguages.LabelLanguages.text := vSelLanguages;
+  PanChannels[vCurrentPanChannel].ChSelLang.text := vSelLanguages;
+  i := SQLiteModule.Upd_sel_Lang_RefreshToken(PanChannels[vCurrentPanChannel]
+    .chId.text, vSelLanguages);
 end;
 
 // грузим субтитры пока
