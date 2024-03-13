@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.737,C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit1.pas=D:\Delphi\Windows\MouseMover for ST\MouseMover\Service\uService.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.441,=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.166,=C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.551,C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Project1.dproj=D:\Delphi\Windows\MouseMover for ST\MouseMover\Service\ST_Service.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.737,C:\Users\Alex\Documents\Embarcadero\Studio\Projects\Unit1.dfm=D:\Delphi\Windows\MouseMover for ST\MouseMover\Service\uService.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,6 @@
+object Service1: TService1
+  DisplayName = 'Service1'
+  Height = 433
+  Width = 577
+  PixelsPerInch = 144
+end

@@ -1,0 +1,14 @@
+﻿[LangForm.Query]
+Visible=False
+Coordinates=334,464,97,33
+
+[LangForm.BindSourceDB1]
+Coordinates=860,500,145,123
+
+[]
+Coordinates=304,175,82,33
+Visible=False
+
+[FormScheduler.FDQuery]
+Visible=False
+

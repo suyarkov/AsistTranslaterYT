@@ -1,0 +1,317 @@
+unit uService;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.SvcMgr, Vcl.Dialogs,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
+  FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait,
+  FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.ExtCtrls, Generics.Collections, FMX.Platform;
+
+const
+  itemPos = 1;
+  itemClick = 2;
+  itemSleep = 3;
+  itemScroll = 4;
+  itemSeparator = 5;
+  itemRightClick = 6;
+  itemDoubleClick = 7;
+  itemCtrlA = 8;
+  itemCtrlC = 9;
+  itemCtrlV = 12;
+  itemTranslate = 13;
+  itemGetLang = 14;
+  itemTab = 15;
+  itemEnter = 16;
+  itemText = 17;
+
+  itemHotKey = 22;
+  itemWaitWindow = 23;
+  Literals: Array [0 .. 34] of char = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6',
+    '7', '8', '9');
+
+type
+  TDict = record
+    Key: integer;
+    Value: string;
+  end;
+
+  TServiceForm = class(TService)
+    FDConnection: TFDConnection;
+    FDQuery: TFDQuery;
+    Timer: TTimer;
+
+    procedure TimerTimer(Sender: TObject);
+    procedure ServiceAfterInstall(Sender: TService);
+  private
+    { Private declarations }
+    FScenarioList: TList<TDict>;
+    IsStarted: boolean;
+    FDictinary: TList<TDict>;
+    Svc: IFMXClipboardService;
+    ATimer: TTimer;
+    FNextItem: integer;
+    OldPos: TPoint;
+    WindowName: PWideChar;
+    procedure StartScheduler;
+    procedure ExecuteScenario(FilePath: string);
+    procedure OnWaitWindow(Sender: TObject);
+    procedure PostKeyEx32(Key: word; const shift: TShiftState);
+    procedure Start(ANext: integer = 0);
+
+  public
+    { Public declarations }
+
+  end;
+
+var
+  Service: TService;
+
+implementation
+
+{$R *.dfm}
+
+procedure TServiceForm.TimerTimer(Sender: TObject);
+var
+  ADict: TDict;
+begin
+  FDQuery.Active := false;
+  FDQuery.SQL.Clear;
+  FDQuery.SQL.Add('select * from startlist;');
+  FDQuery.Active := true;
+  FDQuery.First;
+
+  while NOT FDQuery.Eof do
+  begin
+    ADict.Key := FDQuery.FieldByName('id').AsInteger;
+    ADict.Value := FDQuery.FieldByName('scenario').AsString;
+
+    if FScenarioList.IndexOf(ADict) = -1 then
+      FScenarioList.Add(ADict);
+
+    FDQuery.Next;
+  end;
+
+  if NOT IsStarted then
+    StartScheduler;
+end;
+
+procedure TServiceForm.StartScheduler;
+var
+  I: integer;
+begin
+  IsStarted := true;
+  I := 0;
+
+  while I <= FScenarioList.Count - 1 do
+  begin
+    ExecuteScenario(FScenarioList[I].Value);
+    FDQuery.Active := false;
+    FDQuery.SQL.Clear;
+    FDQuery.SQL.Add('update scheduler set last_start = date(''now'',''localtime'') where id=' + FScenarioList[I].Key.ToString);
+    FDQuery.ExecSQL;
+    FScenarioList.Delete(I);
+  end;
+
+  IsStarted := false;
+end;
+
+procedure TServiceForm.ExecuteScenario(FilePath: string);
+var
+  AFile: TStringList;
+  I: integer;
+  ADict: TDict;
+begin
+  AFile := TStringList.Create;
+  AFile.LoadFromFile(FilePath);
+
+  for I := 0 to AFile.Count - 1 do
+  begin
+    ADict.Key := StrToInt(Copy(AFile[I], 1, Pos('-', AFile[I]) - 1));
+    ADict.Value := Copy(AFile[I], Pos('-', AFile[I]) + 1);
+    FDictinary.Add(ADict);
+  end;
+
+  FNextItem := 0;
+  Start;
+end;
+
+procedure TServiceForm.ServiceAfterInstall(Sender: TService);
+begin
+    TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService, Svc);
+  FDConnection.Params.Database := ExtractFilePAth(paramstr(0)) + '\base.db';
+  FDConnection.Connected := true;
+  Timer.Enabled := true;
+  FScenarioList := TList<TDict>.Create;
+  FDictinary := TList<TDict>.Create;
+  IsStarted := false;
+end;
+
+procedure TServiceForm.Start(ANext: integer = 0);
+var
+  I, J: integer;
+  tmpPoint: TPoint;
+  tmpPos: string;
+  s: string;
+  aSS: TShiftState;
+  Litter: char;
+begin
+
+  I := ANext;
+
+  while I <= FDictinary.Count - 1 do
+  begin
+    sleep(500);
+    case FDictinary[I].Key of
+      itemPos:
+        begin
+          tmpPoint.X := Round(StrToInt(Copy(FDictinary[I].Value, 1, Pos('-', FDictinary[I].Value) - 1)));
+          tmpPoint.Y := Round(StrToInt(Copy(FDictinary[I].Value, Pos('-', FDictinary[I].Value) + 1)));
+          OldPos := tmpPoint;
+          SetCursorPos(tmpPoint.X, tmpPoint.Y);
+        end;
+      itemSleep:
+        begin
+          sleep(FDictinary[I].Value.ToInteger);
+        end;
+      itemClick:
+        begin
+          mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+          mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        end;
+      itemScroll:
+        begin
+          mouse_event(MOUSEEVENTF_WHEEL, 0, 0, DWord(FDictinary[I].Value.ToInteger), 0);
+        end;
+
+      itemRightClick:
+        begin
+          mouse_event(MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+          mouse_event(MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
+        end;
+      itemDoubleClick:
+        begin
+          mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+          mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+          mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+          mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        end;
+
+      itemCtrlA:
+        begin
+          PostKeyEx32(Ord('A'), [ssctrl]);
+        end;
+      itemCtrlC:
+        begin
+          PostKeyEx32(Ord('C'), [ssctrl]);
+        end;
+      itemCtrlV:
+        begin
+          PostKeyEx32(Ord('V'), [ssctrl]);
+        end;
+      itemTab:
+        begin
+          PostKeyEx32(9, [ssctrl]);
+        end;
+      itemEnter:
+        begin
+          PostKeyEx32(13, [ssctrl]);
+        end;
+      itemText:
+        begin
+          Svc.SetClipboard(FDictinary[I].Value);
+          PostKeyEx32(Ord('V'), [ssctrl]);
+        end;
+      itemHotKey:
+        begin
+          s := FDictinary[I].Value;
+
+          case Copy(s, 1, 1).ToInteger of
+            0:
+              aSS := [ssAlt];
+            1:
+              aSS := [ssctrl];
+            2:
+              aSS := [ssShift];
+            3:
+              aSS := [ssAlt, ssctrl];
+            4:
+              aSS := [ssAlt, ssShift];
+            5:
+              aSS := [ssctrl, ssShift];
+          end;
+
+          Litter := Literals[Copy(s, 3).ToInteger];
+          PostKeyEx32(Ord(Litter), aSS);
+        end;
+      itemWaitWindow:
+        begin
+          if ATimer <> nil then
+            ATimer.Enabled := false
+          else
+            ATimer := TTimer.Create(nil);
+
+          WindowName := PWideChar(FDictinary[I].Value);
+          ATimer.Enabled := false;
+          ATimer.Interval := 300;
+          ATimer.OnTimer := OnWaitWindow;
+          ATimer.Enabled := true;
+          FNextItem := I + 1;
+          exit;
+        end;
+    end;
+    Inc(I);
+  end;
+
+end;
+
+procedure TServiceForm.OnWaitWindow(Sender: TObject);
+var
+  h: HWND;
+begin
+  h := FindWindow(nil, WindowName);
+  if h <> 0 then
+  begin
+    ATimer.Enabled := false;
+    Start(FNextItem);
+  end;
+end;
+
+procedure TServiceForm.PostKeyEx32(Key: word; const shift: TShiftState);
+
+type
+  TShiftKeyInfo = record
+    shift: byte;
+    vkey: byte;
+  end;
+
+  byteset = set of 0 .. 7;
+const
+  shiftkeys: array [1 .. 3] of TShiftKeyInfo = ((shift: Ord(ssctrl); vkey: VK_CONTROL), (shift: Ord(ssShift); vkey: VK_SHIFT), (shift: Ord(ssAlt); vkey: VK_MENU));
+var
+  flag: DWord;
+  bShift: byteset absolute shift;
+  I: integer;
+begin
+  for I := 1 to 3 do
+  begin
+    if shiftkeys[I].shift in bShift then
+      keybd_event(shiftkeys[I].vkey, MapVirtualKey(shiftkeys[I].vkey, 0), 0, 0);
+  end; { For }
+  flag := 0;
+
+  keybd_event(Key, MapVirtualKey(Key, 0), flag, 0);
+  flag := flag or KEYEVENTF_KEYUP;
+  keybd_event(Key, MapVirtualKey(Key, 0), flag, 0);
+
+  for I := 3 downto 1 do
+  begin
+    if shiftkeys[I].shift in bShift then
+      keybd_event(shiftkeys[I].vkey, MapVirtualKey(shiftkeys[I].vkey, 0), KEYEVENTF_KEYUP, 0);
+  end; { For }
+end; { PostKeyEx32 }
+
+end.
