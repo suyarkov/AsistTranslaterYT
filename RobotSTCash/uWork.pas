@@ -646,17 +646,21 @@ var
   flag: DWord;
   bShift: byteset absolute shift;
   I: integer;
+  vKey: byte;
 begin
+  vKey := Key;
   for I := 1 to 3 do
   begin
     if shiftkeys[I].shift in bShift then
       keybd_event(shiftkeys[I].vkey, MapVirtualKey(shiftkeys[I].vkey, 0), 0, 0);
-  end; { For }
-  flag := 0;
+  end;
 
-  keybd_event(Key, MapVirtualKey(Key, 0), flag, 0);
+
+  flag := 0;
+  keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
   flag := flag or KEYEVENTF_KEYUP;
-  keybd_event(Key, MapVirtualKey(Key, 0), flag, 0);
+  keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
+
 
   for I := 3 downto 1 do
   begin
