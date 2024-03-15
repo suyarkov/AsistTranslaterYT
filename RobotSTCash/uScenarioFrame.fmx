@@ -870,7 +870,11 @@ object ScenarioFrame: TScenarioFrame
                 '8'
                 '9'
                 'F1'
-                'F2')
+                'F2'
+                'UP'
+                'DOWN'
+                'LEFT'
+                'RIGHT')
               Position.X = 159.000000000000000000
               Position.Y = 14.000000000000000000
               Size.Width = 91.000000000000000000
@@ -888,7 +892,35 @@ object ScenarioFrame: TScenarioFrame
               Size.PlatformDefault = False
               TextSettings.Font.Size = 15.000000000000000000
               Text = '+'
+              TabOrder = 3
+            end
+            object numClick: TNumberBox
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
               TabOrder = 2
+              Cursor = crIBeam
+              Min = 1.000000000000000000
+              Max = 50.000000000000000000
+              Value = 1.000000000000000000
+              TextSettings.FontColor = claSlategray
+              TextSettings.HorzAlign = Center
+              Position.Y = 70.000000000000000000
+              HorzIncrement = 0.000000000000000000
+              Size.Width = 391.000000000000000000
+              Size.Height = 25.000000000000000000
+              Size.PlatformDefault = False
+              StyledSettings = [Family, Size, Style]
+              OnChange = cbShiftLitterChange
+            end
+            object Label42: TLabel
+              StyledSettings = [Family, Size]
+              Position.Y = 50.000000000000000000
+              Size.Width = 391.000000000000000000
+              Size.Height = 25.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.StyleExt = {00070000000000000004000000}
+              TextSettings.FontColor = claSlategray
+              Text = #1053#1072#1078#1072#1090#1100' '#1082#1083#1080#1074#1080#1096#1080' '#1088#1072#1079':'
+              TabOrder = 4
             end
           end
           object TabWaitWindow: TTabItem

@@ -42,9 +42,9 @@ const
   tcCopy = 2;
   tcNew = 1;
 
-  Literals: Array [0 .. 38] of word = (Ord('A'), Ord('B'), Ord('C'), Ord('D'), Ord('E'), Ord('F'), Ord('G'), Ord('H'), Ord('I'), Ord('J'), Ord('K'), Ord('L'), Ord('M'), Ord('N'), Ord('O'), Ord('P'),
+  Literals: Array [0 .. 40] of word = (Ord('A'), Ord('B'), Ord('C'), Ord('D'), Ord('E'), Ord('F'), Ord('G'), Ord('H'), Ord('I'), Ord('J'), Ord('K'), Ord('L'), Ord('M'), Ord('N'), Ord('O'), Ord('P'),
     Ord('Q'), Ord('R'), Ord('S'), Ord('T'), Ord('U'), Ord('V'), Ord('W'), Ord('X'), Ord('Y'), Ord('Z'), Ord('1'), Ord('2'), Ord('3'), Ord('4'), Ord('5'), Ord('6'), Ord('7'), Ord('8'), Ord('9'),
-    vk_f1, vk_f2, VK_UP, VK_DOWN);
+    vk_f1, vk_f2, VK_UP, VK_DOWN,VK_LEFT, VK_RIGHT);
 
 procedure ExeQ(var FDQuery: TFDQuery; SQL: string; AType: TTypeSQL);
 function SendMessage(ASubject: string; AMessageText: TStrings; var FDQuery: TFDQuery; FileName: string = ''): boolean;

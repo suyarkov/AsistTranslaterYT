@@ -30,7 +30,7 @@ type
     procedure GoItemPos(HintText: string);
     procedure GoWaitWindow(HintText: string; OnWait: TOnWait);
     procedure OnWaitWindow(Sender: TObject);
-    procedure PostKeyEx32(Key: Word; const shift: TShiftState);
+    procedure PostKeyEx32(Key: Word; const shift: TShiftState; numClick: Word = 1);
     procedure MainNextStep(IsSuccess: boolean);
     procedure MakeScreenShot(AFileName: string);
     procedure InsertLog(Result: boolean);
@@ -90,6 +90,7 @@ var
   ACondition: string;
   SqlText: string;
   res : string;
+  numClick : word;
 begin
   I := ANext;
 
@@ -204,9 +205,19 @@ begin
               5:
                 aSS := [ssCtrl, ssShift];
             end;
-
-            Litter := Literals[Copy(s, 3).ToInteger];
-            PostKeyEx32(Litter, aSS);
+            s := Copy(s, 3);
+            if pos('+', s) <> 0 then
+            begin
+              Litter := Literals[Copy(s, 1, pos('+', s) - 1).ToInteger];
+              numClick := Copy(s, pos('+', s) + 1).ToInteger;
+            end
+            else
+            begin
+              Litter := Literals[Copy(s, 1).ToInteger];
+              numClick := 1;
+            end;
+            // вызов нажатия
+            PostKeyEx32(Litter, aSS, numClick);
           end;
         itemWaitWindow:
           begin
@@ -631,8 +642,8 @@ begin
   Result := false;
 end;
 
-procedure TWork.PostKeyEx32(Key: Word; const shift: TShiftState);
 
+procedure TWork.PostKeyEx32(Key: Word; const shift: TShiftState; numClick: Word = 1);
 type
   TShiftKeyInfo = record
     shift: byte;
@@ -648,6 +659,7 @@ var
   I: integer;
   vKey: byte;
 begin
+
   vKey := Key;
   for I := 1 to 3 do
   begin
@@ -655,11 +667,18 @@ begin
       keybd_event(shiftkeys[I].vkey, MapVirtualKey(shiftkeys[I].vkey, 0), 0, 0);
   end;
 
+//    keybd_event(VK_DOWN, MapVirtualKey(VK_DOWN, 0), 0, 0);
+//    keybd_event(VK_DOWN, MapVirtualKey(VK_DOWN, 0), KEYEVENTF_KEYUP, 0);
 
-  flag := 0;
-  keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
-  flag := flag or KEYEVENTF_KEYUP;
-  keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
+  for I := 1 to numClick do
+  begin
+    flag := 0;
+    keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
+    flag := flag or KEYEVENTF_KEYUP;
+    keybd_event(vKey, MapVirtualKey(vKey, 0), flag, 0);
+    if I < numClick then
+      sleep( 300); //0.3 секунды
+  end;
 
 
   for I := 3 downto 1 do
@@ -667,6 +686,7 @@ begin
     if shiftkeys[I].shift in bShift then
       keybd_event(shiftkeys[I].vkey, MapVirtualKey(shiftkeys[I].vkey, 0), KEYEVENTF_KEYUP, 0);
   end; { For }
+
 end; { PostKeyEx32 }
 
 end.

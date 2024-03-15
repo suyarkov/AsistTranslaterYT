@@ -216,6 +216,8 @@ type
     Label41: TLabel;
     btnApplyPosition: TCornerButton;
     Label35: TLabel;
+    numClick: TNumberBox;
+    Label42: TLabel;
     procedure btnAddClick(Sender: TObject);
     procedure timerGetPosTimer(Sender: TObject);
     procedure timerCheckTrackTimer(Sender: TObject);
@@ -906,7 +908,8 @@ end;
 
 procedure TScenarioFrame.cbShiftLitterChange(Sender: TObject);
 begin
-  SelItem.Hint := cbShift.ItemIndex.ToString + '-' + cbShiftLitter.ItemIndex.ToString;
+  SelItem.Hint := cbShift.ItemIndex.ToString + '-' + cbShiftLitter.ItemIndex.ToString+ '+' + numClick.Value.ToString;
+//  SelItem.Hint := cbShift.ItemIndex.ToString + '-' + cbShiftLitter.ItemIndex.ToString+ '+1';
   ExeQ(FDExe, Format('update scenario_item set value =''%s'' where id_scenario=%d and order_id= %d', [SelItem.Hint, LoadScenariesID, ObjectList.Content.Children.IndexOf(SelItem)]), tsExec);
 end;
 
@@ -1308,7 +1311,8 @@ begin
   case itemType of
     itemHotKey:
       begin
-        SelItem := CreateBox(itemType, itemOrder, 'Горячая клавиша', '0-0');
+        SelItem := CreateBox(itemType, itemOrder, 'Горячая клавиша', '0-0+1');
+//        SelItem := CreateBox(itemType, itemOrder, 'Горячая клавиша2', '0-0');
         (SelItem.TagObject as TImage).MultiResBitmap[0].Bitmap.Assign(ImageList.Source[21].MultiResBitmap[0].Bitmap);
       end;
     itemText:
@@ -1814,8 +1818,20 @@ begin
           TabControl.Visible := true;
           TabControl.ActiveTab := tabHotKey;
           tmpHint := SelItem.Hint;
-          cbShift.ItemIndex := Copy(tmpHint, 1, 1).ToInteger;
-          cbShiftLitter.ItemIndex := Copy(tmpHint, 3).ToInteger;
+          begin
+            cbShift.ItemIndex := Copy(tmpHint, 1, 1).ToInteger;
+            tmpHint := Copy(tmpHint, 3);
+            if pos('+', tmpHint) <> 0 then
+            begin
+              cbShiftLitter.ItemIndex := Copy(tmpHint, 1, pos('+', tmpHint) - 1).ToInteger;
+              numClick.Value := Copy(tmpHint, pos('+', tmpHint) + 1).ToInteger;
+            end
+            else
+            begin
+              cbShiftLitter.ItemIndex := tmpHint.ToInteger;
+              numClick.Value := 1;
+            end;
+          end;
         end;
       itemWaitWindow:
         begin
