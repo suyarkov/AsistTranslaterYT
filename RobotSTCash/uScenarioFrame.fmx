@@ -919,7 +919,7 @@ object ScenarioFrame: TScenarioFrame
               Size.PlatformDefault = False
               TextSettings.Font.StyleExt = {00070000000000000004000000}
               TextSettings.FontColor = claSlategray
-              Text = #1053#1072#1078#1072#1090#1100' '#1082#1083#1080#1074#1080#1096#1080' '#1088#1072#1079':'
+              Text = #1053#1072#1078#1072#1090#1100' '#1082#1083#1072#1074#1080#1096#1080' '#1088#1072#1079':'
               TabOrder = 4
             end
           end
