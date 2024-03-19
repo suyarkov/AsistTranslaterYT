@@ -951,7 +951,6 @@ object ScenarioFrame: TScenarioFrame
                 Size.PlatformDefault = False
                 TabOrder = 2
                 object gb1: TGroupBox
-                  Align = Top
                   StyledSettings = [Family, Size, Other]
                   Padding.Left = 15.000000000000000000
                   Padding.Top = 15.000000000000000000
@@ -1102,12 +1101,11 @@ object ScenarioFrame: TScenarioFrame
                   end
                 end
                 object gb5: TGroupBox
-                  Align = Top
                   StyledSettings = [Family, Size, Other]
                   Padding.Left = 15.000000000000000000
                   Padding.Top = 15.000000000000000000
                   Padding.Right = 15.000000000000000000
-                  Position.Y = 428.000000000000000000
+                  Position.Y = 520.000000000000000000
                   Size.Width = 391.000000000000000000
                   Size.Height = 130.000000000000000000
                   Size.PlatformDefault = False
@@ -1236,12 +1234,11 @@ object ScenarioFrame: TScenarioFrame
                   end
                 end
                 object gb4: TGroupBox
-                  Align = Top
                   StyledSettings = [Family, Size, Other]
                   Padding.Left = 15.000000000000000000
                   Padding.Top = 15.000000000000000000
                   Padding.Right = 15.000000000000000000
-                  Position.Y = 321.000000000000000000
+                  Position.Y = 390.000000000000000000
                   Size.Width = 391.000000000000000000
                   Size.Height = 130.000000000000000000
                   Size.PlatformDefault = False
@@ -1370,12 +1367,11 @@ object ScenarioFrame: TScenarioFrame
                   end
                 end
                 object gb3: TGroupBox
-                  Align = Top
                   StyledSettings = [Family, Size, Other]
                   Padding.Left = 15.000000000000000000
                   Padding.Top = 15.000000000000000000
                   Padding.Right = 15.000000000000000000
-                  Position.Y = 214.000000000000000000
+                  Position.Y = 260.000000000000000000
                   Size.Width = 391.000000000000000000
                   Size.Height = 130.000000000000000000
                   Size.PlatformDefault = False
@@ -1502,12 +1498,11 @@ object ScenarioFrame: TScenarioFrame
                   end
                 end
                 object gb2: TGroupBox
-                  Align = Top
                   StyledSettings = [Family, Size, Other]
                   Padding.Left = 15.000000000000000000
                   Padding.Top = 15.000000000000000000
                   Padding.Right = 15.000000000000000000
-                  Position.Y = 107.000000000000000000
+                  Position.Y = 130.000000000000000000
                   Size.Width = 391.000000000000000000
                   Size.Height = 130.000000000000000000
                   Size.PlatformDefault = False

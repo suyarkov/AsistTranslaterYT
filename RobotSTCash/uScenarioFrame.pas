@@ -340,8 +340,6 @@ begin
   layDialogs.Height := 130 * btnAddDialog.Tag;
 
   (FindComponent('gb' + btnAddDialog.Tag.ToString) as TGroupBox).Visible := true;
-  (FindComponent('gb' + btnAddDialog.Tag.ToString) as TGroupBox).Position.Y := 1000;
-
   btnAddDialog.Visible := btnAddDialog.Tag < 5;
   btnDelDialog.Visible := btnAddDialog.Tag > 1;
 
