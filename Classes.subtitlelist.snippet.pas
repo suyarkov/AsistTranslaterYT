@@ -19,6 +19,7 @@ type
     FisDraft: boolean;
     FisAutoSynced: boolean;
     Fstatus: string;
+    FfailureReason: string;
   public
     property videoId: string read FvideoId write FvideoId;
     property lastUpdated: string read FlastUpdated write FlastUpdated;
@@ -32,6 +33,7 @@ type
     property isDraft: boolean read FisDraft write FisDraft;
     property isAutoSynced: boolean read FisAutoSynced write FisAutoSynced;
     property status: string read Fstatus write Fstatus;
+    property failureReason: string read FfailureReason write FfailureReason;
   end;
 
 implementation
