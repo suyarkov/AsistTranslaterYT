@@ -1,21 +1,20 @@
 {*******************************************************}
 {                                                       }
 {           CodeGear Delphi Runtime Library             }
-{ Copyright(c) 2014-2021 Embarcadero Technologies, Inc. }
+{ Copyright(c) 2014-2022 Embarcadero Technologies, Inc. }
 {              All rights reserved                      }
 {                                                       }
 {*******************************************************}
 
 /// <summary>Unit that holds functionality relative to process MIME parts from/to a network message</summary>
-unit MimeDelpta;
+unit System.Net.Mime;
 
 interface
 
 {$SCOPEDENUMS ON}
 
 uses
-  System.Classes, System.Sysutils, System.Generics.Collections, System.Generics.Defaults,
-  FMX.Dialogs;
+  System.Classes, System.Sysutils, System.Generics.Collections, System.Generics.Defaults;
 
 type
   /// <summary>Class to manage multipart form data</summary>
@@ -207,18 +206,11 @@ uses
 { TMultipartFormData }
 
 constructor TMultipartFormData.Create(AOwnsOutputStream: Boolean);
-var
-  vFileText: TStringList;
 begin
   inherited Create;
   FOwnsOutputStream := AOwnsOutputStream;
-  FBoundary := 'AA0512';
+  FBoundary := GenerateBoundary;
   FStream := TMemoryStream.Create;
-
-          vFileText := TStringList.Create;
-          vFileText.Add(FBoundary);
-          // сохраняем
-          vFileText.SaveToFile('d:/tesf.txt');
 end;
 
 destructor TMultipartFormData.Destroy;
@@ -235,6 +227,7 @@ procedure TMultipartFormData.AddField(const AField, AValue: string; const AConte
 begin
   AdjustLastBoundary;
   WriteStringLn('--' + FBoundary);
+  WriteStringLn(sContentDisposition + ': form-data; name="' + AField + '"'); // do not localize
   // We need 2 line breaks here
   if AContentType <> '' then
     WriteStringLn(sContentType + ': ' + AContentType + #13#10)
@@ -251,7 +244,13 @@ var
 begin
   AdjustLastBoundary;
   WriteStringLn('--' + FBoundary);
+  LLine := sContentDisposition + ': form-data; name="' + AField + '"'; // do not localize
+  if AFileName <> '' then
+    LLine := LLine + '; filename="' + AFileName + '"'; // do not localize
+  WriteStringLn(LLine);
   LType := AContentType;
+  if LType = '' then
+    TMimeTypes.Default.GetFileInfo(AFileName, LType, LKind);
   // We need 2 line breaks here
   WriteStringLn(sContentType + ': ' + LType + #13#10);
   FStream.CopyFrom(AStream, 0);
@@ -295,7 +294,7 @@ end;
 
 function TMultipartFormData.GetMimeTypeHeader: string;
 begin
-  Result := 'multipart/related; boundary=' + FBoundary; // do not localize
+  Result := 'multipart/form-data; boundary=' + FBoundary; // do not localize
 end;
 
 function TMultipartFormData.GetStream: TMemoryStream;
@@ -320,7 +319,6 @@ function TMultipartFormData.GenerateBoundary: string;
 begin
   Randomize;
   Result := '-------Embt-Boundary--' + IntToHex(Random(MaxInt), 8) + IntToHex(Random(MaxInt), 8); // do not localize
-//  Result := '-------Embt2-Boundary--' + IntToHex(Random(MaxInt), 8) + IntToHex(Random(MaxInt), 8); // do not localize
 end;
 
 { TMimeTypes }
@@ -1408,7 +1406,7 @@ procedure TMimeTypes.AddOSTypes;
             if LExt.StartsWith('.') then
               if LReg.OpenKeyReadOnly(CExtsKey + LExt) then
               begin
-                LType := LReg.ReadString('Content Type'); // do not localize
+                LType := LReg.ReadString('Content Type').Trim; // do not localize
                 if LType <> '' then
                   AddType(LExt, LType, TKind.Undefined, True);
                 LReg.CloseKey;
@@ -1420,9 +1418,9 @@ procedure TMimeTypes.AddOSTypes;
           LReg.GetKeyNames(LKeys);
           LReg.CloseKey;
           for LType in LKeys do
-            if LReg.OpenKeyReadOnly(CTypesKey + LType) then
+            if (LType.Trim <> '') and LReg.OpenKeyReadOnly(CTypesKey + LType) then
             begin
-              LExt := LReg.ReadString('Extension'); // do not localize
+              LExt := LReg.ReadString('Extension').Trim; // do not localize
               if LExt <> '' then
                 AddType(LExt, LType, TKind.Undefined, True);
               LReg.CloseKey;
@@ -1461,8 +1459,9 @@ procedure TMimeTypes.AddOSTypes;
         if (LItem <> '') and not LItem.StartsWith('#') then
         begin
           LArr := LItem.Split([' ', #9], TStringSplitOptions.ExcludeEmpty);
-          for i := 1 to Length(LArr) - 1 do
-            AddType(LArr[i], LArr[0], TKind.Undefined, True);
+          if LArr[0].Trim <> '' then
+            for i := 1 to Length(LArr) - 1 do
+              AddType(LArr[i], LArr[0], TKind.Undefined, True);
         end;
       end;
     finally
@@ -1532,7 +1531,7 @@ procedure TMimeTypes.AddOSTypes;
           end
           else if (Length(LArr) = 1) and SameText(LArr[0], '/dict') and (LMode >= 0) then // do not localize
           begin
-            if LType <> '' then
+            if LType.Trim <> '' then
               for j := 0 to LExts.Count - 1 do
                 AddType(LExts[j], LType, TKind.Undefined, True);
             LMode := -1;

@@ -2028,7 +2028,14 @@ var
   vObj: Tsnippet;
   vAddCaptionJSON: string;
 
+  vFileText2: TStringList;
 begin
+
+          vFileText2 := TStringList.Create;
+          vFileText2.Add('что? DD');
+          // сохран€ем
+          vFileText2.SaveToFile('d:/tesf2.txt');
+
   vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
   if vLength > 2 then
   begin
@@ -2121,7 +2128,7 @@ begin
           then
           begin
             inc(vTransCount);
-            showmessage('добавл€ем €зык ' + FrameVideos.LabelVideoId.text +
+            showmessage('добавл€ем €зык ' + FrameVideos.LanguageVideoLabel.text +
               ' на ' + PanLanguages[i].ChLang.text);
             // vString := OAuth2.SubtitleDownload(PanLanguages[i].ChLang.text, 'en');
             // загружаем в этом €зыке субтитры
@@ -2137,14 +2144,19 @@ begin
               vObj.snippet.videoId := FrameVideos.LabelVideoId.text;
               vObj.snippet.language := PanLanguages[i].ChLang.text; //'en';
               vObj.snippet.name := PanLanguages[i].ChName.text; // '';// }
-            vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
-            // showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
+//            vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
+            vAddCaptionJSON := '{"kra":"dva"}';
+//            vAddCaptionJSON :=  '{"snippet":'+ vAddCaptionJSON + '}';
+             showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
             // vAddCaptionJSON := '{language:es,name:465,videoId:' + FrameVideos.LabelVideoId.text + '}';
             // vAddCaptionJSON :=  '{snippet:{ language:es, name:Spanish captions, videoId:' +
             // FrameVideos.LabelVideoId.text + ',isDraft:true}}';
             // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, '');
             vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
               'default.sbv');
+
+//            vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
+//              '');
             FrameInfo(Sender, 'ќтвет от перевода ' + vResponceInsSubtitle);
             Memo1.text := vResponceInsSubtitle;
             vObj.Free;
