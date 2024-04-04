@@ -3,8 +3,10 @@ unit FrmMain;
 interface
 
 uses
+  MimeDelpta,
   System.SysUtils, System.Types, System.UITypes, System.Classes,
-  System.Variants, System.Net.HTTPClient, System.NetEncoding,
+  System.Variants, System.Net.HTTPClient,
+  System.NetEncoding,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FmFirst, FmChannels, Data.DB,
   PnChannel, PnVideo,
@@ -24,7 +26,6 @@ uses
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
   FmHelp, FmAddMoney, System.ImageList, FMX.ImgList
-//  ,MimeDelpta
   ;
 
 type

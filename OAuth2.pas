@@ -5,9 +5,12 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.StrUtils,
   //FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  JSON, Rest.Client, Rest.Types, Generics.Collections,
+  MimeDelpta,
+  JSON,
+  Rest.Client,
+  Rest.Types,
+  Generics.Collections,
   FMX.Dialogs
-  //, MimeDelpta
   ;
 
 const
