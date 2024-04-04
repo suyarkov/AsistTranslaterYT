@@ -6,7 +6,9 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.StrUtils,
   //FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   JSON, Rest.Client, Rest.Types, Generics.Collections,
-  FMX.Dialogs, MimeDelpta;
+  FMX.Dialogs
+  //, MimeDelpta
+  ;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -496,6 +498,7 @@ const
 //  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
 //    URL = 'https://youtube.googleapis.com/youtube/v3/captions?part=snippet&key=[YOUR_API_KEY]';
   URL = 'https://youtube.googleapis.com/youtube/v3/captions';
+//  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;

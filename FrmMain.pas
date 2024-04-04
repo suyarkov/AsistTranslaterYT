@@ -23,8 +23,9 @@ uses
   Classes.title, Classes.snippet, Classes.snippetInsert,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
-  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList,
-  MimeDelpta;
+  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList
+//  ,MimeDelpta
+  ;
 
 type
   TfMain = class(TForm)
