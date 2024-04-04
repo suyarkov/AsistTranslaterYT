@@ -217,12 +217,7 @@ begin
         begin
           Result := '403' + FResponse.JSONText;
         end;
-      400:
-        begin
-          Result := '400' + FResponse.JSONText + ' ' +  FResponse.StatusText + ' ' + FResponse.ErrorMessage;
-          showmessage(Result);
-        end;
-      else // 404 и другие
+        else // 404 и другие
         begin
           Result := IntToStr(FResponse.StatusCode) + ' JSON ' + FResponse.JSONText + ' TEXT ' + FResponse.StatusText + ' ???';
           showmessage(Result);
@@ -496,14 +491,14 @@ begin
 
   Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
-{
+
 // Subtitle insert
 function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
 const
 //  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
 //    URL = 'https://youtube.googleapis.com/youtube/v3/captions?part=snippet&key=[YOUR_API_KEY]';
-  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
-//  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
+//  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
@@ -514,44 +509,15 @@ begin
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
-//  Headers.Add('Content-Type', 'multipart/related; boundary="AA0512"');
-  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-
-//Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 //  Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
-//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
 //  Headers.Add('Content-Type', 'application/json');
 
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
-end;
-}
-
-// Subtitle insert
-function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
-const
-//  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
-//  'https://youtube.googleapis.com/youtube/v3/captions/%s';
-//  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
-  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
-
-var
-  Params: TDictionary<String, String>;
-  Headers: TDictionary<String, String>;
-begin
-  Params := TDictionary<String, String>.Create;
-  Params.Add('part', 'snippet');
-
-  Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
-  Headers.Add('Accept', 'application/json');
-//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-  Headers.Add('Content-Type', 'multipart/form-data; boundary=''AA0512''');
-
-  Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
-//  Result := SendRequest(URL, Params, Headers, JSON, rmPost, '');
 end;
 
 // Title delete
