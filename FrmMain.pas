@@ -2,8 +2,9 @@ unit FrmMain;
 
 interface
 
+
 uses
-  MimeDelpta,
+//  MimeDelpta,
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants, System.Net.HTTPClient,
   System.NetEncoding,
@@ -173,6 +174,7 @@ var
 implementation
 
 {$R *.fmx}
+
 
 // окончания работы прогресс бара!!!
 procedure  TfMain.FinishProgressBar(Sender: TObject);

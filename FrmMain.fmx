@@ -127,7 +127,7 @@
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited EditName: TEdit
@@ -247,16 +247,19 @@
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+      inherited LabelVideoId: TLabel
+        TabOrder = 2
+      end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -304,7 +307,7 @@
     end
     inherited LabelLanguages: TLabel
       inherited ButtonAddAllLanguages: TButton
-        TabOrder = 3
+        TabOrder = 2
         OnClick = FrameLanguagesButtonAddAllLanguagesClick
       end
     end
