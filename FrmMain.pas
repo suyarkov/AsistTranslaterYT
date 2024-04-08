@@ -4,7 +4,7 @@ interface
 
 
 uses
-//  MimeDelpta,
+  MimeDelpta,
   System.SysUtils, System.Types, System.UITypes, System.Classes,
   System.Variants, System.Net.HTTPClient,
   System.NetEncoding,

@@ -51,7 +51,15 @@ uses
   Classes.title in 'Classes.title.pas',
   Classes.snippet in 'Classes.snippet.pas',
   Classes.snippetInsert in 'Classes.snippetInsert.pas',
-  MimeDelpta in 'MimeDelpta.pas';
+  MimeDelpta in 'MimeDelpta.pas',
+  System.Net.FileClient in 'System.Net.FileClient.pas',
+  System.Net.HttpClient in 'System.Net.HttpClient.pas',
+  System.Net.HttpClient.Win in 'System.Net.HttpClient.Win.pas',
+  System.Net.HttpClientComponent in 'System.Net.HttpClientComponent.pas',
+  System.Net.Mime in 'System.Net.Mime.pas',
+  System.Net.Socket in 'System.Net.Socket.pas',
+  System.Net.URLClient in 'System.Net.URLClient.pas',
+  System.NetConsts in 'System.NetConsts.pas';
 
 {$R *.res}
 
