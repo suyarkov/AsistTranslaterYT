@@ -2147,8 +2147,8 @@ begin
               vObj.snippet.videoId := FrameVideos.LabelVideoId.text;
               vObj.snippet.language := PanLanguages[i].ChLang.text; //'en';
               vObj.snippet.name := PanLanguages[i].ChName.text; // '';// }
-//            vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
-            vAddCaptionJSON := '{"kra":"dva"}';
+            vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
+//            vAddCaptionJSON := '{"kra":"dva"}';
 //            vAddCaptionJSON :=  '{"snippet":'+ vAddCaptionJSON + '}';
              showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
             // vAddCaptionJSON := '{language:es,name:465,videoId:' + FrameVideos.LabelVideoId.text + '}';
@@ -2503,3 +2503,4 @@ begin
 end;
 
 end.
+

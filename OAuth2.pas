@@ -516,7 +516,7 @@ begin
 //  Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
 //  Headers.Add('Content-Type', 'application/json');
 
 

@@ -25,7 +25,7 @@ type
     FStream: TMemoryStream;
     FLastBoundaryWrited: Boolean;
     function GetMimeTypeHeader: string;
-    function GenerateBoundary: string;
+//    function GenerateBoundary: string;
     procedure WriteStringLn(const AString: string);
     function GetStream: TMemoryStream;
     procedure AdjustLastBoundary;
@@ -212,14 +212,15 @@ begin
   inherited Create;
   FOwnsOutputStream := AOwnsOutputStream;
   FBoundary := 'AA0512';
-  {
+
   FStream := TMemoryStream.Create;
 
           vFileText := TStringList.Create;
-          vFileText.Add(FBoundary);
+          vFileText.LoadFromFile('d:/test_start MIME.txt');
+          vFileText.Add(FBoundary + ', '+DateToStr(Now) + ' : '+TimeToStr(Now));
           // сохраняем
-          vFileText.SaveToFile('d:/tesf22.txt');
-  }
+          vFileText.SaveToFile('d:/test_start MIME.txt');
+
 
 end;
 
@@ -296,8 +297,16 @@ begin
 end;
 
 function TMultipartFormData.GetMimeTypeHeader: string;
+var
+  vFileText: TStringList;
 begin
   Result := 'multipart/related; boundary=' + FBoundary; // do not localize
+          vFileText := TStringList.Create;
+          vFileText.LoadFromFile('d:/test_start MIME.txt');
+          vFileText.Add(FBoundary + ', '+DateToStr(Now) + ' : '+TimeToStr(Now)
+          + ' = ' + Result);
+          // сохраняем
+          vFileText.SaveToFile('d:/test_start MIME.txt');
 end;
 
 function TMultipartFormData.GetStream: TMemoryStream;
@@ -318,6 +327,7 @@ begin
   FStream.WriteBuffer(Buff, Length(Buff));
 end;
 
+{
 function TMultipartFormData.GenerateBoundary: string;
 begin
   Randomize;
@@ -325,7 +335,7 @@ begin
   Result := 'AA0512'; // do not localize
 //  Result := '-------Embt2-Boundary--' + IntToHex(Random(MaxInt), 8) + IntToHex(Random(MaxInt), 8); // do not localize
 end;
-
+}
 { TMimeTypes }
 
 constructor TMimeTypes.Create;
