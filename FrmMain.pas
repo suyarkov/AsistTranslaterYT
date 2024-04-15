@@ -2490,7 +2490,8 @@ begin
     // Создаем
     // PanelVideos
     PanVideos[vCountVideoCreate + i + 1] :=
-      TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY, i + 1,
+      TVideoPanel.Create(FrameMainChannel.BoxVideos, vPosY,
+      vCountVideoCreate +i + 1,
       vVideo.videoId, vVideo.channelId, vVideo.title, vVideo.publishTime,
       'нету', vVideo.img);
     PanVideos[vCountVideoCreate + i + 1].Parent := FrameMainChannel.BoxVideos;
