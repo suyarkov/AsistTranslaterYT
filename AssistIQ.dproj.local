@@ -115,38 +115,38 @@
     <Transaction>1899.12.30 00:00:00.000.075,D:\GitClicker\AsistYou\FrmMain.pas=C:\Users\Dmitry\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.817,=D:\GitClicker\AsistTranslaterYT\Classes.shearche.pageInfo.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.435,=D:\GitClicker\AsistTranslaterYT\Classes.videoInfo.itemInfo.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.872,=D:\Tmp\Dlf\AsistTranslaterYT\Classes.subtitlelist.snippet.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.893,=D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.382,=D:\Tmp\Dlf\AsistTranslaterYT\System.NetConsts.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.806,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAsk.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.877,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmInfo.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.710,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmTextInput.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.602,D:\GitClicker\AsistTranslaterYT\FmProgressEndLess.pas=D:\GitClicker\AsistTranslaterYT\FmProgressNot.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.602,D:\GitClicker\AsistTranslaterYT\FmProgressEndLess.pas=D:\GitClicker\AsistTranslaterYT\FmProgressNot.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.329,=D:\GitClicker\AsistTranslaterYT\Classes.video.snippet.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.179,=D:\Tmp\Dlf\AsistTranslaterYT\System.Beacon.Components.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.382,=D:\Tmp\Dlf\AsistTranslaterYT\System.NetConsts.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.015,=D:\Tmp\Dlf\AsistTranslaterYT\System.Net.HttpClient.Mac.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.602,D:\GitClicker\AsistTranslaterYT\FmProgressEndLess.pas=D:\GitClicker\AsistTranslaterYT\FmProgressNot.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.160,=D:\Tmp\Dlf\AsistTranslaterYT\System.Mac.Beacon.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.602,D:\GitClicker\AsistTranslaterYT\FmProgressEndLess.pas=D:\GitClicker\AsistTranslaterYT\FmProgressNot.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.723,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAddUser.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.487,=D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.872,=D:\Tmp\Dlf\AsistTranslaterYT\Classes.subtitlelist.snippet.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.160,=D:\Tmp\Dlf\AsistTranslaterYT\System.Mac.Beacon.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.364,=D:\Tmp\Dlf\AsistTranslaterYT\FmInfoMoney.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.723,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAddUser.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.121,=D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.644,=D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.579,=D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.806,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAsk.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.877,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmInfo.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.710,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmTextInput.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.723,D:\Tmp\Dlf\AsistTranslaterYT\Unit1.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAddUser.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.364,=D:\Tmp\Dlf\AsistTranslaterYT\FmInfoMoney.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.539,=D:\Tmp\Dlf\AsistTranslaterYT\System.Win.BluetoothWinRT.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.092,D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.dfm=D:\GitClicker\AsistTranslaterYT\Unit1.dfm</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.801,D:\GitClicker\AsistTranslaterYT\UnLang.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.893,=D:\GitClicker\AsistTranslaterYT\ChannelPanel.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.580,D:\Tmp\Dlf\AsistTranslaterYT\FmHepl.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAboveUs.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.176,=D:\GitClicker\AsistTranslaterYT\Classes.video.item.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.316,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\UnLang.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.176,=D:\GitClicker\AsistTranslaterYT\Classes.video.item.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.897,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\FmLanguages.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.921,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\FmProgressBar.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.078,=D:\GitClicker\AsistTranslaterYT\Classes.channel.items.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.326,=D:\Tmp\Dlf\AsistTranslaterYT\System.Bluetooth.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.316,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\UnLang.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.092,D:\GitClicker\AsistTranslaterYT\FrmDataSQLite.dfm=D:\GitClicker\AsistTranslaterYT\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.801,D:\GitClicker\AsistTranslaterYT\UnLang.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.801,D:\GitClicker\AsistTranslaterYT\UnLang.pas=</Transaction>
     <Transaction>1899.12.30 00:00:00.000.161,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\FmChannels.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.326,=D:\Tmp\Dlf\AsistTranslaterYT\System.Bluetooth.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.580,D:\Tmp\Dlf\AsistTranslaterYT\FmHepl.pas=D:\Tmp\Dlf\AsistTranslaterYT\FmAboveUs.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.015,=D:\Tmp\Dlf\AsistTranslaterYT\System.Net.HttpClient.Mac.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.921,D:\GitClicker\AsistTranslaterYT\Unit1.fmx=D:\GitClicker\AsistTranslaterYT\FmProgressBar.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.078,=D:\GitClicker\AsistTranslaterYT\Classes.channel.items.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.176,=D:\GitClicker\AsistTranslaterYT\Classes.video.item.pas</Transaction>
     <Transaction>2024.04.18 15:27:06.290,D:\Tmp\Dlf\AsistTranslaterYT\MimeDelpta.pas=</Transaction>
     <Transaction>2024.04.18 15:27:06.383,D:\Tmp\Dlf\AsistTranslaterYT\System.Net.FileClient.pas=</Transaction>
     <Transaction>2024.04.18 15:27:06.397,D:\Tmp\Dlf\AsistTranslaterYT\System.Net.HttpClient.pas=</Transaction>
@@ -156,6 +156,7 @@
     <Transaction>2024.04.18 15:27:06.455,D:\Tmp\Dlf\AsistTranslaterYT\System.Net.Socket.pas=</Transaction>
     <Transaction>2024.04.18 15:27:06.468,D:\Tmp\Dlf\AsistTranslaterYT\System.Net.URLClient.pas=</Transaction>
     <Transaction>2024.04.18 15:27:06.481,D:\Tmp\Dlf\AsistTranslaterYT\System.NetConsts.pas=</Transaction>
+    <Transaction>2024.04.18 16:17:47.353,=D:\Tmp\Dlf\AsistTranslaterYT\System.Net.Mime.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="Classes.channel.item.pas"/>
@@ -221,5 +222,6 @@
     <File Path="FmAddMoney.pas"/>
     <File Path="FmAddMoney.fmx"/>
     <File Path="Classes.title.pas"/>
+    <File Path="System.Net.Mime.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

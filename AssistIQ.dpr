@@ -50,7 +50,8 @@ uses
   FmAddMoney in 'FmAddMoney.pas' {FrameAddMoney: TFrame},
   Classes.title in 'Classes.title.pas',
   Classes.snippet in 'Classes.snippet.pas',
-  Classes.snippetInsert in 'Classes.snippetInsert.pas';
+  Classes.snippetInsert in 'Classes.snippetInsert.pas',
+  System.Net.Mime in 'System.Net.Mime.pas';
 
 {$R *.res}
 
