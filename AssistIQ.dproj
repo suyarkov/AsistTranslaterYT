@@ -322,15 +322,6 @@
         <DCCReference Include="Classes.title.pas"/>
         <DCCReference Include="Classes.snippet.pas"/>
         <DCCReference Include="Classes.snippetInsert.pas"/>
-        <DCCReference Include="MimeDelpta.pas"/>
-        <DCCReference Include="System.Net.FileClient.pas"/>
-        <DCCReference Include="System.Net.HttpClient.pas"/>
-        <DCCReference Include="System.Net.HttpClient.Win.pas"/>
-        <DCCReference Include="System.Net.HttpClientComponent.pas"/>
-        <DCCReference Include="System.Net.Mime.pas"/>
-        <DCCReference Include="System.Net.Socket.pas"/>
-        <DCCReference Include="System.Net.URLClient.pas"/>
-        <DCCReference Include="System.NetConsts.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
