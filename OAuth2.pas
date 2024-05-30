@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.StrUtils,
   //FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  MimeDelpta,
+  //MimeDelpta,
   JSON,
   Rest.Client,
   Rest.Types,
@@ -132,7 +132,7 @@ var
   i: integer;
   Key: String;
   LParam: TRESTRequestParameter;
-  Boundary: string;
+//  Boundary: string;
 begin
   FRest := TRestClient.Create(URL);
   FResponse := TRestResponse.Create(nil);
@@ -168,7 +168,7 @@ var
   i: integer;
   Key: String;
   LParam: TRESTRequestParameter;
-  Boundary: string;
+//  Boundary: string;
 begin
   FRest := TRestClient.Create(URL);
   FResponse := TRestResponse.Create(nil);
@@ -197,6 +197,7 @@ begin
 //     showmessage('в тело вставляем JSON:' + JSON);
     if AFile <> '' then
     begin
+      showmessage('в тело вставляем file:' + AFile);
       FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);
     end;
   end;
@@ -471,7 +472,8 @@ begin
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Authorization', 'Bearer ' + RefreshToken);
   Headers.Add('Accept', 'application/json');
-  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
 //  showmessage('Куда стучимся =  ' + Format(URL, [CaptionID]));
 //  Result := SendRequest(URL, Params, Headers, '', rmGet);
   Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
