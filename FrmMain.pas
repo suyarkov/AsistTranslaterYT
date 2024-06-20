@@ -424,7 +424,7 @@ begin
       vChannel.img := TBitmap.Create;
       vChannel.img := Bitimg;
       vChannel.img_channel := TBlobType(Bitimg);
-    except
+    except                                                                         сс
       showmessage('Что except');
     end;
 
