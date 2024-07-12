@@ -367,7 +367,7 @@ begin
     vAppLocalization.MainVideos_LabelTitle,
     vAppLocalization.MainVideos_LabelDescription,
     vAppLocalization.MainVideos_BTranslater);
-  // 'Если Есть обновление!'
+  // 'Если Есть обновление!' - но пока проверки нет.
   FrameInfo(Sender, MsgInfoUpdate);
 
 end;
@@ -403,7 +403,7 @@ begin
     // vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
     vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
     Edit4.text := vImgUrl;
-    try
+//    try
       S := StringReplace(Edit4.text, #13, '', [rfReplaceAll, rfIgnoreCase]);
       AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
       FHTTPClient := THTTPClient.Create;
@@ -424,9 +424,9 @@ begin
       vChannel.img := TBitmap.Create;
       vChannel.img := Bitimg;
       vChannel.img_channel := TBlobType(Bitimg);
-    except                                                                         сс
+    {except                                                                         сс
       showmessage('Что except');
-    end;
+    end;}
 
     vChannel.refresh_token := EdRefresh_token;
     if vChannel.lang = '' then

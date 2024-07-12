@@ -29,7 +29,9 @@ implementation
 
 procedure TFrameProgressBar.FrameResize(Sender: TObject);
 begin
- showmessage('FrameResize');
+ { -- именно тут загрузка скачет
+ showmessage('FrameResize2');
+ }
 end;
 
 procedure TFrameProgressBar.SetProgress(const APos: integer);
