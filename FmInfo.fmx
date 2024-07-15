@@ -1236,7 +1236,7 @@ object FrameInfo: TFrameInfo
             'ns-icon-design-check-mark-blue-check-mark-blue-angle-logo-thumbn' +
             'ail.png'
         end>
-      Position.X = 141.000000000000000000
+      Position.X = 144.000000000000000000
       Position.Y = 10.000000000000000000
       Size.Width = 56.000000000000000000
       Size.Height = 50.000000000000000000

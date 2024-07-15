@@ -68,7 +68,7 @@ type
     function FireBaseInsert(ACollection, ADocID, JSON: string): string;
 
     function UserGet(ACollection, ACollection2: string): string;
-    function UserAdd(ACollection: string): string;
+    function UserAdd(ACollection, ACollection2: string): string;
 
     constructor Create;
     destructor destroy; override;
@@ -711,7 +711,7 @@ end;
 
 
 // My insert  ? добавление пользователя в базу
-function TOAuth.UserAdd(ACollection: string): string;
+function TOAuth.UserAdd(ACollection, ACollection2: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27
 var

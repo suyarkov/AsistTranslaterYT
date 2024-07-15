@@ -42,8 +42,8 @@ object FrameAsk: TFrameAsk
       Size.Height = 27.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
-      Viewport.Width = 69.000000000000000000
-      Viewport.Height = 23.000000000000000000
+      Viewport.Width = 73.000000000000000000
+      Viewport.Height = 27.000000000000000000
     end
     object Image1: TImage
       MultiResBitmap.Height = 225

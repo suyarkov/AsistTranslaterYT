@@ -403,30 +403,30 @@ begin
     // vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
     vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
     Edit4.text := vImgUrl;
-//    try
-      S := StringReplace(Edit4.text, #13, '', [rfReplaceAll, rfIgnoreCase]);
-      AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
-      FHTTPClient := THTTPClient.Create;
-      FHTTPClient.UserAgent :=
-        'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
-      try
-        AResponce := FHTTPClient.Get(AAPIUrl);
-      except
-        showmessage('нет подключени€');
-      end;
-      if Not Assigned(AResponce) then
-      begin
-        showmessage('ѕусто');
-      end;
+    // try
+    S := StringReplace(Edit4.text, #13, '', [rfReplaceAll, rfIgnoreCase]);
+    AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
+    FHTTPClient := THTTPClient.Create;
+    FHTTPClient.UserAgent :=
+      'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
+    try
+      AResponce := FHTTPClient.Get(AAPIUrl);
+    except
+      showmessage('нет подключени€');
+    end;
+    if Not Assigned(AResponce) then
+    begin
+      showmessage('ѕусто');
+    end;
 
-      Bitimg := TBitmap.Create;
-      Bitimg.LoadFromStream(AResponce.ContentStream);
-      vChannel.img := TBitmap.Create;
-      vChannel.img := Bitimg;
-      vChannel.img_channel := TBlobType(Bitimg);
-    {except                                                                         сс
+    Bitimg := TBitmap.Create;
+    Bitimg.LoadFromStream(AResponce.ContentStream);
+    vChannel.img := TBitmap.Create;
+    vChannel.img := Bitimg;
+    vChannel.img_channel := TBlobType(Bitimg);
+    { except                                                                         сс
       showmessage('„то except');
-    end;}
+      end; }
 
     vChannel.refresh_token := EdRefresh_token;
     if vChannel.lang = '' then
@@ -473,9 +473,9 @@ begin
     ButtonSelChannelsClick(Sender); // обновление не забудь!!!
     EdAccessCode := ''; // чтоб второй раз не пошел
   end;
-  if   TCPServerYouTubeAnswers.Active = true then
+  if TCPServerYouTubeAnswers.Active = true then
     TCPServerYouTubeAnswers.Active := false;
-//    TCPServerYouTubeAnswers.st
+  // TCPServerYouTubeAnswers.st
 end;
 
 // прошли логик что ли
@@ -1109,7 +1109,7 @@ begin
   vPas := fMain.FrameFirst.EditPas.text;
 
   // проверка логина и парол€
-  if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) and (length(vPas) > 0) then
+  if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) and (Length(vPas) > 0) then
   begin
     // проверка на сервере подлинность
     OAuth2 := TOAuth.Create;
@@ -1119,11 +1119,18 @@ begin
     OAuth2.Free;
     if (pos(';', vResponce) > 0) then
     begin
-       vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce)-1));
+      vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
     end;
-    if vRes = 1 then vOk := 1;
-    if vRes < 0 then vOk := -1;
-    if vRes = 0 then vOk := 0;
+    if vRes = 1 then
+      vOk := 1;
+    if vRes < 0 then
+      vOk := -1;
+    if vRes = 0 then
+      vOk := 0;
+    if vRes = -55 then
+      vOk := -55;
+    if vRes = -99 then
+      vOk := -99;
   end
   else
     vOk := -1;
@@ -1135,10 +1142,26 @@ begin
     fMain.FrameFirst.LabelError.Visible := true;
     fMain.FrameFirst.LabelForgot.Visible := true;
   end
-  else if vOk = 0 then // ѕользователь заблокирован на 15 минут // частые неверные попытки
+  else if vOk = 0 then
+  // ѕользователь заблокирован на 15 минут // частые неверные попытки
   begin
     fMain.FrameFirst.LabelError.Visible := true;
     fMain.FrameFirst.LabelForgot.Visible := true;
+  end
+  else if vOk = -55 then
+  // ѕользователь заблокирован на 15 минут // частые неверные попытки
+  begin
+    // fMain.FrameFirst.LabelError.Visible := true;
+    // fMain.FrameFirst.LabelForgot.Visible := true;
+    FrameInfo(Sender, 'ѕользователь не активирован!');
+  end
+  else if vOk = -99 then
+  // ѕользователь заблокирован на 15 минут // частые неверные попытки
+  begin
+    // fMain.FrameFirst.LabelError.Visible := true;
+    // fMain.FrameFirst.LabelForgot.Visible := true;
+    FrameInfoError(Sender,
+      'ѕользователь заблокирован! ќбратитесь к администратору!');
   end
   else
   // идентификаци€ успешна
@@ -1161,6 +1184,9 @@ var
   vEnterText: string;
   vLog, vPas: string;
   vAppLocalization: TAppLocalization;
+
+  vOk, vResponce: string;
+  OAuth2: TOAuth;
 begin
   // грузануть €зыковые надписи дл€ интерфейса
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
@@ -1219,10 +1245,47 @@ begin
 
   // выходим если не совпал
   if vEnterText <> IntToStr(vKey) then
-    exit;;
+    exit;
 
   // -- все вроде прошло ок
   // помещаем чела в базу и авторизируемс€
+  // помещаем чела в базу!!!
+
+  // проверка логина и парол€
+  // проверка на сервере подлинность
+  OAuth2 := TOAuth.Create;
+  vResponce := OAuth2.UserAdd(vLog, vPas);
+  Edit2.text := vResponce;
+  OAuth2.Free;
+  if (pos(';', vResponce) > 0) then
+  begin
+    vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
+  end;
+
+  // реакци€
+  if vRes = -1 then
+  // ошибка  сохранени€
+  begin
+    FrameInfo(Sender, 'ѕользователь не активирован!');
+    exit;
+  end
+  else if vRes = 0 then // пользователь существует
+  begin
+    FrameInfo(Sender, 'ѕользователь уже существует!');
+    exit;
+  end
+  else
+  // идентификаци€ успешна
+  begin
+    uQ.SaveReestr('Name', vLog);
+    LabelMail.text := fMain.FrameFirst.EditName.text;
+    fMain.FrameFirst.LabelError.Visible := false;
+    fMain.FrameFirst.LabelForgot.Visible := false;
+    fMain.Button1Click(Sender);
+    // загрузим видимость каналов
+    fMain.ButtonSelChannelsClick(Sender);
+  end;
+  //
   FrameInfo(Sender, '–егистраци€ успешна!');
 
   FrameFirst.EditName.text := vLog;
@@ -1433,7 +1496,7 @@ begin
       AContext.Connection.IOHandler.WriteLn;
       EdAccessCode := vAccessCode;
       // вызов процедуры запроса данных по каналу и их сохранение
-       BGetTokkens.OnClick(fMain);
+      BGetTokkens.OnClick(fMain);
       // BGetChannel.OnClick(fMain);
     end
     else
@@ -1466,7 +1529,7 @@ begin
       AContext.Connection.IOHandler.WriteLn;
       EdAccessCode := '';
       // вызов процедуры запроса данных по каналу только чтоб остановить сервер
-       BGetTokkens.OnClick(fMain);
+      BGetTokkens.OnClick(fMain);
     end;
     // IdTCPServer1.Active := false;
     Edit2.text := 'чудо !!';
