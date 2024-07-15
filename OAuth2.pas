@@ -67,7 +67,8 @@ type
     function FireBaseUpdate(ACollection, JSON: string): string;
     function FireBaseInsert(ACollection, ADocID, JSON: string): string;
 
-    function UserGet(ACollection: string): string;
+    function UserGet(ACollection, ACollection2: string): string;
+    function UserAdd(ACollection: string): string;
 
     constructor Create;
     destructor destroy; override;
@@ -214,7 +215,11 @@ begin
 //              showmessage('что то есть для сохранения! captions');
               ServerResponseToFile(FResponse, 'default.sbv');  // он сам автоматом прибавит текущую дирректорию
             end;
-          Result := FResponse.JSONText; // '200' +  + URL
+          if Pos('Testing Add', FResponse.Content) <> 0 then
+            Result := FResponse.Content // '200' +  + URL
+          else
+            Result := FResponse.JSONText; // '200' +  + URL
+          //  FResponse.Content
 
         end;
       403:
@@ -678,8 +683,35 @@ end;
 
 
 
+//  тест пользователя
+// function TOAuth.UserGet(ACollection: string, ACollection2: string): string;
+function TOAuth.UserGet(ACollection, ACollection2: string): string;
+const
+  URL = 'http://assistiq.suyarkov.com/user_connect.php?';//?name=vava&age=27
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  JSON: string;
+begin
+  FireBaseAuth();
+
+  Params := TDictionary<String, String>.Create;
+  Params.Add('name', ACollection);
+  Params.Add('age', ACollection2);
+
+  Headers := TDictionary<String, String>.Create;
+//  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
+  Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'application/json');
+
+  StringReplace(JSON, '\', '', [rfReplaceAll]);
+
+  Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet) + 'что?'; //rmPost
+end;
+
+
 // My insert  ? добавление пользователя в базу
-function TOAuth.UserGet(ACollection: string): string;
+function TOAuth.UserAdd(ACollection: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27
 var
@@ -690,7 +722,7 @@ begin
   FireBaseAuth();
 
   Params := TDictionary<String, String>.Create;
-//  Params.Add('name', ACollection);
+  Params.Add('name', ACollection);
 
   Headers := TDictionary<String, String>.Create;
 //  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);

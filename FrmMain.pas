@@ -287,7 +287,7 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-   fMain.PanelAlpha_ForTest.visible := false;
+  // fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
   fMain.Width := 871;
@@ -1116,6 +1116,7 @@ begin
 
   // проверка на сервере подлинность
   OAuth2 := TOAuth.Create;
+  vResponce := OAuth2.UserGet(vLog, vPas);
   // vResponce := OAuth2.UserGet('name=' + vLog);
   Edit2.text := vResponce;
   OAuth2.Free;
