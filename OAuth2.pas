@@ -215,7 +215,7 @@ begin
 //              showmessage('что то есть для сохранения! captions');
               ServerResponseToFile(FResponse, 'default.sbv');  // он сам автоматом прибавит текущую дирректорию
             end;
-          if Pos('Testing Add', FResponse.Content) <> 0 then
+          if Pos(';', FResponse.Content) <> 0 then    // ответы от базы нашей, где активация
             Result := FResponse.Content // '200' +  + URL
           else
             Result := FResponse.JSONText; // '200' +  + URL
@@ -706,7 +706,7 @@ begin
 
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
-  Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet) + 'что?'; //rmPost
+  Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
 end;
 
 

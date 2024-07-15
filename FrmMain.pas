@@ -1100,30 +1100,42 @@ end;
 
 procedure TfMain.FrameFirstButtonLogClick(Sender: TObject);
 var
-  vOk: boolean;
+  vOk, vRes: integer;
   vLog, vPas, vResponce: string;
   OAuth2: TOAuth;
 begin
-  vOk := false;
+  vOk := -1;
   vLog := fMain.FrameFirst.EditName.text;
   vPas := fMain.FrameFirst.EditPas.text;
 
   // проверка логина и парол€
-  if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) then
-    vOk := true
+  if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) and (length(vPas) > 0) then
+  begin
+    // проверка на сервере подлинность
+    OAuth2 := TOAuth.Create;
+    vResponce := OAuth2.UserGet(vLog, vPas);
+    // vResponce := OAuth2.UserGet('name=' + vLog);
+    Edit2.text := vResponce;
+    OAuth2.Free;
+    if (pos(';', vResponce) > 0) then
+    begin
+       vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce)-1));
+    end;
+    if vRes = 1 then vOk := 1;
+    if vRes < 0 then vOk := -1;
+    if vRes = 0 then vOk := 0;
+  end
   else
-    vOk := false;
-
-  // проверка на сервере подлинность
-  OAuth2 := TOAuth.Create;
-  vResponce := OAuth2.UserGet(vLog, vPas);
-  // vResponce := OAuth2.UserGet('name=' + vLog);
-  Edit2.text := vResponce;
-  OAuth2.Free;
+    vOk := -1;
 
   // реакци€
-  if vOk = false then
+  if vOk = -1 then
   // ошибка идентификации
+  begin
+    fMain.FrameFirst.LabelError.Visible := true;
+    fMain.FrameFirst.LabelForgot.Visible := true;
+  end
+  else if vOk = 0 then // ѕользователь заблокирован на 15 минут // частые неверные попытки
   begin
     fMain.FrameFirst.LabelError.Visible := true;
     fMain.FrameFirst.LabelForgot.Visible := true;
