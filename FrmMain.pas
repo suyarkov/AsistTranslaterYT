@@ -168,6 +168,7 @@ var
   vInterfaceLanguage: string;
   vTotalCountVideo, vNowCountVideo: integer;
   vnextPageTokenVideo: string;
+  vClientId : integer;
 
 implementation
 
@@ -1101,8 +1102,10 @@ end;
 procedure TfMain.FrameFirstButtonLogClick(Sender: TObject);
 var
   vOk, vRes: integer;
-  vLog, vPas, vResponce: string;
+  vLog, vPas, vResponce, vTmp: string;
   OAuth2: TOAuth;
+  vidCl : integer;
+  vScore : integer;
 begin
   vOk := -1;
   vLog := fMain.FrameFirst.EditName.text;
@@ -1117,12 +1120,34 @@ begin
     // vResponce := OAuth2.UserGet('name=' + vLog);
     Edit2.text := vResponce;
     OAuth2.Free;
+    vidCl := 0;
     if (pos(';', vResponce) > 0) then
     begin
       vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
+      vTmp := copy(vResponce, pos(';', vResponce) + 1, 1000);
+      if (pos(';', vTmp) > 0) then
+      begin
+         vidCl := StrToInt(copy(vTmp, 1, pos(';', vTmp) - 1));
+         vTmp := copy(vTmp, pos(';', vTmp) + 1, 1000);
+        if (pos(';', vTmp) > 0) then
+        begin
+          vScore := StrToInt(copy(vTmp, 1, pos(';', vTmp) - 1));
+          // возможно тут нужно обновить количество в базе локальной
+          iScore := vScore;
+          LabelScore.text := IntToStr(iScore);
+        end;
+      end;
     end;
     if vRes = 1 then
-      vOk := 1;
+    begin
+      if vidCl > -1 then
+      begin
+        vClientId := vidCl;
+        vOk := 1
+      end
+      else
+        vOk := -1;
+    end;
     if vRes < 0 then
       vOk := -1;
     if vRes = 0 then
@@ -1134,6 +1159,11 @@ begin
   end
   else
     vOk := -1;
+
+    if (pos(';', vResponce) > 0) then
+    begin
+      vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
+    end;
 
   // реакция
   if vOk = -1 then
@@ -2293,6 +2323,9 @@ var
   vObjTitle: Ttitle; // Tchannel;
 
   vСutTitle: string;
+
+   OAuth3: TOAuth;
+   vResponce3: string;
 begin
 
   vTitle := FrameVideos.MemoTitle.text;
@@ -2458,6 +2491,11 @@ begin
         FrameProgressBar.Visible := false;
         iScore := iScore - vTransCount;
         LabelScore.text := IntToStr(iScore);
+
+        // сохранение затрат
+        OAuth3 := TOAuth.Create;
+        vResponce3 := OAuth2.Clicks(inttostr(vClientId), '0', IntToStr(vTransCount), '1' );
+
         FrameInfo(Sender, 'Попытались перевести на ' +
           IntToStr(vTransCount), 1);
         // FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));

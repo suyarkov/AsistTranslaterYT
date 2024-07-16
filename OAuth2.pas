@@ -69,6 +69,7 @@ type
 
     function UserGet(ACollection, ACollection2: string): string;
     function UserAdd(ACollection, ACollection2: string): string;
+    function Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
 
     constructor Create;
     destructor destroy; override;
@@ -732,6 +733,33 @@ begin
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
   Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet); //rmPost
+end;
+
+
+// My insert  ? добавление пользователя в базу
+function TOAuth.Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
+const
+  URL = 'http://assistiq.suyarkov.com/real_clicks.php?';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  JSON: string;
+begin
+  FireBaseAuth();
+
+  Params := TDictionary<String, String>.Create;
+  Params.Add('id', ACollection);
+  Params.Add('device', ACollection2);
+  Params.Add('cl', ACollection3);
+  Params.Add('typecl', ACollection4);
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'application/json');
+
+  StringReplace(JSON, '\', '', [rfReplaceAll]);
+
+  Result := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost
 end;
 
 end.

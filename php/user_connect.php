@@ -43,43 +43,61 @@ if ($name != "not set") {
         $CountConnect = 0;
         $CountConnect = $row['CountConnect'];
         $LastConnectDate = $row['LastConnectDate'];
+        $DivTime = strtotime($LastConnectDate);
+        $Div = time() - $DivTime;
         if ($CountConnect == null)
             {
                 $CountConnect = 0;
             };
             
         if ($CountConnect >= 3){
-//            print('99;10'); // временная блокировка аккаунта
-            if ((SYSDATE -$LastConnectDate)>0.01) { // четверть часа
-            $CountConnect = 0;
+            if ($Div>900) { // четверть часа
+                $CountConnect = 0;
             }
             else{
-                print('0;01'); // временная блокировка аккаунта
+                print('0;01;'.$Div); // временная блокировка аккаунта
                 exit;
             }
         }
         
-        $sql2 = 'SELECT Id_Client, AvClicks  FROM AssMain WHERE Id_Client = '.$Id_Client.' AND Email2 = "'.$age.'"';
+        //$sql2 = 'SELECT User_Name, AvClicks, Status  FROM AssMain WHERE Id_Client = '.$Id_Client.' AND Email2 = "'.$age.'"';
+        $sql2 = 'SELECT UserName, AvClicks, Status  FROM AssMain WHERE Id_Client = '.$Id_Client.' AND Email2 = "'.$age.'"'; //UserName,
         $result2 = mysqli_query($link, $sql2);  
         $countm2 = 0;
         if ($result2 != null)
+        {
         $row = mysqli_fetch_array($result2);
         $countm2 = mysqli_num_rows($result2);
-        
+        }
         if ($countm2 == 1) {
-            $Token = $row['Id_Client'];
+            $Token = $row['UserName'];
             $AvClicks = $row['AvClicks'];
+            $Status = $row['Status'];
             if ($AvClicks == null)
                 $AvClicks = 0;
             $sql =
             'update AssMain set LastConnectDate = SYSDATE(), CountConnect = 0, ip_last = "'.$ipOk.'" WHERE Id_Client = ("'.$Id_Client.'")';
             $result = mysqli_query($link, $sql);
+            if ($Status == 1)
+            {
+                print('1;'.$Token.';'.$AvClicks.';021');
+                exit;
+            };
+            if ($Status == 0) // не активирован
+            {
+                print('-55;'.$Token.';'.$AvClicks.';022');
+                exit;
+            };
+            if ($Status == -1) // блокирован
+            {
+                print('-99;'.$Token.';'.$AvClicks.';023');
+                exit;
+            };            
             //print('1;'.$Token.';'.$AvClicks.';'.$CountConnect.';'.$LastConnectDate.';02');
-            print('1;'.$Token.';'.$AvClicks.';02');
         }
         else
         {
-            // пароль не верен, но говорить будем, что пароль не верен, нет такого логина{"Testing Add": "0","count": 1} 
+            // пароль не верен, но говорить будем, что не верен, нет такого логина{"Testing Add": "0","count": 1} 
             $CountConnect = $CountConnect + 1;
             $sql =
             'update AssMain set LastConnectDate = SYSDATE(), CountConnect = '.$CountConnect.', ip_last = "'.$ipOk.'" WHERE Id_Client = ("'.$Id_Client.'")';
