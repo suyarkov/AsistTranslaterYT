@@ -288,7 +288,8 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  // fMain.PanelAlpha_ForTest.visible := false;
+  // если нужна служебна€ панель дл€ тестировани€ то это ниже заремарь
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
   fMain.Width := 871;
@@ -338,7 +339,10 @@ end;
 procedure TfMain.FormShow(Sender: TObject);
 var
   vAppLocalization: TAppLocalization;
+  vResponce : string;
+  OAuth2: TOAuth;
 begin
+  OAuth2 := TOAuth.Create;
   // вспомним какой у нас интерфейс
   vInterfaceLanguage := uQ.LoadReestr('Local');
   // подмен€ем €зык интерфейса, пока только по загрузке !!!
@@ -369,7 +373,12 @@ begin
     vAppLocalization.MainVideos_LabelDescription,
     vAppLocalization.MainVideos_BTranslater);
   // '≈сли ≈сть обновление!' - но пока проверки нет.
-  FrameInfo(Sender, MsgInfoUpdate);
+  {
+  vResponce := OAuth2.Version();
+  FrameInfo(Sender, vResponce);
+  if vResponce <> '01.01.01' then
+    FrameInfo(Sender, MsgInfoUpdate);
+  }
 
 end;
 

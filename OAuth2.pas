@@ -34,10 +34,10 @@ type
 
     function ParamValue(ParamName, JSONString: string): string;
     procedure SetAccess_token(const Value: string);      // установить ключ доступа
-    procedure SetRefresh_token(const Value: string);     // установить токен длинный
+    procedure SetRefresh_token(const Value: string);     // установить токен длинный - обменный
     procedure SendRequest(URL: string; AFile: string); overload;  // перегруженная отправка
     function SendRequest(URL: string; Params: TDictionary<string, string>; Headers: TDictionary<string, string>; JSON: string; Method: TRESTRequestMethod; AFile: string = ''): string; overload;
-    procedure SetResponseCode(const Value: string);
+    procedure SetResponseCode(const Value: string);   // установка ответного кода
     procedure ServerResponseToFile(AResponse: TRestResponse; AFileName: string);
 
   public
@@ -70,6 +70,7 @@ type
     function UserGet(ACollection, ACollection2: string): string;
     function UserAdd(ACollection, ACollection2: string): string;
     function Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
+    function Version(): string;
 
     constructor Create;
     destructor destroy; override;
@@ -760,6 +761,33 @@ begin
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
   Result := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost
+end;
+
+//  тест связи и версии
+//function TOAuth.Version(ACollection, ACollection2: string): string;
+function TOAuth.Version(): string;
+const
+  URL = 'http://assistiq.suyarkov.com/version.php?';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  JSON: string;
+begin
+  JSON := '';
+  FireBaseAuth();
+
+  Params := TDictionary<String, String>.Create;
+  Params.Add('ip', '22');   // пока ерунда
+  Params.Add('type', '44'); // пока ерунда
+
+  Headers := TDictionary<String, String>.Create;
+//  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
+  Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'application/json');
+
+  StringReplace(JSON, '\', '', [rfReplaceAll]);
+
+  Result := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
 end;
 
 end.
