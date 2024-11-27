@@ -2329,6 +2329,8 @@ var
   vTranslateDescription: string;
   vTransCountMax: integer;
 
+  vTransCountTmp : integer;
+
   vObjTitle: Ttitle; // Tchannel;
 
   vСutTitle: string;
@@ -2391,6 +2393,7 @@ begin
       else if TestScore(Sender, vTransCount) = 0 then
       begin
         vTransCountMax := vTransCount;
+        vTransCountTmp := 0;
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
         // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
         { vFullNameFile := vPath + '/' + 'subload';
@@ -2433,7 +2436,6 @@ begin
         vСutTitle := '';
         for i := 1 to 300 do
         begin
-          FrameProgressBar.SetProgress(TRUNC((i * 100 / vTransCountMax)));
           // сейчас просто, но можно делить
           Application.ProcessMessages;
           // showmessage('startBar 00' + inttostr(i));
@@ -2443,6 +2445,8 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
+            FrameProgressBar.SetProgress(TRUNC((vTransCountTmp * 100 / vTransCountMax)));
+            inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);
             vTranslateTitle := GoogleTranslate(vTitle,
@@ -2505,9 +2509,9 @@ begin
         OAuth3 := TOAuth.Create;
         vResponce3 := OAuth2.Clicks(inttostr(vClientId), '0', IntToStr(vTransCount), '1' );
 
-        FrameInfo(Sender, 'Попытались перевести на ' +
-          IntToStr(vTransCount), 1);
-        // FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+//        FrameInfo(Sender, 'Попытались перевести на ' +
+//          IntToStr(vTransCount), 1);
+         FrameInfo(Sender, 'Описание перевели на' + IntToStr(vTransCount) + ' языков.');
       end;
       OAuth2.Free;
     end

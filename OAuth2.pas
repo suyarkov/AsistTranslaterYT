@@ -25,9 +25,10 @@ type
     FExpires_in: TDateTime;
     FRefresh_token: string; // токен подключения -- токен обновлений
     FAccess_token: string;  // ключ доступа  -- токен доступа
-    FFireBaseToken: string; // токен для складывания
     FResponseCode: string;  // точка доступа     -- код авторизации, который
                             //приложение может обменять на токен доступа и токен обновления.
+
+    FFireBaseToken: string; // токен для складывания  в Fire базу - у нас это не используется, это доступ к Сашиному Fire
 
     procedure SetClientID(const Value: string);
     procedure SetScope(const Value: string);
@@ -60,7 +61,7 @@ type
     function ChannelInfo(AChannelID: string ): string; // об одном канале
     function AccessURL: string;        // урл подключения
     function GetAccessToken: string;   // получить соединительный токен подключения
-    function RefreshToken: string;     // постоянный ключ
+    function RefreshToken: string;     // постоянный ключ получить по RefreshToken токену (а зачем так часто я дергаю этот номер? а не юзаю временный)
 
     function FireBaseAuth: string;
     function FireBaseGet(ACollection: string): string;
@@ -228,6 +229,16 @@ begin
         begin
           Result := '403' + FResponse.JSONText;
         end;
+      400:
+        begin
+          //Result := '400' + FResponse.JSONText;
+          if FResponse.StatusText = 'Bad Request' then
+            Result := IntToStr(FResponse.StatusCode) + ' JSON ' + FResponse.JSONText + ' TEXT ' + FResponse.StatusText + ' Плохой запрос. Права к ресурсу ограничены!'
+          else
+            Result := IntToStr(FResponse.StatusCode) + ' JSON ' + FResponse.JSONText + ' TEXT ' + FResponse.StatusText + ' Требуется переподключиться к аккаунту!';
+
+          showmessage(Result);
+        end;
         else // 404 и другие
         begin
           Result := IntToStr(FResponse.StatusCode) + ' JSON ' + FResponse.JSONText + ' TEXT ' + FResponse.StatusText + ' ???';
@@ -288,6 +299,7 @@ begin
   Result := Access_token;
 end;
 
+// получение информация о токете обновлений???   действителен ли он все ещё рабочий
 function TOAuth.GetTokenInfo: string;
 const
   tokenurl = 'https://www.googleapis.com/oauth2/v3/tokeninfo';
@@ -663,7 +675,8 @@ begin
     Result := '';
 end;
 
-// что это?
+// что это?  -- это получение токена доступа access_token (сессионного) по токету обновлений,
+// но трабл когда токен обновлений  refresh_token устарел
 function TOAuth.RefreshToken: string;
 const
   tokenurl = 'https://accounts.google.com/o/oauth2/token';
@@ -675,7 +688,6 @@ begin
   Params.Add('client_id', ClientID);
   Params.Add('client_secret', ClientSecret);
   Params.Add('refresh_token', Refresh_token);
-
   Params.Add('grant_type', 'refresh_token');
 
   Response := SendRequest(tokenurl, Params, nil, '', rmPost);
@@ -781,7 +793,6 @@ begin
   Params.Add('type', '44'); // пока ерунда
 
   Headers := TDictionary<String, String>.Create;
-//  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
   Headers.Add('Accept', 'application/json');
   Headers.Add('Content-Type', 'application/json');
 
