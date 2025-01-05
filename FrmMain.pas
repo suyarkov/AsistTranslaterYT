@@ -288,7 +288,8 @@ end;
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  // fMain.PanelAlpha_ForTest.visible := false;
+  // если нужна служебная панель для тестирования то это ниже заремарь
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.ButtonUpdate.Visible := false;
   fMain.LabelMail.text := '';
   fMain.Width := 871;
@@ -338,7 +339,10 @@ end;
 procedure TfMain.FormShow(Sender: TObject);
 var
   vAppLocalization: TAppLocalization;
+  vResponce : string;
+  OAuth2: TOAuth;
 begin
+  OAuth2 := TOAuth.Create;
   // вспомним какой у нас интерфейс
   vInterfaceLanguage := uQ.LoadReestr('Local');
   // подменяем язык интерфейса, пока только по загрузке !!!
@@ -369,7 +373,12 @@ begin
     vAppLocalization.MainVideos_LabelDescription,
     vAppLocalization.MainVideos_BTranslater);
   // 'Если Есть обновление!' - но пока проверки нет.
-  FrameInfo(Sender, MsgInfoUpdate);
+  {
+  vResponce := OAuth2.Version();
+  FrameInfo(Sender, vResponce);
+  if vResponce <> '01.01.01' then
+    FrameInfo(Sender, MsgInfoUpdate);
+  }
 
 end;
 
@@ -2320,6 +2329,8 @@ var
   vTranslateDescription: string;
   vTransCountMax: integer;
 
+  vTransCountTmp : integer;
+
   vObjTitle: Ttitle; // Tchannel;
 
   vСutTitle: string;
@@ -2382,6 +2393,7 @@ begin
       else if TestScore(Sender, vTransCount) = 0 then
       begin
         vTransCountMax := vTransCount;
+        vTransCountTmp := 0;
         // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
         // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
         { vFullNameFile := vPath + '/' + 'subload';
@@ -2424,7 +2436,6 @@ begin
         vСutTitle := '';
         for i := 1 to 300 do
         begin
-          FrameProgressBar.SetProgress(TRUNC((i * 100 / vTransCountMax)));
           // сейчас просто, но можно делить
           Application.ProcessMessages;
           // showmessage('startBar 00' + inttostr(i));
@@ -2434,6 +2445,8 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
+            FrameProgressBar.SetProgress(TRUNC((vTransCountTmp * 100 / vTransCountMax)));
+            inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);
             vTranslateTitle := GoogleTranslate(vTitle,
@@ -2496,9 +2509,9 @@ begin
         OAuth3 := TOAuth.Create;
         vResponce3 := OAuth2.Clicks(inttostr(vClientId), '0', IntToStr(vTransCount), '1' );
 
-        FrameInfo(Sender, 'Попытались перевести на ' +
-          IntToStr(vTransCount), 1);
-        // FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+//        FrameInfo(Sender, 'Попытались перевести на ' +
+//          IntToStr(vTransCount), 1);
+         FrameInfo(Sender, 'Описание перевели на' + IntToStr(vTransCount) + ' языков.');
       end;
       OAuth2.Free;
     end
