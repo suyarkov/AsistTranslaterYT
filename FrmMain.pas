@@ -581,7 +581,7 @@ end;
 procedure TProgressThread.SetActualProgress;
 begin
   fMain.Label2.text := IntToStr(vProgressBarStatus);
-  fMain.FrameProgressBar.SetProgress(vProgressBarStatus);
+  fMain.FrameProgressBar.SetProgress(vProgressBarStatus, vProgressBarStatus);
   // FrameProgressEndLess.SetProgress(vProgressBarStatus);
 end;
 
@@ -2445,7 +2445,7 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
-            FrameProgressBar.SetProgress(TRUNC((vTransCountTmp * 100 / vTransCountMax)));
+            FrameProgressBar.SetProgress(TRUNC((vTransCountTmp * 100 / vTransCountMax)), vTransCountTmp);
             inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);
