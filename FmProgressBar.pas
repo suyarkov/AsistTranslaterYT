@@ -18,9 +18,11 @@ type
     procedure FrameResize(Sender: TObject);
   private
     { Private declarations }
+    procedure SetProgressCircle(const APos: integer);
   public
     { Public declarations }
-    procedure SetProgress(const APos: integer);
+//    procedure SetProgress(const APos: integer);
+    procedure SetProgress(const APos: integer; const ANum : integer);
   end;
 
 implementation
@@ -34,12 +36,16 @@ begin
  }
 end;
 
-procedure TFrameProgressBar.SetProgress(const APos: integer);
+// кружок позиция отрисовка
+procedure TFrameProgressBar.SetProgressCircle(const APos: integer);
   var vSin : integer;
       vXCenter, vYCenter, vR : Single;
+      vRadius : integer;
 begin
-  vXCenter := TRUNC(Pie1.Position.X);
-  vYCenter := TRUNC(Pie1.Position.Y);
+  vRadius := TRUNC(Pie1.Height/2);
+  vXCenter := TRUNC(Height/2);
+  vYCenter := TRUNC(Width/2);
+
   vR := Pie1.Size.Height / 2;
   vSin := APos mod (100);
   Pie1.EndAngle := ( 360 * vSin / 100 ) - 90;
@@ -49,6 +55,26 @@ begin
   Circle2.Position.X := vXCenter;
   Circle2.Position.Y := vYCenter;
   Text1.Text := IntToStr(vSin);
+end;
+
+procedure TFrameProgressBar.SetProgress(const APos: integer; const ANum : integer);
+//    function TestScore(Sender: TObject; pCount: integer): integer;
+  var vSin : integer;
+      vXCenter, vYCenter, vR : Single;
+begin
+  vXCenter := 116+Position.X+Trunc(Height/2);
+  vYCenter := 113+Position.Y+Trunc(Width/2);
+
+//  showmessage(IntToStr(TRUNC(vXCenter)) + ' на ' + IntToStr(TRUNC(vYCenter)));
+  vR := 88;
+
+  vSin := APos mod (100);
+  Pie1.EndAngle := ( 360 * vSin / 100 ) - 90;
+
+//  Circle2.Position.X := vXCenter + vR * cos(( 360 * APos * pi/ 100/180 -90));
+//  Circle2.Position.Y := vYCenter + vR * sin(( 360 * APos * pi/ 100/180 -90));
+  Circle2.Visible := false;
+  Text1.Text := IntToStr(ANum);
 end;
 
 end.
