@@ -72,6 +72,8 @@ type
     function UserAdd(ACollection, ACollection2: string): string;
     function Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
     function Version(): string;
+    function TestDoubleEmail(AEmail: string): integer;
+
 
     constructor Create;
     destructor destroy; override;
@@ -799,6 +801,38 @@ begin
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
   Result := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
+end;
+
+
+//  тест связи и версии
+//function TOAuth.Version(ACollection, ACollection2: string): string;
+function TOAuth.TestDoubleEmail( AEmail: string): integer;
+const
+  URL = 'http://assistiq.suyarkov.com/user_checkdouble.php?';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  JSON: string;
+  vResult: string;
+begin
+  JSON := '';
+  FireBaseAuth();
+
+  Params := TDictionary<String, String>.Create;
+  Params.Add('name', AEmail);
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Accept', 'application/json');
+  Headers.Add('Content-Type', 'application/json');
+
+  StringReplace(JSON, '\', '', [rfReplaceAll]);
+
+  vResult := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
+
+  if vResult = '0' then
+    Result := 0 // нет такого емейл в базе (нужно ещё проверить на дополнительные + в имени почты)
+  else
+    Result := 1; // есть уже такой пользователь
 end;
 
 end.

@@ -1253,6 +1253,15 @@ begin
     exit;
 
   // проверка на не существует ли уже такой пользователь
+  OAuth2 := TOAuth.Create;
+  vRes := OAuth2.TestDoubleEmail(vLog);
+
+  // уже есть в базе такой пользователь
+  if vRes = 1 then
+  begin
+    FrameInfo(Sender, vLog + ' - пользователь с указанной почтой уже существует!');
+    exit;
+  end;
 
   // отправка кода на ящик почтовый пользователю
   repeat
@@ -1292,7 +1301,7 @@ begin
 
   // проверка логина и пароля
   // проверка на сервере подлинность
-  OAuth2 := TOAuth.Create;
+
   vResponce := OAuth2.UserAdd(vLog, vPas);
   Edit2.text := vResponce;
   OAuth2.Free;
