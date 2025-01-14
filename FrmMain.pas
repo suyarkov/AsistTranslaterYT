@@ -289,8 +289,9 @@ procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // если нужна служебная панель для тестирования то это ниже заремарь
-   fMain.PanelAlpha_ForTest.visible := false;
-  fMain.ButtonUpdate.Visible := false;
+//   fMain.PanelAlpha_ForTest.visible := false;
+  fMain.PanelAlpha_ForTest.Position.X := 0;
+
   fMain.LabelMail.text := '';
   fMain.Width := 871;
   lastPanel := nil;
@@ -930,18 +931,32 @@ end;
 procedure TfMain.ButtonEmail2Click(Sender: TObject);
 var
   vBody: string;
-begin
-  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  <p style="text-align:center">'
+begin // изначальное письмо с рисунком
+{
+vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  <p style="text-align:center">'
     + '<img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px"></p>'
-    + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AceIQ Desktop.</strong></p>'
+    + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
     + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения Ace Desktop.</p>'
     + '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
     + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
+}
+  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  '
+    + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
+    + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения AssistIQ Desktop.</p>'
+    + '<p style="text-align:center"><strong>Подтверждающий код:</strong> 578723</p><p>&nbsp;</p>'
+    + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-  SendEmail('smtp.mail.ru', 465, 'brest20133@mail.ru', '0wxKM9nE60HAwsvhGbN5',
-    // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com', 'Тема пирога',
-    'brest20133@mail.ru', 'AceIQ Desktop', 'suyarkov+4561@gmail.com',
-    'AceIQ : Confirm your email address', vBody, '', true);
+  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'QWEqwe123/',
+    // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com'//, 'Тема пирога',
+    'assistiq.info@gmail.com', 'AssistIQ Desktop', 'suyarkov@gmail.com', // suyarkov+4561@gmail.com
+    'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
+    // 'AssistIQ : Confirm your email address', vBody, '', true);
+
+{
+  SendEmail('smtp.mail.ru', 465, 'robotcash@inbox.ru', '2G5c2Nz41jzh2UAjpWer/',
+    'robotcash@inbox.ru', 'AssistIQ Desktop', 'suyarkov@gmail.com',
+    'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
+}
 end;
 
 procedure TfMain.ButtonHelpClick(Sender: TObject);
@@ -2284,6 +2299,8 @@ begin
             // vAddCaptionJSON :=  '{snippet:{ language:es, name:Spanish captions, videoId:' +
             // FrameVideos.LabelVideoId.text + ',isDraft:true}}';
             // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, '');
+            //vResponceInsSubtitle := OAuth2.SubtitleV2Insert(vAddCaptionJSON,
+            //  'default2.sbv', FrameVideos.LabelVideoId.text);
             vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
               'default2.sbv');
 
@@ -2454,7 +2471,7 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
-            FrameProgressBar.SetProgress(TRUNC((vTransCountTmp * 100 / vTransCountMax)), vTransCountTmp);
+            FrameProgressBar.SetProgress(TRUNC(((vTransCountTmp+1) * 100 / vTransCountMax)), vTransCountTmp+1);
             inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);

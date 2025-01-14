@@ -10,8 +10,9 @@ uses
   Rest.Client,
   Rest.Types,
   Generics.Collections,
-  FMX.Dialogs
-  ;
+  FMX.Dialogs,
+
+  IdHTTP, IdSSLOpenSSL, IdMultipartFormData;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -45,6 +46,8 @@ type
     function SubtitleDelete(SubtitleID: string): string;
     function SubtitleList(VideoID: string): string;
     function SubtitleDownload(CaptionID, TargetLang: string): string;
+
+    function SubtitleV2Insert(JSON: string; FileName: String; VIDEOID : String): string;
     function SubtitleInsert(JSON: string; FileName: String): string;
 
     function TitleDelete(LangID: string): string;
@@ -204,7 +207,8 @@ begin
     if AFile <> '' then
     begin
       showmessage('в тело вставляем file:' + AFile);
-      FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);
+//      FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);
+      FRequest.AddFile('file', AFile, 'text/plain');
     end;
   end;
 
@@ -500,6 +504,7 @@ begin
   Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
 end;
 
+
 // Subtitle delete
 function TOAuth.SubtitleDelete(SubtitleID: string): string;
 const
@@ -518,8 +523,9 @@ begin
   Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
 
+
 // Subtitle insert
-function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
+function TOAuth.SubtitleV2Insert(JSON: string; FileName: String; VIDEOID : String): string;
 const
 //  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
 //    URL = 'https://youtube.googleapis.com/youtube/v3/captions?part=snippet&key=[YOUR_API_KEY]';
@@ -528,6 +534,44 @@ const
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
+
+  procedure UploadSubtitles(const AccessToken, VideoId, FilePath: string);
+  var
+    HTTP: TIdHTTP;
+    SSLHandler: TIdSSLIOHandlerSocketOpenSSL;
+    FormData: TIdMultiPartFormDataStream;
+    Response: string;
+  begin
+    HTTP := TIdHTTP.Create(nil);
+    SSLHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
+    FormData := TIdMultiPartFormDataStream.Create;
+    try
+      try
+        HTTP.IOHandler := SSLHandler;
+        HTTP.Request.ContentType := 'multipart/form-data';
+        HTTP.Request.CustomHeaders.Values['Authorization'] := 'Bearer ' + AccessToken;
+
+        // Формирование данных для загрузки
+        FormData.AddFormField('snippet', Format(
+          '{"videoId": "%s", "language": "en", "name": "My Subtitles", "isDraft": false}', [VideoId]),
+          'application/json; charset=UTF-8');
+
+        FormData.AddFile('file', FilePath, 'text/plain');
+
+        // Выполнение запроса
+        Response := HTTP.Post('https://www.googleapis.com/upload/youtube/v3/captions?part=snippet', FormData);
+
+        Writeln('Загруженные субтитры: ', Response);
+      except
+        on E: Exception do
+          Writeln('Ошибка загрузки субтитров: ', E.Message);
+      end;
+    finally
+      FormData.Free;
+      SSLHandler.Free;
+      HTTP.Free;
+    end;
+  end;
 begin
   Params := TDictionary<String, String>.Create;
   Params.Add('part', 'snippet');
@@ -539,8 +583,42 @@ begin
 //  Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
-  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
 //  Headers.Add('Content-Type', 'application/json');
+  Headers.Add('Content-Type', 'multipart/form-data; boundary=AA0512');
+
+    // Пример использования
+//    UploadSubtitles('YOUR_ACCESS_TOKEN', 'YOUR_VIDEO_ID', 'path_to_subtitles.srt');
+    UploadSubtitles(Access_token, VIDEOID, FileName);
+
+  Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
+end;
+
+
+function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
+const
+//  URL = 'https://youtube.googleapis.com/upload/youtube/v3/captions';
+//    URL = 'https://youtube.googleapis.com/youtube/v3/captions?part=snippet&key=[YOUR_API_KEY]';
+//  URL = 'https://youtube.googleapis.com/youtube/v3/captions';
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+
+begin
+  Params := TDictionary<String, String>.Create;
+  Params.Add('part', 'snippet');
+
+  Headers := TDictionary<String, String>.Create;
+  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Accept', 'application/json');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/form-data; boundary="AA0512"');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
+//  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
+//  Headers.Add('Content-Type', 'application/json');
+  Headers.Add('Content-Type', 'multipart/form-data; boundary=AA0512');
 
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
@@ -834,5 +912,8 @@ begin
   else
     Result := 1; // есть уже такой пользователь
 end;
+
+
+
 
 end.
