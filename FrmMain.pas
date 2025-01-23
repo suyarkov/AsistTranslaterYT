@@ -287,9 +287,9 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := 'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
+  fMain.Caption := 'AssistIQ 0.0.1. 01';//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // если нужна служебная панель для тестирования то это ниже заремарь
-//   fMain.PanelAlpha_ForTest.visible := false;
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -332,16 +332,15 @@ begin
 
   fMain.FrameFirst.EditName.text := uQ.LoadReestr('Name');
 
-  fMain.FrameVideos.LanguageComboBox.Items.Add('ABC1');
-  fMain.FrameVideos.LanguageComboBox.Items.Add('ABC2');
-
 end;
 
 procedure TfMain.FormShow(Sender: TObject);
 var
+  i,j: integer;
   vAppLocalization: TAppLocalization;
-  vResponce : string;
+  vResponce, vTemp : string;
   OAuth2: TOAuth;
+  vList: TListLanguages;
 begin
   OAuth2 := TOAuth.Create;
   // вспомним какой у нас интерфейс
@@ -380,6 +379,25 @@ begin
   if vResponce <> '01.01.01' then
     FrameInfo(Sender, MsgInfoUpdate);
   }
+
+  // наполнение комбобокса наполненем языков с каких можно переводить
+  vList := vGlobalList;
+  i := 1;
+  repeat
+    fMain.FrameVideos.LanguageComboBox.Items.Add(vList[i].LnCode);
+    inc(i);
+  until (i >= 300) or (vList[i].LnCode = '');
+
+  // отсортируем значения в комбобоксе
+  for i := 0 to fMain.FrameVideos.LanguageComboBox.Items.Count-1 do
+    for j := i+ 1  to fMain.FrameVideos.LanguageComboBox.Items.Count-1 do
+      if CompareStr(fMain.FrameVideos.LanguageComboBox.Items[i], fMain.FrameVideos.LanguageComboBox.Items[j]) > 0 then
+      begin
+          vTemp := fMain.FrameVideos.LanguageComboBox.Items[i];
+          fMain.FrameVideos.LanguageComboBox.Items [i] := fMain.FrameVideos.LanguageComboBox.Items[j];
+          fMain.FrameVideos.LanguageComboBox.Items[j] := vTemp
+      end;
+  // а должно бы сработать fMain.FrameVideos.LanguageComboBox.Sorted := true;
 
 end;
 
@@ -1897,6 +1915,13 @@ begin
   //
 
   FrameVideos.LanguageVideoLabel.text := vVideo.language;
+
+  i :=  fMain.FrameVideos.LanguageComboBox.Items.IndexOf(vVideo.language);
+  if i <> -1 then
+  begin
+    fMain.FrameVideos.LanguageComboBox.ItemIndex := i;
+  end;
+
 
   FrameVideos.ImageVideo.Bitmap := vVideo.img;
   // PanVideos[vNPanel].VdImage.Bitmap;
