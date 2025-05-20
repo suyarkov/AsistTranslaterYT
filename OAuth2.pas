@@ -739,6 +739,7 @@ begin
 
   Params := TDictionary<String, String>.Create;
   Params.Add('name', ACollection);
+  Params.Add('name1', ACollection2);
 
   Headers := TDictionary<String, String>.Create;
 //  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
@@ -751,7 +752,7 @@ begin
 end;
 
 
-// My insert  ? добавление пользователя в базу
+// добавление данных о кликах
 function TOAuth.Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/real_clicks.php?';

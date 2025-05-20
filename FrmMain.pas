@@ -289,7 +289,7 @@ procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'AssistIQ 0.0.1. 01';//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // если нужна служебная панель для тестирования то это ниже заремарь
-  // fMain.PanelAlpha_ForTest.visible := false;
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -958,7 +958,9 @@ vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"
     + '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
     + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 }
-  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  '
+//
+  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"> <p style="text-align:center">'
+    + '<img alt="" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" style="height:100px; width:100px"></p>'
     + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
     + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения AssistIQ Desktop.</p>'
     + '<p style="text-align:center"><strong>Подтверждающий код:</strong> 578723</p><p>&nbsp;</p>'
@@ -1259,6 +1261,8 @@ var
 
   vOk, vResponce: string;
   OAuth2: TOAuth;
+
+  vBody: string; // тело письма
 begin
   // грузануть языковые надписи для интерфейса
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
@@ -1296,12 +1300,25 @@ begin
     exit;
   end;
 
-  // отправка кода на ящик почтовый пользователю
-  repeat
-    vKey := Random(10000)
-  until vKey < 1000;
+  // генерация кода авторизации
+  vKey := 100000 + Random(900000); // 4 цифры
+  //vKey := 1111; // на время отладки
 
-  vKey := 1111; // на время отладки
+  //отправка кода на ящик почтовый пользователю
+
+  vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"> <p style="text-align:center">'
+    + '<img alt="" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" style="height:100px; width:100px"></p>'
+    + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
+    + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения AssistIQ Desktop.</p>'
+    + '<p style="text-align:center"><strong>Подтверждающий код:</strong> ' + IntToStr(vKey) + '</p><p>&nbsp;</p>'
+    + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
+
+  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'ztnaixmausffpmvq',
+    // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com'//, 'Тема пирога',
+    'assistiq.info@gmail.com', 'AssistIQ Desktop', vLog,
+    'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
+
+
   // сообщение о том, что на ящик отправлен код, для авторизации
   FrameInfo(Sender, 'Проверьте почту!');
 
@@ -1328,6 +1345,7 @@ begin
   if vEnterText <> IntToStr(vKey) then
     exit;
 
+  FrameInfo(Sender, 'Код верен, попытка активации!');
   // -- все вроде прошло ок
   // помещаем чела в базу и авторизируемся
   // помещаем чела в базу!!!
@@ -1337,6 +1355,7 @@ begin
 
   vResponce := OAuth2.UserAdd(vLog, vPas);
   Edit2.text := vResponce;
+  FrameInfo(Sender, 'vResponce = ' + vResponce);
   OAuth2.Free;
   if (pos(';', vResponce) > 0) then
   begin

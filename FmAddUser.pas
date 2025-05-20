@@ -46,7 +46,7 @@ procedure TFrameAddUser.ButtonSendClick(Sender: TObject);
 begin
   // проверка логина и пароля
   if (pos('@', EditEmail.Text) = 0) or (pos('.', EditEmail.Text) = 0)
-      or (pos('-', EditEmail.Text) > 0) or (pos('+', EditEmail.Text) > 0)then
+      or (pos('-', EditEmail.Text) > 0) or (pos('-', EditEmail.Text) > 0)then // заменить второй - на +
   begin
 //    showmessage('Неверный почтовый адрес');
     showmessage(MsgEmail);
