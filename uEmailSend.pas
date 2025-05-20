@@ -51,7 +51,8 @@ begin
     //Порты mail.ru: 587 и 2525 (без шифрования) или 465 (с шифрованием)
 
     lSMTP.Username := aSmtpLogin;
-    lSMTP.Password := aSmtpPassword;
+    lSMTP.Password := aSmtpPassword;     //ztna ixma usff pmvq
+
 
     // -- решаем проблему отправки писем, если у компьютера руссоке имя
     lSMTP.HeloName := 'tfo';

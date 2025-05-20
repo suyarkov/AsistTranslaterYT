@@ -289,7 +289,7 @@ procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'AssistIQ 0.0.1. 01';//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // если нужна служебная панель для тестирования то это ниже заремарь
-   fMain.PanelAlpha_ForTest.visible := false;
+  // fMain.PanelAlpha_ForTest.visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -964,9 +964,9 @@ vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"
     + '<p style="text-align:center"><strong>Подтверждающий код:</strong> 578723</p><p>&nbsp;</p>'
     + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'QWEqwe123/',
+  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'ztnaixmausffpmvq',
     // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com'//, 'Тема пирога',
-    'assistiq.info@gmail.com', 'AssistIQ Desktop', 'suyarkov@gmail.com', // suyarkov+4561@gmail.com
+    'assistiq.info@gmail.com', 'AssistIQ Desktop', 'brestmk@mail.ru',  // 'suyarkov@gmail.com',
     'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
     // 'AssistIQ : Confirm your email address', vBody, '', true);
 
@@ -2496,7 +2496,7 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
-            FrameProgressBar.SetProgress(TRUNC(((vTransCountTmp+1) * 100 / vTransCountMax)), vTransCountTmp+1);
+            FrameProgressBar.SetProgress(TRUNC(((vTransCountTmp) * 100 / vTransCountMax)), vTransCountTmp+1);
             inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);
