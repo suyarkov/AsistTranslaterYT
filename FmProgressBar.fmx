@@ -21,7 +21,7 @@ object FrameProgressBar: TFrameProgressBar
     end
     object Circle1: TCircle
       Align = Center
-      Fill.Color = claAliceblue
+      Fill.Color = claLightgray
       Size.Width = 162.000000000000000000
       Size.Height = 161.000000000000000000
       Size.PlatformDefault = False
@@ -34,7 +34,7 @@ object FrameProgressBar: TFrameProgressBar
         Text = '12'
         TextSettings.Font.Size = 36.000000000000000000
         TextSettings.Font.StyleExt = {00070000000000000004000000}
-        TextSettings.FontColor = claRoyalblue
+        TextSettings.FontColor = claWhite
       end
     end
   end

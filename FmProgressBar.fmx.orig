@@ -1,0 +1,54 @@
+object FrameProgressBar: TFrameProgressBar
+  Size.Width = 252.000000000000000000
+  Size.Height = 243.000000000000000000
+  Size.PlatformDefault = False
+  OnResize = FrameResize
+  object Layout1: TLayout
+    Align = Center
+    Size.Width = 209.000000000000000000
+    Size.Height = 209.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Pie1: TPie
+      Align = Center
+      Fill.Color = claRoyalblue
+      Size.Width = 193.000000000000000000
+      Size.Height = 193.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      StartAngle = -90.000000000000000000
+      EndAngle = 90.000000000000000000
+    end
+    object Circle1: TCircle
+      Align = Center
+      Fill.Color = claAliceblue
+      Size.Width = 162.000000000000000000
+      Size.Height = 161.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      object Text1: TText
+        Align = Center
+<<<<<<< HEAD
+        Text = '0'
+=======
+        Size.Width = 81.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        Text = '12'
+>>>>>>> 1cbe6ff012c9a8e11dac44ca1d2ecc7ff6cd105c
+        TextSettings.Font.Size = 36.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = claRoyalblue
+      end
+    end
+  end
+  object Circle2: TCircle
+    Fill.Color = claRoyalblue
+    Position.X = 116.000000000000000000
+    Position.Y = 201.000000000000000000
+    Size.Width = 17.000000000000000000
+    Size.Height = 18.000000000000000000
+    Size.PlatformDefault = False
+    Stroke.Kind = None
+  end
+end
