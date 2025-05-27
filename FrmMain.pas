@@ -1155,6 +1155,12 @@ begin
   vLog := fMain.FrameFirst.EditName.text;
   vPas := fMain.FrameFirst.EditPas.text;
 
+  if (Date > EncodeDate(2026, 1, 1)) then /// ÂÅĞÑÈß ÄÎ 1 ßÍÂÀĞß 2026 ÃÎÄÀ
+  begin
+    FrameInfoError(Sender, 'Âåğñèÿ ïğîãğàììû óñòàğåëà!'); 
+    exit;
+  end;
+
   // ïğîâåğêà ëîãèíà è ïàğîëÿ
   if (pos('@', vLog) > 0) and (pos('.', vLog) > 0) and (Length(vPas) > 0) then
   begin
