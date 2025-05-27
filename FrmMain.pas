@@ -289,7 +289,7 @@ procedure TfMain.FormCreate(Sender: TObject);
 begin
   fMain.Caption := 'AssistIQ 0.0.1. 01';//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
   // если нужна служебная панель для тестирования то это ниже заремарь
-   fMain.PanelAlpha_ForTest.visible := false;
+  // fMain.PanelAlpha_ForTest.visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -1353,7 +1353,7 @@ begin
   // проверка логина и пароля
   // проверка на сервере подлинность
 
-  vResponce := OAuth2.UserAdd(vLog, vPas);
+  vResponce := OAuth2.UserAdd(vLog, vPas, vInterfaceLanguage);
   Edit2.text := vResponce;
   FrameInfo(Sender, 'vResponce = ' + vResponce);
   OAuth2.Free;
