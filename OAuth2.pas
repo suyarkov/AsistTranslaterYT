@@ -69,7 +69,7 @@ type
     function FireBaseInsert(ACollection, ADocID, JSON: string): string;
 
     function UserGet(ACollection, ACollection2: string): string;
-    function UserAdd(ACollection, ACollection2: string): string;
+    function UserAdd(ACollection, ACollection2, ACollection3: string): string;
     function Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
     function Version(): string;
     function TestDoubleEmail(AEmail: string): integer;
@@ -727,7 +727,7 @@ end;
 
 
 // My insert  ? добавление пользователя в базу
-function TOAuth.UserAdd(ACollection, ACollection2: string): string;
+function TOAuth.UserAdd(ACollection, ACollection2, ACollection3: string): string;
 const
   URL = 'http://assistiq.suyarkov.com/user_add.php?';//?name=vava&age=27
 var
@@ -740,6 +740,7 @@ begin
   Params := TDictionary<String, String>.Create;
   Params.Add('name', ACollection);
   Params.Add('name1', ACollection2);
+  Params.Add('language', ACollection3);
 
   Headers := TDictionary<String, String>.Create;
 //  Headers.Add('Authorization', 'Bearer ' + FFireBaseToken);
