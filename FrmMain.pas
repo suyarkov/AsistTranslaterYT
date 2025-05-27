@@ -116,6 +116,7 @@ type
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
     iScore: integer;
+    sVersion: string;
 
   public
     { Public declarations }
@@ -287,9 +288,11 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  fMain.Caption := 'AssistIQ 0.0.1. 01';//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  // если нужна служебная панель для тестирования то это ниже заремарь
-  // fMain.PanelAlpha_ForTest.visible := false;
+  sVersion := '0.0.1. 01';
+  fMain.Caption := 'AssistIQ ' + sVersion;//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
+  // !!!!!!!! 
+  // !!!!!!!! если нужна служебная панель для тестирования то это ниже заремарь
+   fMain.PanelAlpha_ForTest.visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -345,21 +348,18 @@ begin
   OAuth2 := TOAuth.Create;
   // вспомним какой у нас интерфейс
   vInterfaceLanguage := uQ.LoadReestr('Local');
-  // подменяем язык интерфейса, пока только по загрузке !!!
-  FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
-    vInterfaceLanguage);;
-  // загрузим известные языки перевод
-  vGlobalList := SQLiteModule.LoadLanguage();
-  iScore := SQLiteModule.GetScore();
-  LabelScore.text := IntToStr(iScore);
-  // переведем названия языков на язык программы
-  // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
-  // переведем интерфейс
-
+  // подменяем язык интерфейса, пока только по загрузке !!
+  
   // грузануть языковые надписи для интерфейса
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
+  
   // установить надписи на все панели!
   MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
+
+  LabelYouTube.Text := vAppLocalization.PanelTop_LabelYouTube;
+  ButtonMonеy.Text := vAppLocalization.PanelTop_ButtonMonеy;
+  ButtonUpdate.Text := vAppLocalization.PanelTop_ButtonUpdate;
+  
   FrameFirst.SetLang(vAppLocalization.First_LabelName,
     vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
     vAppLocalization.First_ButtonReg);
@@ -372,6 +372,27 @@ begin
     vAppLocalization.MainVideos_LabelTitle,
     vAppLocalization.MainVideos_LabelDescription,
     vAppLocalization.MainVideos_BTranslater);
+
+    // проверка версии    
+  vResponce := OAuth2.Version();
+  // удалим последний сомвол, который = ';'
+  if vResponce <>'' then
+    vResponce := Copy(vResponce, 1, Length(vResponce) - 1);
+  if ((vResponce <> sVersion) and (vResponce <> '')) then
+  begin
+    FrameInfo(Sender, 'Вышла новая версия программы - ' + vResponce + '!');  
+  end;
+  
+  FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
+    vInterfaceLanguage);  
+  
+  // загрузим известные языки перевод
+  vGlobalList := SQLiteModule.LoadLanguage();
+  iScore := SQLiteModule.GetScore();
+  LabelScore.text := IntToStr(iScore);
+  // переведем названия языков на язык программы
+  // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
+
   // 'Если Есть обновление!' - но пока проверки нет.
   {
   vResponce := OAuth2.Version();
@@ -1436,6 +1457,11 @@ begin
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
   // установить надписи на все панели!
   MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
+  
+  LabelYouTube.Text := vAppLocalization.PanelTop_LabelYouTube;
+  ButtonMonеy.Text := vAppLocalization.PanelTop_ButtonMonеy;
+  ButtonUpdate.Text := vAppLocalization.PanelTop_ButtonUpdate;
+  
   FrameFirst.SetLang(vAppLocalization.First_LabelName,
     vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
     vAppLocalization.First_ButtonReg);

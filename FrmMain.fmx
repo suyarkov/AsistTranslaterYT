@@ -45,15 +45,18 @@
       OnClick = ButtonBackClick
     end
     object ButtonUpdate: TButton
-      Position.X = 736.000000000000000000
+      Position.X = 704.000000000000000000
       Position.Y = 7.000000000000000000
+      Size.Width = 112.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 4
-      Text = 'Update'
+      Text = 'Update the version'
     end
     object LabelYouTube: TLabel
-      Position.X = 322.000000000000000000
+      Position.X = 327.000000000000000000
       Position.Y = 8.000000000000000000
-      Size.Width = 137.000000000000000000
+      Size.Width = 203.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Developed with YouTube'
@@ -70,7 +73,7 @@
       OnClick = ButtonHelpClick
     end
     object Panel1: TPanel
-      Position.X = 573.000000000000000000
+      Position.X = 538.000000000000000000
       Position.Y = 4.000000000000000000
       Size.Width = 158.000000000000000000
       Size.Height = 26.000000000000000000
@@ -199,7 +202,7 @@
       Size.PlatformDefault = False
       TextSettings.Font.Size = 10.000000000000000000
       TextSettings.FontColor = claDarkgray
-      Text = 'Copyright '#169' 2023 AsisYou Inc. All Rights Reserved.'
+      Text = 'Copyright '#169' 2025 AssistIQ Inc. All Rights Reserved.'
       TabOrder = 0
     end
   end
@@ -330,6 +333,7 @@
       end
     end
     inherited ButtonSubtitles: TButton
+      Enabled = False
       Position.X = 456.000000000000000000
       Position.Y = 515.000000000000000000
       Size.Width = 141.000000000000000000
@@ -626,7 +630,7 @@
         Size.Width = 97.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 2
+        TabOrder = 3
         Text = 'TestAniingicator'
         OnClick = TestAniingicatorClick
       end
@@ -665,8 +669,8 @@
       Size.Height = 59.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-      Viewport.Width = 884.000000000000000000
-      Viewport.Height = 59.000000000000000000
+      Viewport.Width = 880.000000000000000000
+      Viewport.Height = 55.000000000000000000
     end
     object ButtonQ: TButton
       Position.X = 96.000000000000000000
@@ -26078,9 +26082,9 @@
   end
   inline FrameProgressBar: TFrameProgressBar
     Position.X = 16.000000000000000000
-    Position.Y = 8.000000000000000000
+    Position.Y = 74.000000000000000000
     Size.Width = 866.000000000000000000
-    Size.Height = 621.000000000000000000
+    Size.Height = 492.000000000000000000
     Size.PlatformDefault = False
     inherited Layout1: TLayout
       inherited Pie1: TPie
@@ -26089,7 +26093,7 @@
       inherited Circle1: TCircle
         Fill.Color = claLightskyblue
         inherited Text1: TText
-          Text = ''
+          Text = '0'
           TextSettings.Font.StyleExt = {00070000000000000004000000}
         end
       end

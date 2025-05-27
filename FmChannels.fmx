@@ -33,9 +33,9 @@ object FrameChannels: TFrameChannels
   end
   object ButtonAddChannel: TButton
     StyledSettings = [Family, Size, FontColor]
-    Position.X = 678.000000000000000000
+    Position.X = 624.000000000000000000
     Position.Y = 14.000000000000000000
-    Size.Width = 170.000000000000000000
+    Size.Width = 224.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1

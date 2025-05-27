@@ -699,7 +699,7 @@ end;
 
 
 
-//  тест пользователя
+// Подключение пользователя
 // function TOAuth.UserGet(ACollection: string, ACollection2: string): string;
 function TOAuth.UserGet(ACollection, ACollection2: string): string;
 const
@@ -783,18 +783,18 @@ end;
 //function TOAuth.Version(ACollection, ACollection2: string): string;
 function TOAuth.Version(): string;
 const
-  URL = 'http://assistiq.suyarkov.com/version.php?';
+  URL = 'http://assistiq.suyarkov.com/user_version.php?';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
   JSON: string;
 begin
   JSON := '';
-  FireBaseAuth();
+//  FireBaseAuth();
 
   Params := TDictionary<String, String>.Create;
-  Params.Add('ip', '22');   // пока ерунда
-  Params.Add('type', '44'); // пока ерунда
+//  Params.Add('ip', '22');   // пока ерунда
+//  Params.Add('type', '44'); // пока ерунда
 
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Accept', 'application/json');
@@ -802,12 +802,13 @@ begin
 
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
+  // ещё тут выводить что нет связи!!
   Result := SendRequest(URL, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
+
 end;
 
 
-//  тест связи и версии
-//function TOAuth.Version(ACollection, ACollection2: string): string;
+//  тест что не дубль логина
 function TOAuth.TestDoubleEmail( AEmail: string): integer;
 const
   URL = 'http://assistiq.suyarkov.com/user_checkdouble.php?';

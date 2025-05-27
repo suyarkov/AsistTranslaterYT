@@ -79,6 +79,10 @@ type
 
     MsgInfoUpdate :string;
 
+    PanelTop_LabelYouTube: string;
+    PanelTop_ButtonMonеy: string;
+    PanelTop_ButtonUpdate: string;
+
     First_LabelName: string;
     First_LabelPas: string;
     First_ButtonLog: string;
@@ -516,7 +520,12 @@ begin
 
     if language = 'ru' then
     begin
-      MsgInfoUpdate := 'Новая версия программы! Обновитесь!';
+      MsgInfoUpdate := 'Вышла новая версия программы! Обновитесь!';
+
+      PanelTop_LabelYouTube := 'Создано совместно с YouTube';
+      PanelTop_ButtonMonеy := 'Добавить';
+      PanelTop_ButtonUpdate :=  'Обновить версию';
+
       First_LabelName := 'Введите Email';
       First_LabelPas := 'Пароль';
       First_ButtonLog := 'Войти';
@@ -531,7 +540,7 @@ begin
       AddUser_MsgPassword2 := 'Пароли не совпадают';
 
       Channels_LabelChannels := 'Ваши каналы';
-      Channels_ButtonAddChannel := 'Подключить Youtube канал при помощи Google';
+      Channels_ButtonAddChannel := 'Подключить Youtube от Google';
 
       MainChannel_LabelNameChannel := 'Текущий канал';
       MainChannel_ButtonAddNextVideo := 'Показать предыдущие видео';
@@ -549,6 +558,10 @@ begin
     else // английский язык по умолчанию
     begin
       MsgInfoUpdate := 'New release! Update the program!';
+
+      PanelTop_LabelYouTube := 'Developed with YouTube';
+      PanelTop_ButtonMonеy := 'Add';
+      PanelTop_ButtonUpdate :=  'Update the version';
 
       First_LabelName := 'Email';
       First_LabelPas := 'Password';
