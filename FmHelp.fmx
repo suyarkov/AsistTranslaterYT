@@ -1,7 +1,7 @@
 object FrameHelp: TFrameHelp
   Align = Client
   Size.Width = 897.000000000000000000
-  Size.Height = 325.000000000000000000
+  Size.Height = 448.000000000000000000
   Size.PlatformDefault = False
   object Panel1: TPanel
     Align = Center
@@ -34,6 +34,7 @@ object FrameHelp: TFrameHelp
       Size.Height = 41.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
+      Visible = False
       Viewport.Width = 125.000000000000000000
       Viewport.Height = 37.000000000000000000
     end

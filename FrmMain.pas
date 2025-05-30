@@ -25,7 +25,9 @@ uses
   Classes.title, Classes.snippet, Classes.snippetInsert,
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
-  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList;
+  FmHelp, FmAddMoney, System.ImageList, FMX.ImgList,
+  //IdSocketHandle,
+  IdGlobal;
 
 type
   TfMain = class(TForm)
@@ -112,6 +114,7 @@ type
     procedure FinishProgressBar(Sender: TObject);
     procedure FrameLanguagesButtonAddAllLanguagesClick(Sender: TObject);
     procedure FrameLanguagesButtonDelAllLanguagesClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     MsgInfoUpdate: string; // 'Есть обновление!'
@@ -169,7 +172,7 @@ var
   vInterfaceLanguage: string;
   vTotalCountVideo, vNowCountVideo: integer;
   vnextPageTokenVideo: string;
-  vClientId : integer;
+  vClientId: integer;
 
 implementation
 
@@ -286,13 +289,19 @@ begin
   end;
 end;
 
+procedure TfMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // TCPServerYouTubeAnswers.Active := false;
+  // TCPServerYouTubeAnswers.Destroy;
+end;
+
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   sVersion := '0.0.1. 01';
-  fMain.Caption := 'AssistIQ ' + sVersion;//'YouTranslate 0.0.1'; // 'AssistIQ 0.0.1'; AceIQ 1.0.1
-  // !!!!!!!! 
+  fMain.Caption := 'AssistIQ ' + sVersion;
+  // !!!!!!!!
   // !!!!!!!! если нужна служебная панель для тестирования то это ниже заремарь
-   fMain.PanelAlpha_ForTest.visible := false;
+  fMain.PanelAlpha_ForTest.Visible := false;
   fMain.PanelAlpha_ForTest.Position.X := 0;
 
   fMain.LabelMail.text := '';
@@ -339,9 +348,9 @@ end;
 
 procedure TfMain.FormShow(Sender: TObject);
 var
-  i,j: integer;
+  i, j: integer;
   vAppLocalization: TAppLocalization;
-  vResponce, vTemp : string;
+  vResponce, vTemp: string;
   OAuth2: TOAuth;
   vList: TListLanguages;
 begin
@@ -349,17 +358,17 @@ begin
   // вспомним какой у нас интерфейс
   vInterfaceLanguage := uQ.LoadReestr('Local');
   // подменяем язык интерфейса, пока только по загрузке !!
-  
+
   // грузануть языковые надписи для интерфейса
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
-  
+
   // установить надписи на все панели!
   MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
 
-  LabelYouTube.Text := vAppLocalization.PanelTop_LabelYouTube;
-  ButtonMonеy.Text := vAppLocalization.PanelTop_ButtonMonеy;
-  ButtonUpdate.Text := vAppLocalization.PanelTop_ButtonUpdate;
-  
+  LabelYouTube.text := vAppLocalization.PanelTop_LabelYouTube;
+  ButtonMonеy.text := vAppLocalization.PanelTop_ButtonMonеy;
+  ButtonUpdate.text := vAppLocalization.PanelTop_ButtonUpdate;
+
   FrameFirst.SetLang(vAppLocalization.First_LabelName,
     vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
     vAppLocalization.First_ButtonReg);
@@ -373,19 +382,23 @@ begin
     vAppLocalization.MainVideos_LabelDescription,
     vAppLocalization.MainVideos_BTranslater);
 
-    // проверка версии    
+  // проверка версии
   vResponce := OAuth2.Version();
   // удалим последний сомвол, который = ';'
-  if vResponce <>'' then
+  if vResponce <> '' then
+  begin
     vResponce := Copy(vResponce, 1, Length(vResponce) - 1);
+  end;
+
   if ((vResponce <> sVersion) and (vResponce <> '')) then
   begin
-    FrameInfo(Sender, 'Вышла новая версия программы - ' + vResponce + '!');  
+    FrameInfo(Sender, 'Вышла новая версия программы - ' + vResponce + '!');
   end;
-  
-  FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
-    vInterfaceLanguage);  
-  
+
+
+  // FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
+  // vInterfaceLanguage);
+
   // загрузим известные языки перевод
   vGlobalList := SQLiteModule.LoadLanguage();
   iScore := SQLiteModule.GetScore();
@@ -395,9 +408,9 @@ begin
 
   // 'Если Есть обновление!' - но пока проверки нет.
   {
-  vResponce := OAuth2.Version();
-  FrameInfo(Sender, vResponce);
-  if vResponce <> '01.01.01' then
+    vResponce := OAuth2.Version();
+    FrameInfo(Sender, vResponce);
+    if vResponce <> '01.01.01' then
     FrameInfo(Sender, MsgInfoUpdate);
   }
 
@@ -410,13 +423,15 @@ begin
   until (i >= 300) or (vList[i].LnCode = '');
 
   // отсортируем значения в комбобоксе
-  for i := 0 to fMain.FrameVideos.LanguageComboBox.Items.Count-1 do
-    for j := i+ 1  to fMain.FrameVideos.LanguageComboBox.Items.Count-1 do
-      if CompareStr(fMain.FrameVideos.LanguageComboBox.Items[i], fMain.FrameVideos.LanguageComboBox.Items[j]) > 0 then
+  for i := 0 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
+    for j := i + 1 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
+      if CompareStr(fMain.FrameVideos.LanguageComboBox.Items[i],
+        fMain.FrameVideos.LanguageComboBox.Items[j]) > 0 then
       begin
-          vTemp := fMain.FrameVideos.LanguageComboBox.Items[i];
-          fMain.FrameVideos.LanguageComboBox.Items [i] := fMain.FrameVideos.LanguageComboBox.Items[j];
-          fMain.FrameVideos.LanguageComboBox.Items[j] := vTemp
+        vTemp := fMain.FrameVideos.LanguageComboBox.Items[i];
+        fMain.FrameVideos.LanguageComboBox.Items[i] :=
+          fMain.FrameVideos.LanguageComboBox.Items[j];
+        fMain.FrameVideos.LanguageComboBox.Items[j] := vTemp
       end;
   // а должно бы сработать fMain.FrameVideos.LanguageComboBox.Sorted := true;
 
@@ -462,7 +477,7 @@ begin
     try
       AResponce := FHTTPClient.Get(AAPIUrl);
     except
-      showmessage('нет подключения');
+      showmessage('нет подключения_1');
     end;
     if Not Assigned(AResponce) then
     begin
@@ -491,6 +506,7 @@ begin
 end;
 
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
+// и закрытие сервера
 procedure TfMain.BGetTokkensClick(Sender: TObject);
 
 var
@@ -499,6 +515,7 @@ var
 
   OAuth2: TOAuth;
   vString: string;
+
 begin
   if EdAccessCode <> '' then
   begin
@@ -524,8 +541,19 @@ begin
     EdAccessCode := ''; // чтоб второй раз не пошел
   end;
   if TCPServerYouTubeAnswers.Active = true then
-    TCPServerYouTubeAnswers.Active := false;
-  // TCPServerYouTubeAnswers.st
+  begin
+    TThread.Queue(nil,
+      procedure
+      var      i: integer;
+      begin
+        TCPServerYouTubeAnswers.Active := false;
+      for I := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
+        begin
+          TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue; // TIdSocketHandleReuseSocket.rsTrue;
+        end;
+      end);
+  end;
+
 end;
 
 // прошли логик что ли
@@ -971,15 +999,6 @@ procedure TfMain.ButtonEmail2Click(Sender: TObject);
 var
   vBody: string;
 begin // изначальное письмо с рисунком
-{
-vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important">  <p style="text-align:center">'
-    + '<img alt="" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" style="height:100px; width:100px"></p>'
-    + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
-    + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения Ace Desktop.</p>'
-    + '<p style="text-align:center"><strong>Подтвердить код:</strong> 578723</p><p>&nbsp;</p>'
-    + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
-}
-//
   vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"> <p style="text-align:center">'
     + '<img alt="" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" style="height:100px; width:100px"></p>'
     + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
@@ -987,22 +1006,19 @@ vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"
     + '<p style="text-align:center"><strong>Подтверждающий код:</strong> 578723</p><p>&nbsp;</p>'
     + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'ztnaixmausffpmvq',
-    // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com'//, 'Тема пирога',
-    'assistiq.info@gmail.com', 'AssistIQ Desktop', 'brestmk@mail.ru',  // 'suyarkov@gmail.com',
-    'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
-    // 'AssistIQ : Confirm your email address', vBody, '', true);
-
-{
-  SendEmail('smtp.mail.ru', 465, 'robotcash@inbox.ru', '2G5c2Nz41jzh2UAjpWer/',
-    'robotcash@inbox.ru', 'AssistIQ Desktop', 'suyarkov@gmail.com',
-    'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
-}
+  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com',
+    'ztnaixmausffpmvq', 'assistiq.info@gmail.com', 'AssistIQ Desktop',
+    'brestmk@mail.ru', 'AssistIQ : Подтвердите свой адрес электронной почты',
+    vBody, '', true);
 end;
 
 procedure TfMain.ButtonHelpClick(Sender: TObject);
 begin
-  FrameHelp(Sender, 'Тебе обязательно ПОМОГУТ! ');
+  if vInterfaceLanguage = 'ru' then
+    FrameHelp(Sender, 'Отправьте вопрос на почту assistiq.info@gmail.com! ')
+  else
+    FrameHelp(Sender,
+      'Send your question to the mailbox assistiq.info@gmail.com! ');
 end;
 
 procedure TfMain.ButtonMoneyInfoClick(Sender: TObject);
@@ -1123,6 +1139,7 @@ var
 {$IFDEF MSWINDOWS}
   res: HINST;
 {$ENDIF}
+  i : Integer;
 begin
   // подключение
   // EditStatusConnect.Text := 'Waiting for connection ...';
@@ -1130,11 +1147,14 @@ begin
 
   if TCPServerYouTubeAnswers.Active = false then
   begin
-    TCPServerYouTubeAnswers.Bindings.Add.Port := 1904;
+    for I := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
+    begin
+      TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue; // TIdSocketHandleReuseSocket.rsTrue;
+    end;
+
+    //TCPServerYouTubeAnswers.Bindings.Add.Port := 1904; // добавлять нельзя, только через дефолт!
+    TCPServerYouTubeAnswers.DefaultPort := 1904;
     TCPServerYouTubeAnswers.Active := true;
-    // IdTCPServer1.OnExecute(true);
-    // AContext.Connection.Disconnect;
-    // AContext.Connection.IOHandler.Free;
 
   end;
   // 2. Открыть регистрацию
@@ -1151,7 +1171,7 @@ begin
 end;
 
 procedure TfMain.FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Single);
+X, Y: Single);
 begin
   if lastPanel <> nil then
   begin
@@ -1169,16 +1189,17 @@ var
   vOk, vRes: integer;
   vLog, vPas, vResponce, vTmp: string;
   OAuth2: TOAuth;
-  vidCl : integer;
-  vScore : integer;
+  vidCl: integer;
+  vScore: integer;
 begin
   vOk := -1;
   vLog := fMain.FrameFirst.EditName.text;
   vPas := fMain.FrameFirst.EditPas.text;
 
-  if (Date > EncodeDate(2026, 1, 1)) then /// ВЕРСИЯ ДО 1 ЯНВАРЯ 2026 ГОДА
+  if (Date > EncodeDate(2026, 1, 1)) then
+  /// ВЕРСИЯ ДО 1 ЯНВАРЯ 2026 ГОДА
   begin
-    FrameInfoError(Sender, 'Версия программы устарела!'); 
+    FrameInfoError(Sender, 'Версия программы устарела!');
     exit;
   end;
 
@@ -1194,15 +1215,15 @@ begin
     vidCl := 0;
     if (pos(';', vResponce) > 0) then
     begin
-      vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
-      vTmp := copy(vResponce, pos(';', vResponce) + 1, 1000);
+      vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
+      vTmp := Copy(vResponce, pos(';', vResponce) + 1, 1000);
       if (pos(';', vTmp) > 0) then
       begin
-         vidCl := StrToInt(copy(vTmp, 1, pos(';', vTmp) - 1));
-         vTmp := copy(vTmp, pos(';', vTmp) + 1, 1000);
+        vidCl := StrToInt(Copy(vTmp, 1, pos(';', vTmp) - 1));
+        vTmp := Copy(vTmp, pos(';', vTmp) + 1, 1000);
         if (pos(';', vTmp) > 0) then
         begin
-          vScore := StrToInt(copy(vTmp, 1, pos(';', vTmp) - 1));
+          vScore := StrToInt(Copy(vTmp, 1, pos(';', vTmp) - 1));
           // возможно тут нужно обновить количество в базе локальной
           iScore := vScore;
           LabelScore.text := IntToStr(iScore);
@@ -1231,10 +1252,10 @@ begin
   else
     vOk := -1;
 
-    if (pos(';', vResponce) > 0) then
-    begin
-      vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
-    end;
+  if (pos(';', vResponce) > 0) then
+  begin
+    vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
+  end;
 
   // реакция
   if vOk = -1 then
@@ -1323,30 +1344,29 @@ begin
   // уже есть в базе такой пользователь
   if vRes = 1 then
   begin
-    FrameInfo(Sender, vLog + ' - пользователь с указанной почтой уже существует!');
+    FrameInfo(Sender,
+      vLog + ' - пользователь с указанной почтой уже существует!');
     exit;
   end;
 
   // генерация кода авторизации
   vKey := 100000 + Random(900000); // 4 цифры
-  //vKey := 1111; // на время отладки
+  // vKey := 1111; // на время отладки
 
-  //отправка кода на ящик почтовый пользователю
+  // отправка кода на ящик почтовый пользователю
 
   vBody := '<div class="overflow-auto mb-20" style="overflow-y: hidden !important"> <p style="text-align:center">'
     + '<img alt="" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" style="height:100px; width:100px"></p>'
     + '<hr><p style="text-align:center"><strong>Уважаемый пользователь приложения AssistIQ Desktop.</strong></p>'
     + '<p style="text-align:center">Вам отправлено электронное письмо в ответ на запрос о создании учетной записи для приложения AssistIQ Desktop.</p>'
-    + '<p style="text-align:center"><strong>Подтверждающий код:</strong> ' + IntToStr(vKey) + '</p><p>&nbsp;</p>'
-    + '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
+    + '<p style="text-align:center"><strong>Подтверждающий код:</strong> ' +
+    IntToStr(vKey) + '</p><p>&nbsp;</p>' +
+    '<hr><p style="text-align:center"><span style="color:#e74c3c">Если вы не отправляли этот запрос, проигнорируйте это письмо.</span></p>';
 
-  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com', 'ztnaixmausffpmvq',
-    // 'brest20133@mail.ru', 'aFromName', 'suyarkov@gmail.com'//, 'Тема пирога',
-    'assistiq.info@gmail.com', 'AssistIQ Desktop', vLog,
+  SendEmail('smtp.gmail.com', 465, 'assistiq.info@gmail.com',
+    'ztnaixmausffpmvq', 'assistiq.info@gmail.com', 'AssistIQ Desktop', vLog,
     'AssistIQ : Подтвердите свой адрес электронной почты', vBody, '', true);
 
-
-  // сообщение о том, что на ящик отправлен код, для авторизации
   FrameInfo(Sender, 'Проверьте почту!');
 
   vCountTry := 3;
@@ -1386,7 +1406,7 @@ begin
   OAuth2.Free;
   if (pos(';', vResponce) > 0) then
   begin
-    vRes := StrToInt(copy(vResponce, 1, pos(';', vResponce) - 1));
+    vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
   end;
 
   // реакция
@@ -1457,11 +1477,11 @@ begin
   vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
   // установить надписи на все панели!
   MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
-  
-  LabelYouTube.Text := vAppLocalization.PanelTop_LabelYouTube;
-  ButtonMonеy.Text := vAppLocalization.PanelTop_ButtonMonеy;
-  ButtonUpdate.Text := vAppLocalization.PanelTop_ButtonUpdate;
-  
+
+  LabelYouTube.text := vAppLocalization.PanelTop_LabelYouTube;
+  ButtonMonеy.text := vAppLocalization.PanelTop_ButtonMonеy;
+  ButtonUpdate.text := vAppLocalization.PanelTop_ButtonUpdate;
+
   FrameFirst.SetLang(vAppLocalization.First_LabelName,
     vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
     vAppLocalization.First_ButtonReg);
@@ -1519,12 +1539,12 @@ begin
 
     PanLanguages[i] := TLanguagePanel.Create(FrameLanguages.BoxLanguages, vPosX,
       vPosY, i, vSelected, vEnabled,
-      // временно, потом вставить анализ выбранных языков
-      IntToStr(vList[i].id), vList[i].NameRussian,
-      // русское отображение, наверное и нафиг надо
-      // vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
-      vList[i].NameLocal, // отображение на кнопках
-      vList[i].LnCode, vBitmap); // ,            ,
+    // временно, потом вставить анализ выбранных языков
+    IntToStr(vList[i].id), vList[i].NameRussian,
+    // русское отображение, наверное и нафиг надо
+    // vList[i].NameLocal + ' ' + IntToStr(i), // отображение на кнопках
+    vList[i].NameLocal, // отображение на кнопках
+    vList[i].LnCode, vBitmap); // ,            ,
     // vWidth := PanLanguages[i].Width;
     // vHeight := PanLanguages[i].Height;
     PanLanguages[i].Parent := FrameLanguages.BoxLanguages;
@@ -1585,7 +1605,7 @@ begin
       if (vPosBegin > 0) and (vPosEnd > 0) then
       begin
         vPosBegin := vPosBegin + 5;
-        vAccessCode := copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
+        vAccessCode := Copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
         // vAccessCode := msgFromClient;
         // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
         Edit1.text := vAccessCode;
@@ -1628,7 +1648,7 @@ begin
       AContext.Connection.IOHandler.WriteLn;
       EdAccessCode := vAccessCode;
       // вызов процедуры запроса данных по каналу и их сохранение
-      BGetTokkens.OnClick(fMain);
+      BGetTokkens.OnClick(fMain);     // в нем и заглушим работу данного канала
       // BGetChannel.OnClick(fMain);
     end
     else
@@ -1674,6 +1694,17 @@ begin
   // AContext.Connection.IOHandler.CloseGracefully;
   // AContext.Connection.Socket.CloseGracefully;
   // AContext.Connection.Socket.Close;
+  {
+  // нельзя тут, потому как в процедуре обработка идет ещё, там нужно будет и глушить
+  if TCPServerYouTubeAnswers.Active = true then
+  begin
+    TThread.Queue(nil,
+      procedure
+      begin
+        TCPServerYouTubeAnswers.Active := false;
+      end);
+  end;
+  }
 
 end;
 
@@ -1778,11 +1809,13 @@ begin
       try
         AResponce := FHTTPClient.Get(AAPIUrl);
       except
-        showmessage('нет подключения');
+        showmessage('нет подключения_2');
+        exit;
       end;
       if Not Assigned(AResponce) then
       begin
         showmessage('Пусто');
+        exit;
       end;
 
       Bitimg := TBitmap.Create;
@@ -1790,6 +1823,7 @@ begin
       FrameMainChannel.ImageChannel.Bitmap := Bitimg;
     except
       showmessage('Что except');
+      exit;
     end;
 
   end;
@@ -1831,7 +1865,7 @@ begin
       try
         AResponce := FHTTPClient.Get(AAPIUrl);
       except
-        showmessage('нет подключения');
+        showmessage('нет подключения_3');
       end;
       if Not Assigned(AResponce) then
       begin
@@ -1947,7 +1981,7 @@ begin
       try
         AResponce := FHTTPClient.Get(AAPIUrl);
       except
-        showmessage('нет подключения');
+        showmessage('нет подключения_4');
       end;
       if Not Assigned(AResponce) then
       begin
@@ -1967,12 +2001,11 @@ begin
 
   FrameVideos.LanguageVideoLabel.text := vVideo.language;
 
-  i :=  fMain.FrameVideos.LanguageComboBox.Items.IndexOf(vVideo.language);
+  i := fMain.FrameVideos.LanguageComboBox.Items.IndexOf(vVideo.language);
   if i <> -1 then
   begin
     fMain.FrameVideos.LanguageComboBox.ItemIndex := i;
   end;
-
 
   FrameVideos.ImageVideo.Bitmap := vVideo.img;
   // PanVideos[vNPanel].VdImage.Bitmap;
@@ -2097,11 +2130,17 @@ end;
 // пример вызова   FrameInfo(self, 'Денег просто нет')));
 // procedure TfMain.FrameInfo(Sender: TObject; InfoText: string);
 procedure TfMain.FrameInfo(Sender: TObject; InfoText: string;
-  Status: integer = 0);
+Status: integer = 0);
 var
   vFrameInfo: TFrameInfo;
 begin
-  vFrameInfo := TFrameInfo.Create(Self);
+  try
+    vFrameInfo := TFrameInfo.Create(Self);
+  except
+    on E: Exception do
+      exit;
+  end;
+
   if Status = 0 then
   begin
     vFrameInfo.Image1.Visible := true;
@@ -2131,7 +2170,14 @@ procedure TfMain.FrameInfoError(Sender: TObject; InfoText: string);
 var
   vFrameInfo: TFrameInfo;
 begin
-  vFrameInfo := TFrameInfo.Create(Self);
+
+  try
+    vFrameInfo := TFrameInfo.Create(Self);
+  except
+    on E: Exception do
+      exit;
+  end;
+
   // vFrameInfo.Position.X := Round(fMain.Width/2 + 1);
   // vFrameInfo.Position.Y := Round(fMain.Height/2 + 1);
   vFrameInfo.MemoMessage.Visible := false;
@@ -2150,7 +2196,12 @@ procedure TfMain.FrameHelp(Sender: TObject; InfoText: string);
 var
   vFrameInfo: TFrameHelp;
 begin
-  vFrameInfo := TFrameHelp.Create(Self);
+  try
+    vFrameInfo := TFrameHelp.Create(Self);
+  except
+    on E: Exception do
+      exit;
+  end;
   // vFrameInfo.LabelMessage.Visible := false;
   vFrameInfo.LabelMessage.text := InfoText;
   vFrameInfo.MemoMessage.text := InfoText;
@@ -2297,7 +2348,7 @@ begin
         vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
         // showmessage('язык ' + vSubtitles[vSCount].language);
         // if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-        if vSubtitles[vSCount].language = copy
+        if vSubtitles[vSCount].language = Copy
           (FrameVideos.LanguageVideoLabel.text, 1, 2) then
           vIndexMainLanguage := vSCount; // задан субтитр основного языка
       end;
@@ -2375,8 +2426,8 @@ begin
             // vAddCaptionJSON :=  '{snippet:{ language:es, name:Spanish captions, videoId:' +
             // FrameVideos.LabelVideoId.text + ',isDraft:true}}';
             // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, '');
-            //vResponceInsSubtitle := OAuth2.SubtitleV2Insert(vAddCaptionJSON,
-            //  'default2.sbv', FrameVideos.LabelVideoId.text);
+            // vResponceInsSubtitle := OAuth2.SubtitleV2Insert(vAddCaptionJSON,
+            // 'default2.sbv', FrameVideos.LabelVideoId.text);
             vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
               'default2.sbv');
 
@@ -2431,14 +2482,14 @@ var
   vTranslateDescription: string;
   vTransCountMax: integer;
 
-  vTransCountTmp : integer;
+  vTransCountTmp: integer;
 
   vObjTitle: Ttitle; // Tchannel;
 
   vСutTitle: string;
 
-   OAuth3: TOAuth;
-   vResponce3: string;
+  OAuth3: TOAuth;
+  vResponce3: string;
 begin
 
   vTitle := FrameVideos.MemoTitle.text;
@@ -2547,7 +2598,9 @@ begin
             (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
           then
           begin
-            FrameProgressBar.SetProgress(TRUNC(((vTransCountTmp) * 100 / vTransCountMax)), vTransCountTmp+1);
+            FrameProgressBar.SetProgress
+              (TRUNC(((vTransCountTmp) * 100 / vTransCountMax)),
+              vTransCountTmp + 1);
             inc(vTransCountTmp);
             // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
             // + ' на ' + PanLanguages[i].ChLang.text);
@@ -2558,7 +2611,7 @@ begin
             // ' , стало2 ' + copy( vTranslateTitle, 1, 100));
             if vTranslateTitle.Length > 100 then
             begin
-              vTranslateTitle := copy(vTranslateTitle, 1, 100);
+              vTranslateTitle := Copy(vTranslateTitle, 1, 100);
               vСutTitle := vСutTitle + ' , ' + PanLanguages[i].ChLang.text;
             end;
 
@@ -2609,11 +2662,13 @@ begin
 
         // сохранение затрат
         OAuth3 := TOAuth.Create;
-        vResponce3 := OAuth2.Clicks(inttostr(vClientId), '0', IntToStr(vTransCount), '1' );
+        vResponce3 := OAuth2.Clicks(IntToStr(vClientId), '0',
+          IntToStr(vTransCount), '1');
 
-//        FrameInfo(Sender, 'Попытались перевести на ' +
-//          IntToStr(vTransCount), 1);
-         FrameInfo(Sender, 'Описание перевели на' + IntToStr(vTransCount) + ' языков.');
+        // FrameInfo(Sender, 'Попытались перевести на ' +
+        // IntToStr(vTransCount), 1);
+        FrameInfo(Sender, 'Описание перевели на' + IntToStr(vTransCount) +
+          ' языков.');
       end;
       OAuth2.Free;
     end
@@ -2705,7 +2760,7 @@ begin
       try
         AResponce := FHTTPClient.Get(AAPIUrl);
       except
-        showmessage('нет подключения');
+        showmessage('нет подключения_5');
       end;
       if Not Assigned(AResponce) then
       begin

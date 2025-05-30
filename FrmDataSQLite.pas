@@ -368,7 +368,7 @@ begin
     try
       AResponce := FHTTPClient.Get(AAPIUrl);
     except
-      showmessage('нет подключения');
+      showmessage('нет подключения_10');
     end;
     if Not Assigned(AResponce) then
     begin
