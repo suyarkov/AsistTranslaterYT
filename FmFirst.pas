@@ -27,7 +27,9 @@ type
     Image5: TImage;
     Image6: TImage;
     PanelIsLang: TPanel;
+    ShowPassword: TButton;
     procedure FrameCanFocus(Sender: TObject; var ACanFocus: Boolean);
+    procedure ShowPasswordClick(Sender: TObject);
     { procedure Image0Click(Sender: TObject);
       procedure Image1Click(Sender: TObject);
       procedure Image2Click(Sender: TObject);
@@ -71,6 +73,12 @@ begin
     ButtonLog.Text := pButtonLog;
   if pButtonReg <> '' then
     ButtonReg.Text := pButtonReg;
+end;
+
+procedure TFrameFirst.ShowPasswordClick(Sender: TObject);
+begin
+  EditPas.Password := not (EditPas.Password);
+  EditPas.SetFocus;
 end;
 
 {
