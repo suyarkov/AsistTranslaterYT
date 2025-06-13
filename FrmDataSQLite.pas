@@ -338,7 +338,7 @@ end;
 procedure TSQLiteModule.DataModuleCreate(Sender: TObject);
 begin
   // ClickConnection.Params.Add('Database='+mydir+'database.db');
-  SQL.Params.Database := GetCurrentDir() + '\libast.dll';
+  SQL.Params.Database := GetCurrentDir() + '\libast32.dll';
   { try
     SQL.Connected := true;
     except
