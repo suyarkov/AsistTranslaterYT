@@ -77,7 +77,7 @@ object FrameFirst: TFrameFirst
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 3
-      Text = 'S'
+      Text = '*'
       OnClick = ShowPasswordClick
     end
   end
