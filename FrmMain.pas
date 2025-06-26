@@ -1572,7 +1572,138 @@ begin
 
 end;
 
+// Разработка от Ai
+
+// ОБРАБОТКА поступления согласования или не-согласования выдачи прав на канал пользователем
+procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
+const
+  cNameFile: string = 'AccessCode';
+var
+  PeerIP      : string;
+  PeerPort    : integer;
+  RequestLine : string;
+  vAccessCode : string;
+  vPath, vFullNameFile: string;
+  vFileText   : TStringList;
+  ErrorDesc   : string;
+
+// Парсер параметров запроса (именно query string)
+  function GetQueryParam(const Src, Param: string): string;
+  var
+    qStart, i: Integer;
+    Arr, Pair: TArray<string>;
+  begin
+    Result := '';
+    qStart := Pos('?', Src);
+    if qStart > 0 then
+    begin
+      Arr := Src.Substring(qStart+1).Split(['&']);
+      for i := 0 to High(Arr) do
+      begin
+        Pair := Arr[i].Split(['=']);
+        if (Length(Pair) = 2) and (Pair[0].ToLower = Param.ToLower) then
+          Exit(Pair[1]);
+      end;
+    end;
+  end;
+
+begin
+  vAccessCode := '';
+
+  // 1. Читаем первую строку http-запроса (пример: 'GET /?state=...&code=... HTTP/1.1')
+  RequestLine := AContext.Connection.IOHandler.ReadLn;
+
+  // 2. Читаем заголовки HTTP запроса ДО ПУСТОЙ строки
+  while AContext.Connection.IOHandler.ReadLn <> '' do ;
+
+  // 3. Получаем инфу о клиенте
+  PeerIP   := AContext.Binding.PeerIP;
+  PeerPort := AContext.Binding.PeerPort;
+
+  // 4. Обрабатываем только GET-запросы
+  if Pos('GET', RequestLine) > 0 then
+  begin
+    // Парсим параметры code и error
+    vAccessCode := GetQueryParam(RequestLine, 'code');
+    ErrorDesc   := GetQueryParam(RequestLine, 'error');
+
+    // НЕ было отмены (error), т.е. пользователь выдал права
+    if (ErrorDesc = '') and (vAccessCode <> '') then
+    begin
+      Edit1.text := vAccessCode;
+
+      // Сохраняем код авторизации в файл
+      vPath := GetCurrentDir();
+      vFullNameFile := vPath + PathDelim + cNameFile;
+      vFileText := TStringList.Create;
+      try
+        vFileText.Add(vAccessCode);
+        vFileText.SaveToFile(vFullNameFile, TEncoding.UTF8);
+      finally
+        vFileText.Free;
+      end;
+
+      // Готовим успешный HTML-ответ
+      AContext.Connection.IOHandler.WriteLn('HTTP/1.1 200 OK');
+      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html; charset=UTF-8');
+      AContext.Connection.IOHandler.WriteLn('Connection: close');
+      AContext.Connection.IOHandler.WriteLn;
+      AContext.Connection.IOHandler.Write(
+        '<html><head><meta charset="utf-8"><title>AssistIQ connected!</title></head>' +
+        '<body bgcolor="white">' +
+        '<p>&nbsp;</p>'+
+        '<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>' +
+        '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>' +
+        '<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>' +
+        '</body></html>');
+      AContext.Connection.IOHandler.WriteLn;
+
+      // Для ваших дальнейших процедур:
+      EdAccessCode := vAccessCode;
+      BGetTokkens.OnClick(fMain);  // Дополнительно: если надо остановить канал или обработать токен
+      // BGetChannel.OnClick(fMain); // если используется, раскомментируйте
+
+    end else
+    // Был отказ (error)
+    begin
+      Edit1.text := '';
+      // Готовим HTML-ответ для случая отказа
+      AContext.Connection.IOHandler.WriteLn('HTTP/1.1 200 OK');
+      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html; charset=UTF-8');
+      AContext.Connection.IOHandler.WriteLn('Connection: close');
+      AContext.Connection.IOHandler.WriteLn;
+      AContext.Connection.IOHandler.Write(
+        '<html><head><meta charset="utf-8"><title>AssistIQ not connected!</title></head>' +
+        '<body bgcolor="white">' +
+        '<p>&nbsp;</p>'+
+        '<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>' +
+        '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>' +
+        '<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>' +
+        '</body></html>');
+      AContext.Connection.IOHandler.WriteLn;
+
+      EdAccessCode := '';
+      // Вызываем обработчик для остановки/очистки канала
+      BGetTokkens.OnClick(fMain);
+    end;
+
+    Edit2.text := 'чудо !!';
+
+    // Корректно закрываем соединение
+    AContext.Connection.IOHandler.InputBuffer.Clear;
+    AContext.Connection.Disconnect;
+  end
+  else
+  begin
+    // Не GET-запрос: Выводим в Edit2 для диагностики
+    Edit2.text := RequestLine;
+  end;
+end;
+
+
+
 // ОБРАБОТКА  поступление согласлования или не согласования выдачи прав на канал пользователем
+{
 procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
 const
   cNameFile: string = 'AccessCode';
@@ -1704,9 +1835,10 @@ begin
         TCPServerYouTubeAnswers.Active := false;
       end);
   end;
-  }
+
 
 end;
+}
 
 procedure TfMain.TestAniingicatorClick(Sender: TObject);
 begin
