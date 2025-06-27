@@ -26,7 +26,7 @@ uses
   uLanguages, FmLanguages, PnLanguage, uTranslate,
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
   FmHelp, FmAddMoney, System.ImageList, FMX.ImgList,
-  //IdSocketHandle,
+  // IdSocketHandle,
   IdGlobal;
 
 type
@@ -517,42 +517,49 @@ var
   vString: string;
 
 begin
-  if EdAccessCode <> '' then
+  if Trim(EdAccessCode) <> '' then
   begin
-
     OAuth2 := TOAuth.Create;
-    OAuth2.ClientID :=
-      '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-    OAuth2.ClientSecret := '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';
-    OAuth2.ResponseCode := EdAccessCode; // Edit1.Text;//
-    // Edit1.text := EdAccessCode;
+    try
+      OAuth2.ClientID :=
+        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+      OAuth2.ClientSecret := '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';
+      OAuth2.ResponseCode := EdAccessCode; // Edit1.Text;//
+      // Edit1.text := EdAccessCode;
 
-    Access_token := OAuth2.GetAccessToken;
-    refresh_token := OAuth2.refresh_token;
+      Access_token := OAuth2.GetAccessToken;
+      refresh_token := OAuth2.refresh_token;
 
-    Edit4.text := Access_token + ' иии ' + refresh_token;
+      Edit4.text := Access_token + ' иии ' + refresh_token;
 
-    vResponceChannel := OAuth2.MyChannels;
-    Memo1.text := vResponceChannel;
-    OAuth2.Free;
-    EdRefresh_token := refresh_token;
-    BGetChannelClick(Sender);
-    ButtonSelChannelsClick(Sender); // обновление не забудь!!!
-    EdAccessCode := ''; // чтоб второй раз не пошел
-  end;
-  if TCPServerYouTubeAnswers.Active = true then
-  begin
-    TThread.Queue(nil,
-      procedure
-      var      i: integer;
+      vResponceChannel := OAuth2.MyChannels;
+      Memo1.text := vResponceChannel;
+
+      EdRefresh_token := refresh_token;
+      // вызов других обработчиков событий
+      BGetChannelClick(Sender);
+      ButtonSelChannelsClick(Sender); // обновление не забудь!!!
+      EdAccessCode := ''; // чтоб второй раз не пошел
+    finally
+      OAuth2.Free;
+    end;
+  end;;
+// остановка и перенастройка TCP
+if TCPServerYouTubeAnswers.Active = true then
+begin
+  TThread.Queue(nil,
+    procedure
+    var
+      i: integer;
+    begin
+      TCPServerYouTubeAnswers.Active := false;
+      for i := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
       begin
-        TCPServerYouTubeAnswers.Active := false;
-      for I := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
-        begin
-          TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue; // TIdSocketHandleReuseSocket.rsTrue;
-        end;
-      end);
-  end;
+        TCPServerYouTubeAnswers.Bindings[i].ReuseSocket :=
+          TIdReuseSocket.rsTrue; // TIdSocketHandleReuseSocket.rsTrue;
+      end;
+    end);
+end;
 
 end;
 
@@ -1128,46 +1135,105 @@ begin
 end;
 
 // обработка пароля
-procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
-var
-{$IFDEF ANDROID}
-  Intent: JIntent;
-{$ENDIF}
-{$IFDEF IOS}
-  NSU: NSUrl;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-  res: HINST;
-{$ENDIF}
-  i : Integer;
-begin
+//procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
+//var
+//{$IFDEF ANDROID}
+//  Intent: JIntent;
+//{$ENDIF}
+//{$IFDEF IOS}
+//  NSU: NSUrl;
+//{$ENDIF}
+//{$IFDEF MSWINDOWS}
+//  res: HINST;
+//{$ENDIF}
+//  i: integer;
+//begin
   // подключение
   // EditStatusConnect.Text := 'Waiting for connection ...';
   // 1.Включить сервер
 
-  if TCPServerYouTubeAnswers.Active = false then
-  begin
-    for I := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
-    begin
-      TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue; // TIdSocketHandleReuseSocket.rsTrue;
-    end;
+//  if TCPServerYouTubeAnswers.Active = false then
+//  begin
+//    for i := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
+//    begin
+//      TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue;
+      // TIdSocketHandleReuseSocket.rsTrue;
+//    end;
 
-    //TCPServerYouTubeAnswers.Bindings.Add.Port := 1904; // добавлять нельзя, только через дефолт!
-    TCPServerYouTubeAnswers.DefaultPort := 1904;
-    TCPServerYouTubeAnswers.Active := true;
+    // TCPServerYouTubeAnswers.Bindings.Add.Port := 1904; // добавлять нельзя, только через дефолт!
+//    TCPServerYouTubeAnswers.DefaultPort := 1904;
+//    TCPServerYouTubeAnswers.Active := true;
 
-  end;
+//  end;
   // 2. Открыть регистрацию
-{$IFDEF MSWINDOWS}     // версия для винды
-  ShellExecute(0 { Handle } , 'open',
-    PChar('https://accounts.google.com/o/oauth2/v2/auth?' +
-    'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
-    'access_type=offline&include_granted_scopes=true' + '&state=security_token'
-    + '&response_type=code' + '&redirect_uri=http://127.0.0.1:1904' +
-    '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com'
-    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil,
-    1 { SW_SHOWNORMAL } );
+//{$IFDEF MSWINDOWS}     // версия для винды
+//  ShellExecute(0 { Handle } , 'open',
+//    PChar('https://accounts.google.com/o/oauth2/v2/auth?' +
+//    'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
+//    'access_type=offline&include_granted_scopes=true' + '&state=security_token'
+//    + '&response_type=code' + '&redirect_uri=http://127.0.0.1:1904' +
+//    '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com'
+//    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil,
+//    1 { SW_SHOWNORMAL } );
+//{$ENDIF}
+//end;
+
+
+procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
+{$IFDEF ANDROID}
+var
+  Intent: JIntent;
 {$ENDIF}
+{$IFDEF IOS}
+var
+  NSU: NSUrl;
+{$ENDIF}
+var
+  i: Integer;
+  OAuthUrl: string;
+begin
+  // 1. Запуск сервера (если не активен)
+  if not TCPServerYouTubeAnswers.Active then
+  begin
+    try
+      for i := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
+        TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue;
+      TCPServerYouTubeAnswers.DefaultPort := 1904; // Порт из OAuth2 redirect_uri
+      TCPServerYouTubeAnswers.Active := true;
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Ошибка запуска локального сервера: ' + E.Message);
+        Exit;
+      end;
+    end;
+  end;
+
+  // 2. Сформировать URL для авторизации
+  OAuthUrl :=
+    'https://accounts.google.com/o/oauth2/v2/auth?' +
+    'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
+    'access_type=offline&include_granted_scopes=true' +
+    '&state=security_token' +
+    '&response_type=code' +
+    '&redirect_uri=http://127.0.0.1:1904' +
+    '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com' +
+    '&service=lso&o2v=2&flowName=GeneralOAuthFlow';
+
+  // 3. Открытие ссылки на разных платформах
+  {$IFDEF MSWINDOWS}
+    ShellExecute(0, 'open', PChar(OAuthUrl), nil, nil, 1); // SW_SHOWNORMAL
+  {$ELSEIF ANDROID}
+    Intent := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_VIEW, StrToJURI(OAuthUrl));
+    TAndroidHelper.Context.startActivity(Intent);
+  {$ELSEIF IOS}
+    NSU := StrToNSUrl(OAuthUrl);
+    if SharedApplication.canOpenURL(NSU) then
+      SharedApplication.openURL(NSU);
+  {$ELSE}
+    // Fallback — показать пользователю ссылку для ручного запуска
+    ShowMessage('Откройте в браузере: ' + OAuthUrl);
+  {$ENDIF}
 end;
 
 procedure TfMain.FrameChannelsMouseMove(Sender: TObject; Shift: TShiftState;
@@ -1579,30 +1645,30 @@ procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
 const
   cNameFile: string = 'AccessCode';
 var
-  PeerIP      : string;
-  PeerPort    : integer;
-  RequestLine : string;
-  vAccessCode : string;
+  PeerIP: string;
+  PeerPort: integer;
+  RequestLine: string;
+  vAccessCode: string;
   vPath, vFullNameFile: string;
-  vFileText   : TStringList;
-  ErrorDesc   : string;
+  vFileText: TStringList;
+  ErrorDesc: string;
 
-// Парсер параметров запроса (именно query string)
+  // Парсер параметров запроса (именно query string)
   function GetQueryParam(const Src, Param: string): string;
   var
-    qStart, i: Integer;
+    qStart, i: integer;
     Arr, Pair: TArray<string>;
   begin
     Result := '';
-    qStart := Pos('?', Src);
+    qStart := pos('?', Src);
     if qStart > 0 then
     begin
-      Arr := Src.Substring(qStart+1).Split(['&']);
+      Arr := Src.Substring(qStart + 1).Split(['&']);
       for i := 0 to High(Arr) do
       begin
         Pair := Arr[i].Split(['=']);
         if (Length(Pair) = 2) and (Pair[0].ToLower = Param.ToLower) then
-          Exit(Pair[1]);
+          exit(Pair[1]);
       end;
     end;
   end;
@@ -1614,18 +1680,18 @@ begin
   RequestLine := AContext.Connection.IOHandler.ReadLn;
 
   // 2. Читаем заголовки HTTP запроса ДО ПУСТОЙ строки
-  while AContext.Connection.IOHandler.ReadLn <> '' do ;
+  while AContext.Connection.IOHandler.ReadLn <> '' do;
 
   // 3. Получаем инфу о клиенте
-  PeerIP   := AContext.Binding.PeerIP;
+  PeerIP := AContext.Binding.PeerIP;
   PeerPort := AContext.Binding.PeerPort;
 
   // 4. Обрабатываем только GET-запросы
-  if Pos('GET', RequestLine) > 0 then
+  if pos('GET', RequestLine) > 0 then
   begin
     // Парсим параметры code и error
     vAccessCode := GetQueryParam(RequestLine, 'code');
-    ErrorDesc   := GetQueryParam(RequestLine, 'error');
+    ErrorDesc := GetQueryParam(RequestLine, 'error');
 
     // НЕ было отмены (error), т.е. пользователь выдал права
     if (ErrorDesc = '') and (vAccessCode <> '') then
@@ -1645,41 +1711,43 @@ begin
 
       // Готовим успешный HTML-ответ
       AContext.Connection.IOHandler.WriteLn('HTTP/1.1 200 OK');
-      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html; charset=UTF-8');
+      AContext.Connection.IOHandler.WriteLn
+        ('Content-Type: text/html; charset=UTF-8');
       AContext.Connection.IOHandler.WriteLn('Connection: close');
       AContext.Connection.IOHandler.WriteLn;
-      AContext.Connection.IOHandler.Write(
-        '<html><head><meta charset="utf-8"><title>AssistIQ connected!</title></head>' +
-        '<body bgcolor="white">' +
-        '<p>&nbsp;</p>'+
-        '<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>' +
-        '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>' +
-        '<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>' +
-        '</body></html>');
+      AContext.Connection.IOHandler.
+        Write('<html><head><meta charset="utf-8"><title>AssistIQ connected!</title></head>'
+        + '<body bgcolor="white">' + '<p>&nbsp;</p>' +
+        '<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>'
+        + '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>'
+        + '<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>'
+        + '</body></html>');
       AContext.Connection.IOHandler.WriteLn;
 
       // Для ваших дальнейших процедур:
       EdAccessCode := vAccessCode;
-      BGetTokkens.OnClick(fMain);  // Дополнительно: если надо остановить канал или обработать токен
+      BGetTokkens.OnClick(fMain);
+      // Дополнительно: если надо остановить канал или обработать токен
       // BGetChannel.OnClick(fMain); // если используется, раскомментируйте
 
-    end else
+    end
+    else
     // Был отказ (error)
     begin
       Edit1.text := '';
       // Готовим HTML-ответ для случая отказа
       AContext.Connection.IOHandler.WriteLn('HTTP/1.1 200 OK');
-      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html; charset=UTF-8');
+      AContext.Connection.IOHandler.WriteLn
+        ('Content-Type: text/html; charset=UTF-8');
       AContext.Connection.IOHandler.WriteLn('Connection: close');
       AContext.Connection.IOHandler.WriteLn;
-      AContext.Connection.IOHandler.Write(
-        '<html><head><meta charset="utf-8"><title>AssistIQ not connected!</title></head>' +
-        '<body bgcolor="white">' +
-        '<p>&nbsp;</p>'+
-        '<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>' +
-        '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>' +
-        '<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>' +
-        '</body></html>');
+      AContext.Connection.IOHandler.
+        Write('<html><head><meta charset="utf-8"><title>AssistIQ not connected!</title></head>'
+        + '<body bgcolor="white">' + '<p>&nbsp;</p>' +
+        '<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>'
+        + '<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" /></p>'
+        + '<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>'
+        + '</body></html>');
       AContext.Connection.IOHandler.WriteLn;
 
       EdAccessCode := '';
@@ -1701,13 +1769,12 @@ begin
 end;
 
 
-
 // ОБРАБОТКА  поступление согласлования или не согласования выдачи прав на канал пользователем
 {
-procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
-const
+  procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
+  const
   cNameFile: string = 'AccessCode';
-var
+  var
   Port: integer;
   PeerPort: integer;
   PeerIP: string;
@@ -1720,7 +1787,7 @@ var
   vFullNameFile: string;
   vFileText: TStringList;
 
-begin
+  begin
   vAccessCode := '';
   msgFromClient := AContext.Connection.IOHandler.ReadLn;
 
@@ -1729,97 +1796,97 @@ begin
 
   if pos('GET', msgFromClient) > 0 then
   begin
-    if pos('error=', msgFromClient) = 0 then
-    begin
-      vPosBegin := pos('code=', msgFromClient);
-      vPosEnd := pos('scope=', msgFromClient);
-      if (vPosBegin > 0) and (vPosEnd > 0) then
-      begin
-        vPosBegin := vPosBegin + 5;
-        vAccessCode := Copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
-        // vAccessCode := msgFromClient;
-        // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
-        Edit1.text := vAccessCode;
-        if vAccessCode <> '' then
-        begin
-          vPath := GetCurrentDir();
-          vFullNameFile := vPath + '/' + cNameFile;
-          vFileText := TStringList.Create;
-          vFileText.Add(vAccessCode);
-          // сохраняем
-          vFileText.SaveToFile(vFullNameFile);
-        end;
-      end;
-      AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
-      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
-      AContext.Connection.IOHandler.WriteLn('Connection: close');
-      AContext.Connection.IOHandler.WriteLn;
-      AContext.Connection.IOHandler.write('<html>');
-      AContext.Connection.IOHandler.write('<head>');
-      AContext.Connection.IOHandler.
-        write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
-      AContext.Connection.IOHandler.
-        write('<title>"AssistIQ connected!</title>');
-      AContext.Connection.IOHandler.write('</head>');
+  if pos('error=', msgFromClient) = 0 then
+  begin
+  vPosBegin := pos('code=', msgFromClient);
+  vPosEnd := pos('scope=', msgFromClient);
+  if (vPosBegin > 0) and (vPosEnd > 0) then
+  begin
+  vPosBegin := vPosBegin + 5;
+  vAccessCode := Copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
+  // vAccessCode := msgFromClient;
+  // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
+  Edit1.text := vAccessCode;
+  if vAccessCode <> '' then
+  begin
+  vPath := GetCurrentDir();
+  vFullNameFile := vPath + '/' + cNameFile;
+  vFileText := TStringList.Create;
+  vFileText.Add(vAccessCode);
+  // сохраняем
+  vFileText.SaveToFile(vFullNameFile);
+  end;
+  end;
+  AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
+  AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
+  AContext.Connection.IOHandler.WriteLn('Connection: close');
+  AContext.Connection.IOHandler.WriteLn;
+  AContext.Connection.IOHandler.write('<html>');
+  AContext.Connection.IOHandler.write('<head>');
+  AContext.Connection.IOHandler.
+  write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
+  AContext.Connection.IOHandler.
+  write('<title>"AssistIQ connected!</title>');
+  AContext.Connection.IOHandler.write('</head>');
 
-      AContext.Connection.IOHandler.write('<body bgcolor="white">');
-      AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
-      AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>');
-      AContext.Connection.IOHandler.
-        write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
-      // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
+  AContext.Connection.IOHandler.write('<body bgcolor="white">');
+  AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
+  AContext.Connection.IOHandler.
+  write('<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>');
+  AContext.Connection.IOHandler.
+  write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
+  // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
 
-      AContext.Connection.IOHandler.write('</p>');
-      AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>');
-      AContext.Connection.IOHandler.write('</body>');
+  AContext.Connection.IOHandler.write('</p>');
+  AContext.Connection.IOHandler.
+  write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>');
+  AContext.Connection.IOHandler.write('</body>');
 
-      AContext.Connection.IOHandler.write('</html>');
-      AContext.Connection.IOHandler.WriteLn;
-      EdAccessCode := vAccessCode;
-      // вызов процедуры запроса данных по каналу и их сохранение
-      BGetTokkens.OnClick(fMain);     // в нем и заглушим работу данного канала
-      // BGetChannel.OnClick(fMain);
-    end
-    else
-    begin
-      AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
-      AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
-      AContext.Connection.IOHandler.WriteLn('Connection: close');
-      AContext.Connection.IOHandler.WriteLn;
-      AContext.Connection.IOHandler.write('<html>');
-      AContext.Connection.IOHandler.write('<head>');
-      AContext.Connection.IOHandler.
-        write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
-      AContext.Connection.IOHandler.write('<title>AssistIQ connected!</title>');
-      AContext.Connection.IOHandler.write('</head>');
-
-      AContext.Connection.IOHandler.write('<body bgcolor="white">');
-      AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
-      AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>');
-      AContext.Connection.IOHandler.
-        write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
-      // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
-
-      AContext.Connection.IOHandler.write('</p>');
-      AContext.Connection.IOHandler.
-        write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>');
-      AContext.Connection.IOHandler.write('</body>');
-
-      AContext.Connection.IOHandler.write('</html>');
-      AContext.Connection.IOHandler.WriteLn;
-      EdAccessCode := '';
-      // вызов процедуры запроса данных по каналу только чтоб остановить сервер
-      BGetTokkens.OnClick(fMain);
-    end;
-    // IdTCPServer1.Active := false;
-    Edit2.text := 'чудо !!';
+  AContext.Connection.IOHandler.write('</html>');
+  AContext.Connection.IOHandler.WriteLn;
+  EdAccessCode := vAccessCode;
+  // вызов процедуры запроса данных по каналу и их сохранение
+  BGetTokkens.OnClick(fMain);     // в нем и заглушим работу данного канала
+  // BGetChannel.OnClick(fMain);
   end
   else
   begin
-    Edit2.text := msgFromClient;
+  AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
+  AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
+  AContext.Connection.IOHandler.WriteLn('Connection: close');
+  AContext.Connection.IOHandler.WriteLn;
+  AContext.Connection.IOHandler.write('<html>');
+  AContext.Connection.IOHandler.write('<head>');
+  AContext.Connection.IOHandler.
+  write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
+  AContext.Connection.IOHandler.write('<title>AssistIQ connected!</title>');
+  AContext.Connection.IOHandler.write('</head>');
+
+  AContext.Connection.IOHandler.write('<body bgcolor="white">');
+  AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
+  AContext.Connection.IOHandler.
+  write('<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>');
+  AContext.Connection.IOHandler.
+  write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
+  // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
+
+  AContext.Connection.IOHandler.write('</p>');
+  AContext.Connection.IOHandler.
+  write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>');
+  AContext.Connection.IOHandler.write('</body>');
+
+  AContext.Connection.IOHandler.write('</html>');
+  AContext.Connection.IOHandler.WriteLn;
+  EdAccessCode := '';
+  // вызов процедуры запроса данных по каналу только чтоб остановить сервер
+  BGetTokkens.OnClick(fMain);
+  end;
+  // IdTCPServer1.Active := false;
+  Edit2.text := 'чудо !!';
+  end
+  else
+  begin
+  Edit2.text := msgFromClient;
   end;
   // а вот тут танцы с бубнами как же прикрыть работу сервера
   // AContext.Connection.IOHandler.CloseGracefully;
@@ -1829,15 +1896,15 @@ begin
   // нельзя тут, потому как в процедуре обработка идет ещё, там нужно будет и глушить
   if TCPServerYouTubeAnswers.Active = true then
   begin
-    TThread.Queue(nil,
-      procedure
-      begin
-        TCPServerYouTubeAnswers.Active := false;
-      end);
+  TThread.Queue(nil,
+  procedure
+  begin
+  TCPServerYouTubeAnswers.Active := false;
+  end);
   end;
 
 
-end;
+  end;
 }
 
 procedure TfMain.TestAniingicatorClick(Sender: TObject);
