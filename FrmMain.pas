@@ -77,6 +77,7 @@ type
     procedure ButtonBackClick(Sender: TObject);
     procedure FrameFirstButtonLogClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ClearChannelPanels;
     procedure ButtonSelChannelsClick(Sender: TObject);
     procedure DinButtonDeleteChannelClick(Sender: TObject);
     procedure DinPanelClick(Sender: TObject);
@@ -439,6 +440,92 @@ end;
 
 // смотри статус не снеси
 // разбор полученного ответа в vResponceChannel по каналу от сервера youtube и создание коротного описания каналов
+// от DeepSeek
+
+procedure TfMain.BGetChannelClick(Sender: TObject);
+var
+  vObj: TChannel;
+  i: Integer;
+  vChannel: TShortChannel;
+  vImgUrl: string;
+  Bitmap: TBitmap;
+  CleanUrl: string;
+  HTTPClient: THTTPClient;
+  Response: IHTTPResponse;
+begin
+  if Memo1.Text = '' then
+  begin
+    ShowMessage('Memo1 пустой - нет данных для обработки');
+    Exit;
+  end;
+
+  try
+    vObj := TJson.JsonToObject<TChannel>(Memo1.Text);
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Ошибка парсинга JSON: ' + E.Message);
+      Exit;
+    end;
+  end;
+
+  try
+    HTTPClient := THTTPClient.Create;
+    try
+      HTTPClient.UserAgent := 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
+
+      for i := 0 to High(vObj.Items) do
+      begin
+        // Заполняем данные канала
+        vChannel.id_channel := vObj.Items[i].id;
+        vChannel.name_channel := vObj.Items[i].snippet.title;
+        vChannel.lang := vObj.Items[i].snippet.country;
+
+        if vChannel.lang = '' then
+          vChannel.lang := vObj.Items[i].snippet.defaultLanguage;
+
+        vChannel.refresh_token := EdRefresh_token; // Добавлено .Text
+        vChannel.deleted := 0;
+
+        // Обработка изображения
+        vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
+        Edit4.text := vImgUrl;
+        CleanUrl := StringReplace(vImgUrl, #13#10, '', [rfReplaceAll]);
+
+        try
+          Response := HTTPClient.Get(CleanUrl);
+          if Assigned(Response) and (Response.StatusCode = 200) then
+          begin
+            Bitmap := TBitmap.Create;
+            try
+              Bitmap.LoadFromStream(Response.ContentStream);
+              vChannel.img := TBitmap.Create;
+              vChannel.img.Assign(Bitmap);
+              vChannel.img_channel := TBlobType(Bitmap);
+            finally
+              Bitmap.Free;
+            end;
+          end;
+        except
+          on E: Exception do
+            ShowMessage('Ошибка загрузки изображения: ' + E.Message);
+        end;
+
+        // Сохранение в БД
+        if SQLiteModule.InsRefreshToken(vChannel) <= 0 then
+          ShowMessage('Ошибка сохранения канала: ' + vChannel.name_channel);
+      end;
+    finally
+      HTTPClient.Free;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Общая ошибка: ' + E.Message);
+  end;
+end;
+
+//было до ИИ
+{
 procedure TfMain.BGetChannelClick(Sender: TObject);
 var
   vObj: Tchannel; // Tchannel;
@@ -489,9 +576,9 @@ begin
     vChannel.img := TBitmap.Create;
     vChannel.img := Bitimg;
     vChannel.img_channel := TBlobType(Bitimg);
-    { except                                                                         сс
-      showmessage('Что except');
-      end; }
+//     except                                                                         сс
+//      showmessage('Что except');
+//      end;
 
     vChannel.refresh_token := EdRefresh_token;
     if vChannel.lang = '' then
@@ -504,6 +591,7 @@ begin
   end;
 
 end;
+}
 
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
 // и закрытие сервера
@@ -1063,7 +1151,119 @@ begin
 
 end;
 
+
+procedure TfMain.ClearChannelPanels;   // это полностью придумал ИИ
+var
+  I: Integer;
+begin
+  for I := Low(PanChannels) to High(PanChannels) do
+  begin
+    if Assigned(PanChannels[I]) then
+    begin
+      PanChannels[I].Free;  // Освобождаем память
+      PanChannels[I] := nil; // Обнуляем ссылку
+    end;
+  end;
+  lastPanel := nil; // Сбрасываем последнюю выбранную панель
+end;
+
 // прорисовываю каналы что ли
+procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
+var
+  results: TDataSet;
+  i, vPos: Integer;
+  vBitmap: TBitmap;
+  vDefaultBitmap: TBitmap;
+  vIdChannel, vRefreshToken, vName, vLang, vSelLang: string;
+begin
+  // Инициализация
+  i := 1;
+  vDefaultBitmap := nil; // Можно заранее загрузить дефолтное изображение
+
+  // Очистка предыдущих панелей
+  ClearChannelPanels;
+
+  // Получаем данные из БД
+  results := SQLiteModule.SelRefreshToken;
+  try
+    if not Assigned(results) then
+    begin
+      ShowMessage('Ошибка: не удалось получить данные из БД');
+      Exit;
+    end;
+
+    // Оптимизация: отключаем обновление интерфейса во время создания панелей
+    FrameChannels.BoxChannels.BeginUpdate;
+    try
+      if not results.IsEmpty then
+      begin
+        results.First;
+        while not results.Eof and (i <= High(PanChannels)) do
+        begin
+          // Получаем данные из записи
+          vIdChannel := results.FieldByName('id_channel').AsString;
+          vRefreshToken := results.FieldByName('refresh_token').AsString;
+          vName := results.FieldByName('name_channel').AsString;
+          vLang := results.FieldByName('lang').AsString;
+          vSelLang := results.FieldByName('sel_lang').AsString;
+
+          // Обработка изображения
+          vBitmap := nil;
+          try
+            if not results.FieldByName('img_channel').IsNull then
+              vBitmap := TBitmap(results.FieldByName('img_channel'));
+          except
+            on E: Exception do
+              ShowMessage('Ошибка загрузки изображения: ' + E.Message);
+            // LogError('Ошибка загрузки изображения: ' + E.Message);
+          end;
+
+          // Позиционирование
+          vPos := 3 + (i - 1) * 120;
+
+          // Создание панели канала
+          PanChannels[i] := TChannelPanel.Create(
+            FrameChannels.BoxChannels,
+            vPos,
+            i,
+            vIdChannel,
+            vRefreshToken,
+            vName,
+            vLang,
+            vSelLang,
+            vBitmap,
+            ImageDel.Bitmap
+          );
+
+          // Настройка панели
+          with PanChannels[i] do
+          begin
+            Parent := FrameChannels.BoxChannels;
+            ButtonDel.OnClick := DinButtonDeleteChannelClick;
+            ImageDel.OnClick := DinButtonDeleteChannelClick;
+            OnClick := DinPanelClick;
+            ChImage.OnClick := DinPanelClick;
+            ChName.OnClick := DinPanelClick;
+            ChLang.OnClick := DinPanelClick;
+          end;
+
+          Inc(i);
+          results.Next;
+        end;
+      end;
+    finally
+      FrameChannels.BoxChannels.EndUpdate;
+    end;
+  finally
+    results.Free;
+  end;
+
+  // Обновление счетчика
+  Label1.Text := IntToStr(i - 1);
+end;
+
+// до ИИ
+{
 procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
 var
   //
@@ -1114,6 +1314,7 @@ begin
   Label1.text := IntToStr(i - 1);
 
 end;
+}
 
 procedure TfMain.ButtonVideoInfoClick(Sender: TObject);
 var
@@ -1914,6 +2115,70 @@ end;
 
 // удaление канала
 procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
+var
+  vIdChannel, vNameChannel: string;
+  vNPanel: Integer;
+  strQuestionDelete: string;
+  i: Integer;
+begin
+  {
+  if not (Sender is TButton) then -- но у нас он навешен не на баттон а рисунок
+  begin
+    ShowMessage('Ошибка: неверный индекс панели');
+    Exit; // Проверка типа Sender
+  end;
+  }
+  vNPanel := TButton(Sender).Tag;
+
+  // Проверка выхода за границы массива PanChannels
+  if (vNPanel < 0) or (vNPanel > High(PanChannels)) then
+  begin
+    ShowMessage('Ошибка: неверный индекс панели');
+    Exit;
+  end;
+
+  // Получаем данные канала
+  vIdChannel := PanChannels[vNPanel].chId.Text;
+  vNameChannel := PanChannels[vNPanel].ChName.Text;
+
+  // Формируем вопрос с корректным форматированием
+  strQuestionDelete := Format('Удалить канал "%s"?', [vNameChannel]);
+
+  // Диалог подтверждения
+  if MessageDlg(strQuestionDelete, TMsgDlgType.mtConfirmation,
+               [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], 0) = mrYes then
+  begin
+    // Удаление из БД
+    if not SQLiteModule.DelChannel(vIdChannel) then
+    begin
+      ShowMessage('Ошибка при удалении канала из БД');
+      Exit;
+    end;
+
+    // Освобождение панелей
+    ButtonSelChannelsClick(Sender); // Обновление интерфейса
+    {
+    try
+      // Более безопасный вариант очистки
+      for i := Low(PanChannels) to High(PanChannels) do
+//      for i := 1 to 50 do
+      begin
+        if Assigned(PanChannels[i]) then
+        begin
+          PanChannels[i].Free;
+          PanChannels[i] := nil; // Обнуляем ссылку
+        end;
+      end;
+    finally
+      lastPanel := nil;
+      ButtonSelChannelsClick(Sender); // Обновление интерфейса
+    end;
+    }
+  end;
+end;
+
+// до ИИ
+{procedure TfMain.DinButtonDeleteChannelClick(Sender: TObject);
 // Sender : TComponent;
 var
   strQuestionDelete, vIdChannel, vNameChannel: string;
@@ -1941,6 +2206,7 @@ begin
   end;
 
 end;
+}
 
 // Нажатие по каналу чтоб загрузить видео для последующей работы с ними
 procedure TfMain.DinPanelClick(Sender: TObject);

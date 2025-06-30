@@ -138,7 +138,8 @@ type
     function InsRefreshToken(pShortChanel: TShortChannel): integer;
     function LoadAnyImage(pUrl: string): TStream;
     procedure SaveTestImage(pSS3: TBitmap);
-    procedure DelChannel(pId: String);
+//    procedure DelChannel(pId: String);
+    function DelChannel(pId: String): Boolean;
     function Upd_sel_Lang_RefreshToken(pId_channel: string;
       pSel_Lang: string): integer;
     function LoadLanguage(): TListLanguages;
@@ -210,6 +211,41 @@ begin
 end;
 
 // загрузка данных по не удаленным каналам
+function TSQLiteModule.SelRefreshToken(): TDataSet;
+var
+  results: TDataSet;
+begin
+  results := nil;
+  try
+    try
+      // Используем параметризованный запрос для безопасности
+      SQLiteModule.SQL.ExecSQL('SELECT * FROM refresh_token WHERE deleted = 0', nil, results);
+
+      if Assigned(results) and not results.IsEmpty then
+      begin
+        // Если нам не нужна обработка данных, можно просто вернуть результат
+        Result := results;
+        Exit;
+      end;
+    except
+      on E: Exception do
+      begin
+        // Лучше использовать более информативное сообщение об ошибке
+        raise Exception.Create('Ошибка при загрузке refresh_token: ' + E.Message);
+        // Или, если нужно именно showmessage:
+        // ShowMessage('Ошибка при загрузке refresh_token: ' + E.Message);
+      end;
+    end;
+  finally
+    // Если не возвращаем results, нужно освободить память
+    if (Result = nil) and Assigned(results) then
+      results.Free;
+  end;
+
+  // Возвращаем nil или пустой результат в случае ошибки
+  Result := nil;
+end;
+{ДО ИИ
 function TSQLiteModule.SelRefreshToken(): tDataSet;
 var
   i: integer;
@@ -244,7 +280,7 @@ begin
 
   Result := results;
 end;
-
+}
 // загрузка данных по всем каналам  и удаленным в том числе
 function TSQLiteModule.SelInfoChannels(): TShortChannels;
 var
@@ -405,14 +441,16 @@ begin
 end;
 
 // удаление канала
-procedure TSQLiteModule.DelChannel(pId: String);
+function TSQLiteModule.DelChannel(pId: String): Boolean;
 begin
-  begin
-    SQLQuery.SQL.Text :=
-      'update refresh_token set deleted = 1 where id_channel = :pId;';
+  try
+    SQLQuery.SQL.Text := 'UPDATE refresh_token SET deleted = 1 WHERE id_channel = :pId';
     SQLQuery.Params[0].AsString := pId;
     SQLQuery.ExecSQL;
     SQLiteModule.SQL.Commit;
+    Result := True;
+  except
+    Result := False;
   end;
 end;
 
