@@ -98,6 +98,10 @@ end;
 constructor TOAuth.Create;
 begin
   inherited;
+   // Инициализация ClientID и ClientSecret при создании объекта
+  FClientID := '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+  FClientSecret := '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';
+
 end;
 
 destructor TOAuth.destroy;

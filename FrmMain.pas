@@ -179,68 +179,77 @@ implementation
 
 {$R *.fmx}
 
-// окончания работы прогресс бара!!!
+// Завершение работы прогресс-бара и потока  ИИ
 procedure TfMain.FinishProgressBar(Sender: TObject);
 begin
+  // Проверяем, существует ли глобальный поток прогресса
   if Assigned(GlobalProgressThread) then
   begin
-    Label1.text := BoolToStr(GlobalProgressThread.Terminated);
-    if GlobalProgressThread.Terminated = false then
-      GlobalProgressThread.Terminate;
-    Label1.text := Label1.text + '  ' +
-      BoolToStr(GlobalProgressThread.Terminated);
-    if GlobalProgressThread.Terminated = null then
-      Label1.text := Label1.text + ' null';
+    // Информативно: отображаем статус завершённости потока
+    Label1.Text := BoolToStr(GlobalProgressThread.Terminated);
 
+    // Если поток ещё не завершён — инициируем завершение
+    if not GlobalProgressThread.Terminated then
+      GlobalProgressThread.Terminate;
+
+    // Ещё раз отображаем изменённый статус потока
+    Label1.Text := Label1.Text + '  ' + BoolToStr(GlobalProgressThread.Terminated);
+
+    // Проверка на null (обычно нет смысла — Terminated всегда boolean, но сохранено как в вашем исходнике)
+    // Однако, такой код не нужен, т.к. Terminated не может быть null, оставляю для совместимости
+    if GlobalProgressThread.Terminated = null then
+      Label1.Text := Label1.Text + ' null';
   end;
+
+  // Освобождаем память от потока, если он всё ещё существует
   if Assigned(GlobalProgressThread) then
   begin
     GlobalProgressThread.Free;
+    GlobalProgressThread := nil; // Явно сбрасываем глобальный указатель на поток
   end;
-  vProgressBarStatus := 0;
 
-  FrameProgressBar.Visible := false;
-  showmessage('FinishBar');
+  vProgressBarStatus := 0; // Сбрасываем статус прогресс-бара
+
+  FrameProgressBar.Visible := false; // Скрываем прогресс-бар с формы
+
+  ShowMessage('FinishBar'); // Для отладки выводим сообщение о завершении
 end;
 
-// начало работы прогресс бара!!!
+
+// Запуск прогресс-бара и связанного фонового потока  ИИ
 procedure TfMain.StartProgressBar(Sender: TObject);
-var
-  aShape: TShape;
-  r, x0, y0: integer;
-  ProgressThread: TProgressThread;
 begin
-  // r:=100;     // радиус
-  // x0:=300;   // координата центра
-  // y0:=200;   // координата центра
-  // image1.Canvas.(FMX.Objects.DrawEllipse(x0, y0, r)); //.Ellipse(x0-r,y0-r,x0+r,y0+r);
-  //
-  // image1.canvas.
+  // Если поток уже существует, проверяем его состояние
   if Assigned(GlobalProgressThread) then
   begin
-    if GlobalProgressThread.Terminated = false or
-      GlobalProgressThread.Terminated = true then
+    // Если поток завершён — чистим память
+    if GlobalProgressThread.Terminated then
     begin
-      if GlobalProgressThread.Terminated = true then
-      begin
-        GlobalProgressThread.Free;
-      end
-    end
+      GlobalProgressThread.Free;
+      GlobalProgressThread := nil;
+    end;
   end;
+
+  // Если поток не существует — создаём новый
   if not Assigned(GlobalProgressThread) then
   begin
-    GlobalProgressThread := TProgressThread.Create(true);
+    GlobalProgressThread := TProgressThread.Create(true); // Создаём поток
   end;
+
+  // (Редкий случай) Если Terminated имеет значение -1 (строка) — пересоздаём поток (такого состояния не бывает у boolean!)
   if BoolToStr(GlobalProgressThread.Terminated) = '-1' then
     GlobalProgressThread := TProgressThread.Create(true);
+
   if vProgressBarStatus = 0 then
   begin
-    vProgressBarStatus := 0;
-    GlobalProgressThread.FreeOnTerminate := true;
-    GlobalProgressThread.Resume;
+    vProgressBarStatus := 1; // Отмечаем, что прогресс-бар активен
+    GlobalProgressThread.FreeOnTerminate := True; // Автоматически освобождать поток после завершения
+    GlobalProgressThread.Resume; // Запускаем поток
   end;
-  FrameProgressBar.Visible := true;
-  // showmessage('startBar');
+
+  FrameProgressBar.Visible := true; // Показываем прогресс-бар на форме
+
+  // ShowMessage('startBar'); // Для отладки (лучше не показывать пользователю!)
 end;
 
 // загрузка данных по не удаленным каналам
@@ -347,96 +356,100 @@ begin
 
 end;
 
+// правлено ИИ
 procedure TfMain.FormShow(Sender: TObject);
 var
-  i, j: integer;
+  i, j: Integer;
   vAppLocalization: TAppLocalization;
   vResponce, vTemp: string;
   OAuth2: TOAuth;
   vList: TListLanguages;
 begin
+  // 1. Авторизация — объект для дальнейшей работы с API
   OAuth2 := TOAuth.Create;
-  // вспомним какой у нас интерфейс
-  vInterfaceLanguage := uQ.LoadReestr('Local');
-  // подменяем язык интерфейса, пока только по загрузке !!
+  try
+    // 2. Чтение настроек: определяем язык интерфейса программы
+    vInterfaceLanguage := uQ.LoadReestr('Local');
 
-  // грузануть языковые надписи для интерфейса
-  vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
+    // 3. Грузим все локализованные надписи из базы/файла для текущего языка интерфейса
+    vAppLocalization := SQLiteModule.GetAppLocalization(vInterfaceLanguage);
 
-  // установить надписи на все панели!
-  MsgInfoUpdate := vAppLocalization.MsgInfoUpdate;
+    // 4. Устанавливаем локализованные строки на основные элементы интерфейса
+    MsgInfoUpdate            := vAppLocalization.MsgInfoUpdate;
+    LabelYouTube.Text        := vAppLocalization.PanelTop_LabelYouTube;
+    ButtonMonеy.Text         := vAppLocalization.PanelTop_ButtonMonеy;
+    ButtonUpdate.Text        := vAppLocalization.PanelTop_ButtonUpdate;
 
-  LabelYouTube.text := vAppLocalization.PanelTop_LabelYouTube;
-  ButtonMonеy.text := vAppLocalization.PanelTop_ButtonMonеy;
-  ButtonUpdate.text := vAppLocalization.PanelTop_ButtonUpdate;
+    // 5. Передаем в фреймы панели локализацию элементам
+    FrameFirst.SetLang(
+      vAppLocalization.First_LabelName,
+      vAppLocalization.First_LabelPas,
+      vAppLocalization.First_ButtonLog,
+      vAppLocalization.First_ButtonReg
+    );
+    FrameChannels.SetLang(
+      vAppLocalization.Channels_LabelChannels,
+      vAppLocalization.Channels_ButtonAddChannel
+    );
+    FrameMainChannel.SetLang(
+      vAppLocalization.MainChannel_LabelNameChannel,
+      vAppLocalization.MainChannel_ButtonAddNextVideo
+    );
+    FrameVideos.SetLang(
+      vAppLocalization.MainVideos_LabelVideos,
+      vAppLocalization.MainVideos_LanguageCheckBox,
+      vAppLocalization.MainVideos_LabelTitle,
+      vAppLocalization.MainVideos_LabelDescription,
+      vAppLocalization.MainVideos_BTranslater
+    );
 
-  FrameFirst.SetLang(vAppLocalization.First_LabelName,
-    vAppLocalization.First_LabelPas, vAppLocalization.First_ButtonLog,
-    vAppLocalization.First_ButtonReg);
-  FrameChannels.SetLang(vAppLocalization.Channels_LabelChannels,
-    vAppLocalization.Channels_ButtonAddChannel);
-  FrameMainChannel.SetLang(vAppLocalization.MainChannel_LabelNameChannel,
-    vAppLocalization.MainChannel_ButtonAddNextVideo);
-  FrameVideos.SetLang(vAppLocalization.MainVideos_LabelVideos,
-    vAppLocalization.MainVideos_LanguageCheckBox,
-    vAppLocalization.MainVideos_LabelTitle,
-    vAppLocalization.MainVideos_LabelDescription,
-    vAppLocalization.MainVideos_BTranslater);
-
-  // проверка версии
-  vResponce := OAuth2.Version();
-  // удалим последний сомвол, который = ';'
-  if vResponce <> '' then
-  begin
-    vResponce := Copy(vResponce, 1, Length(vResponce) - 1);
-  end;
-
-  if ((vResponce <> sVersion) and (vResponce <> '')) then
-  begin
-    FrameInfo(Sender, 'Вышла новая версия программы - ' + vResponce + '!');
-  end;
-
-
-  // FrameFirst.ButtonLog.text := GoogleTranslate(FrameFirst.ButtonLog.text, 'en',
-  // vInterfaceLanguage);
-
-  // загрузим известные языки перевод
-  vGlobalList := SQLiteModule.LoadLanguage();
-  iScore := SQLiteModule.GetScore();
-  LabelScore.text := IntToStr(iScore);
-  // переведем названия языков на язык программы
-  // TranslateListLanguages(vInterfaceLanguage, vGlobalList);
-
-  // 'Если Есть обновление!' - но пока проверки нет.
-  {
+    // 6. Актуальность версии — запрос версии у сервера
     vResponce := OAuth2.Version();
-    FrameInfo(Sender, vResponce);
-    if vResponce <> '01.01.01' then
-    FrameInfo(Sender, MsgInfoUpdate);
-  }
+    // Если в ответе есть разделительный символ (например, ';') в конце — удаляем
+    if vResponce <> '' then
+      vResponce := Copy(vResponce, 1, Length(vResponce) - 1);
 
-  // наполнение комбобокса наполненем языков с каких можно переводить
-  vList := vGlobalList;
-  i := 1;
-  repeat
-    fMain.FrameVideos.LanguageComboBox.Items.Add(vList[i].LnCode);
-    inc(i);
-  until (i >= 300) or (vList[i].LnCode = '');
+    // 7. Если пришла новая версия — сообщаем пользователю
+    if ((vResponce <> sVersion) and (vResponce <> '')) then
+      FrameInfo(Sender, 'Вышла новая версия программы - ' + vResponce + '!');
 
-  // отсортируем значения в комбобоксе
-  for i := 0 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
-    for j := i + 1 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
-      if CompareStr(fMain.FrameVideos.LanguageComboBox.Items[i],
-        fMain.FrameVideos.LanguageComboBox.Items[j]) > 0 then
-      begin
-        vTemp := fMain.FrameVideos.LanguageComboBox.Items[i];
-        fMain.FrameVideos.LanguageComboBox.Items[i] :=
-          fMain.FrameVideos.LanguageComboBox.Items[j];
-        fMain.FrameVideos.LanguageComboBox.Items[j] := vTemp
-      end;
-  // а должно бы сработать fMain.FrameVideos.LanguageComboBox.Sorted := true;
+    // 8. Загрузка списка всех поддерживаемых языков перевода (из БД/файла)
+    vGlobalList := SQLiteModule.LoadLanguage();
 
+    // 9. Получаем пользовательские баллы (очки за переводы) и выводим на форму
+    iScore := SQLiteModule.GetScore();
+    LabelScore.Text := IntToStr(iScore);
+
+    // --- Начало заполнения комбобокса языков для перевода ---
+    vList := vGlobalList;
+    i := 1;
+    repeat
+      // В комбо-список добавляются коды языков, пока есть что добавлять и не переполнили лимит
+      fMain.FrameVideos.LanguageComboBox.Items.Add(vList[i].LnCode);
+      Inc(i);
+    until (i >= 300) or (vList[i].LnCode = '');
+
+    // --- Сортировка списка языков в комбобоксе по алфавиту ---
+    // (т.к. свойство Sorted не работает или отключено)
+    for i := 0 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
+      for j := i + 1 to fMain.FrameVideos.LanguageComboBox.Items.Count - 1 do
+        // Сравниваем строки, если нарушен порядок — меняем местами
+        if CompareStr(fMain.FrameVideos.LanguageComboBox.Items[i],
+                      fMain.FrameVideos.LanguageComboBox.Items[j]) > 0 then
+        begin
+          vTemp := fMain.FrameVideos.LanguageComboBox.Items[i];
+          fMain.FrameVideos.LanguageComboBox.Items[i] :=
+            fMain.FrameVideos.LanguageComboBox.Items[j];
+          fMain.FrameVideos.LanguageComboBox.Items[j] := vTemp
+        end;
+    // Альтернативно, если свойство поддерживается: LanguageComboBox.Sorted := True;
+
+  finally
+    // 10. Освобождаем созданный OAuth объект перед выходом из процедуры
+    OAuth2.Free;
+  end;
 end;
+
 
 // смотри статус не снеси
 // разбор полученного ответа в vResponceChannel по каналу от сервера youtube и создание коротного описания каналов
@@ -524,75 +537,6 @@ begin
   end;
 end;
 
-//было до ИИ
-{
-procedure TfMain.BGetChannelClick(Sender: TObject);
-var
-  vObj: Tchannel; // Tchannel;
-  res, i: integer;
-  urlget: string;
-  vChannel: TShortChannel;
-  // vTest : Tshearche_image;
-  vImgUrl: string;
-  // S: AnsiString;
-  Bitimg: TBitmap;
-  S: string;
-  AAPIUrl: String;
-  FHTTPClient: THTTPClient;
-  AResponce: IHTTPResponse;
-  Stream: TStream;
-begin
-  S := '0';
-  vObj := Tchannel.Create;
-  // в мемо должен быть уже строка с канала
-  vObj := TJson.JsonToObject<Tchannel>(Memo1.text);
-
-  for i := 0 to Length(vObj.Items) - 1 do
-  begin
-    vChannel.id_channel := vObj.Items[i].id;
-    vChannel.name_channel := vObj.Items[i].snippet.title;
-    vChannel.lang := vObj.Items[i].snippet.country;
-    // vChannel.lang :=vObj.Items[i].snippet.defaultLanguage;
-    vImgUrl := vObj.Items[i].snippet.thumbnails.default.URL;
-    Edit4.text := vImgUrl;
-    // try
-    S := StringReplace(Edit4.text, #13, '', [rfReplaceAll, rfIgnoreCase]);
-    AAPIUrl := StringReplace(S, #10, '', [rfReplaceAll, rfIgnoreCase]);
-    FHTTPClient := THTTPClient.Create;
-    FHTTPClient.UserAgent :=
-      'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru-RU) Gecko/20100625 Firefox/3.6.6';
-    try
-      AResponce := FHTTPClient.Get(AAPIUrl);
-    except
-      showmessage('нет подключения_1');
-    end;
-    if Not Assigned(AResponce) then
-    begin
-      showmessage('Пусто');
-    end;
-
-    Bitimg := TBitmap.Create;
-    Bitimg.LoadFromStream(AResponce.ContentStream);
-    vChannel.img := TBitmap.Create;
-    vChannel.img := Bitimg;
-    vChannel.img_channel := TBlobType(Bitimg);
-//     except                                                                         сс
-//      showmessage('Что except');
-//      end;
-
-    vChannel.refresh_token := EdRefresh_token;
-    if vChannel.lang = '' then
-    begin
-      vChannel.lang := vObj.Items[i].snippet.defaultLanguage;
-    end;
-    // vChannel.sel_lang := vObj.;
-    vChannel.deleted := 0;
-    res := SQLiteModule.InsRefreshToken(vChannel);
-  end;
-
-end;
-}
-
 // запуск получения токенов канала по полученному ключу доступа  в Edit1.Text
 // и закрытие сервера
 procedure TfMain.BGetTokkensClick(Sender: TObject);
@@ -609,9 +553,9 @@ begin
   begin
     OAuth2 := TOAuth.Create;
     try
-      OAuth2.ClientID :=
-        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-      OAuth2.ClientSecret := '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';
+//      OAuth2.ClientID :=
+//        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//      OAuth2.ClientSecret := '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';
       OAuth2.ResponseCode := EdAccessCode; // Edit1.Text;//
       // Edit1.text := EdAccessCode;
 
@@ -675,9 +619,9 @@ var
   vString: string;
 begin
   OAuth2 := TOAuth.Create;
-  OAuth2.ClientID :=
-    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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';
+//  OAuth2.ClientID :=
+//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text);
@@ -1262,59 +1206,6 @@ begin
   Label1.Text := IntToStr(i - 1);
 end;
 
-// до ИИ
-{
-procedure TfMain.ButtonSelChannelsClick(Sender: TObject);
-var
-  //
-  i: integer;
-  results: tDataSet;
-  vPos: integer;
-  vBitmap: TBitmap;
-  vDefaulBitmap: TBitmap;
-begin
-
-  i := 1;
-  // загружаю данные из локальной таблицы
-  results := SQLiteModule.SelRefreshToken();
-  // разбираю курсор в объект - бордер
-  if not results.IsEmpty then
-  begin
-    results.First;
-    while not results.Eof do
-    begin
-      try
-        vBitmap := TBitmap(results.FieldByName('img_channel'));
-      except
-        // vBitmap := vDefaulBitmap;
-      end;
-
-      vPos := 3 + (i - 1) * 120;
-      PanChannels[i] := TChannelPanel.Create(FrameChannels.BoxChannels, vPos, i,
-        results.FieldByName('id_channel').AsString,
-        results.FieldByName('refresh_token').AsString,
-        results.FieldByName('name_channel').AsString,
-        results.FieldByName('lang').AsString, results.FieldByName('sel_lang')
-        .AsString, vBitmap, ImageDel.Bitmap);
-      PanChannels[i].Parent := FrameChannels.BoxChannels;
-      PanChannels[i].ButtonDel.OnClick := DinButtonDeleteChannelClick;
-      PanChannels[i].ImageDel.OnClick := DinButtonDeleteChannelClick;
-      // PanChannels[i].OnMouseMove := DinPanelMouseMove;
-      PanChannels[i].OnClick := DinPanelClick; // Type (sender, 'TPanel');
-      PanChannels[i].ChImage.OnClick := DinPanelClick;
-      PanChannels[i].ChName.OnClick := DinPanelClick;
-      PanChannels[i].ChLang.OnClick := DinPanelClick;
-      // это рабочий вариант прямо с поля взять, не из таблицы!!
-      // g.Assign(results.FieldByName('img_channel'));
-      // Image1.Picture.Assign(g);
-      inc(i);
-      results.Next;
-    end;
-  end;
-  Label1.text := IntToStr(i - 1);
-
-end;
-}
 
 procedure TfMain.ButtonVideoInfoClick(Sender: TObject);
 var
@@ -1325,9 +1216,9 @@ var
   vString: string;
 begin
   OAuth2 := TOAuth.Create;
-  OAuth2.ClientID :=
-    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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';
+//  OAuth2.ClientID :=
+//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceInfoVideo := OAuth2.videoInfo(FrameMainChannel.Label5.text);
@@ -1335,51 +1226,7 @@ begin
   OAuth2.Free;
 end;
 
-// обработка пароля
-//procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
-//var
-//{$IFDEF ANDROID}
-//  Intent: JIntent;
-//{$ENDIF}
-//{$IFDEF IOS}
-//  NSU: NSUrl;
-//{$ENDIF}
-//{$IFDEF MSWINDOWS}
-//  res: HINST;
-//{$ENDIF}
-//  i: integer;
-//begin
-  // подключение
-  // EditStatusConnect.Text := 'Waiting for connection ...';
-  // 1.Включить сервер
-
-//  if TCPServerYouTubeAnswers.Active = false then
-//  begin
-//    for i := 0 to TCPServerYouTubeAnswers.Bindings.Count - 1 do
-//    begin
-//      TCPServerYouTubeAnswers.Bindings[i].ReuseSocket := TIdReuseSocket.rsTrue;
-      // TIdSocketHandleReuseSocket.rsTrue;
-//    end;
-
-    // TCPServerYouTubeAnswers.Bindings.Add.Port := 1904; // добавлять нельзя, только через дефолт!
-//    TCPServerYouTubeAnswers.DefaultPort := 1904;
-//    TCPServerYouTubeAnswers.Active := true;
-
-//  end;
-  // 2. Открыть регистрацию
-//{$IFDEF MSWINDOWS}     // версия для винды
-//  ShellExecute(0 { Handle } , 'open',
-//    PChar('https://accounts.google.com/o/oauth2/v2/auth?' +
-//    'scope=https://www.googleapis.com/auth/youtube.force-ssl&' +
-//    'access_type=offline&include_granted_scopes=true' + '&state=security_token'
-//    + '&response_type=code' + '&redirect_uri=http://127.0.0.1:1904' +
-//    '&client_id=701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com'
-//    + '&service=lso&o2v=2&flowName=GeneralOAuthFlow'), nil, nil,
-//    1 { SW_SHOWNORMAL } );
-//{$ENDIF}
-//end;
-
-
+// обработка пароля от ИИ
 procedure TfMain.FrameChannelsButtonAddChannelClick(Sender: TObject);
 {$IFDEF ANDROID}
 var
@@ -1839,9 +1686,7 @@ begin
 
 end;
 
-// Разработка от Ai
-
-// ОБРАБОТКА поступления согласования или не-согласования выдачи прав на канал пользователем
+// ОБРАБОТКА поступления согласования или не-согласования выдачи прав на канал пользователем с ИИ  GPT4
 procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
 const
   cNameFile: string = 'AccessCode';
@@ -1970,143 +1815,6 @@ begin
 end;
 
 
-// ОБРАБОТКА  поступление согласлования или не согласования выдачи прав на канал пользователем
-{
-  procedure TfMain.TCPServerYouTubeAnswersExecute(AContext: TIdContext);
-  const
-  cNameFile: string = 'AccessCode';
-  var
-  Port: integer;
-  PeerPort: integer;
-  PeerIP: string;
-
-  msgFromClient: string;
-  vPosBegin, vPosEnd: integer;
-  vAccessCode: string; // код доступа к каналу
-
-  vPath: string;
-  vFullNameFile: string;
-  vFileText: TStringList;
-
-  begin
-  vAccessCode := '';
-  msgFromClient := AContext.Connection.IOHandler.ReadLn;
-
-  PeerIP := AContext.Binding.PeerIP;
-  PeerPort := AContext.Binding.PeerPort;
-
-  if pos('GET', msgFromClient) > 0 then
-  begin
-  if pos('error=', msgFromClient) = 0 then
-  begin
-  vPosBegin := pos('code=', msgFromClient);
-  vPosEnd := pos('scope=', msgFromClient);
-  if (vPosBegin > 0) and (vPosEnd > 0) then
-  begin
-  vPosBegin := vPosBegin + 5;
-  vAccessCode := Copy(msgFromClient, vPosBegin, vPosEnd - vPosBegin - 1);
-  // vAccessCode := msgFromClient;
-  // промежуточное хранение сохраняем для передачи в процедуру сохранения канала
-  Edit1.text := vAccessCode;
-  if vAccessCode <> '' then
-  begin
-  vPath := GetCurrentDir();
-  vFullNameFile := vPath + '/' + cNameFile;
-  vFileText := TStringList.Create;
-  vFileText.Add(vAccessCode);
-  // сохраняем
-  vFileText.SaveToFile(vFullNameFile);
-  end;
-  end;
-  AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
-  AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
-  AContext.Connection.IOHandler.WriteLn('Connection: close');
-  AContext.Connection.IOHandler.WriteLn;
-  AContext.Connection.IOHandler.write('<html>');
-  AContext.Connection.IOHandler.write('<head>');
-  AContext.Connection.IOHandler.
-  write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
-  AContext.Connection.IOHandler.
-  write('<title>"AssistIQ connected!</title>');
-  AContext.Connection.IOHandler.write('</head>');
-
-  AContext.Connection.IOHandler.write('<body bgcolor="white">');
-  AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
-  AContext.Connection.IOHandler.
-  write('<h3 style="text-align: center; color: #ff2a2;">Everything ended successfully. You can close this window.</h3>');
-  AContext.Connection.IOHandler.
-  write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
-  // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
-
-  AContext.Connection.IOHandler.write('</p>');
-  AContext.Connection.IOHandler.
-  write('<h3 style="text-align: center; color: #ff2a2;">Thank you for being with us. Team "AssistIQ"</h3>');
-  AContext.Connection.IOHandler.write('</body>');
-
-  AContext.Connection.IOHandler.write('</html>');
-  AContext.Connection.IOHandler.WriteLn;
-  EdAccessCode := vAccessCode;
-  // вызов процедуры запроса данных по каналу и их сохранение
-  BGetTokkens.OnClick(fMain);     // в нем и заглушим работу данного канала
-  // BGetChannel.OnClick(fMain);
-  end
-  else
-  begin
-  AContext.Connection.IOHandler.WriteLn('HTTP/1.0 200 OK');
-  AContext.Connection.IOHandler.WriteLn('Content-Type: text/html');
-  AContext.Connection.IOHandler.WriteLn('Connection: close');
-  AContext.Connection.IOHandler.WriteLn;
-  AContext.Connection.IOHandler.write('<html>');
-  AContext.Connection.IOHandler.write('<head>');
-  AContext.Connection.IOHandler.
-  write('<meta HTTP-EQUIV="Content-Type" Content="text-html; charset=windows-1251">');
-  AContext.Connection.IOHandler.write('<title>AssistIQ connected!</title>');
-  AContext.Connection.IOHandler.write('</head>');
-
-  AContext.Connection.IOHandler.write('<body bgcolor="white">');
-  AContext.Connection.IOHandler.write(' <p>&nbsp;</p>');
-  AContext.Connection.IOHandler.
-  write('<h3 style="text-align: center; color: #ff2a2;">Not connected. You can close this window.</h3>');
-  AContext.Connection.IOHandler.
-  write('<p style="text-align: center;"><img style="text-align: center;" src="http://suyarkov.com/wp-content/uploads/2023/04/AssistTranslateYT_240.jpg" />');
-  // write('<p style="text-align: center;"><img style="text-align: center;" src="https://play-lh.googleusercontent.com/-v_3PwP5PejV308DBx8VRtOWp2W_nkgIBZOt1X536YwGD7ytPPI2of2h3hG_uk7siAuh=w240-h480-rw" />');
-
-  AContext.Connection.IOHandler.write('</p>');
-  AContext.Connection.IOHandler.
-  write('<h3 style="text-align: center; color: #ff2a2;">What a pity. Team "AssistIQ"</h3>');
-  AContext.Connection.IOHandler.write('</body>');
-
-  AContext.Connection.IOHandler.write('</html>');
-  AContext.Connection.IOHandler.WriteLn;
-  EdAccessCode := '';
-  // вызов процедуры запроса данных по каналу только чтоб остановить сервер
-  BGetTokkens.OnClick(fMain);
-  end;
-  // IdTCPServer1.Active := false;
-  Edit2.text := 'чудо !!';
-  end
-  else
-  begin
-  Edit2.text := msgFromClient;
-  end;
-  // а вот тут танцы с бубнами как же прикрыть работу сервера
-  // AContext.Connection.IOHandler.CloseGracefully;
-  // AContext.Connection.Socket.CloseGracefully;
-  // AContext.Connection.Socket.Close;
-  {
-  // нельзя тут, потому как в процедуре обработка идет ещё, там нужно будет и глушить
-  if TCPServerYouTubeAnswers.Active = true then
-  begin
-  TThread.Queue(nil,
-  procedure
-  begin
-  TCPServerYouTubeAnswers.Active := false;
-  end);
-  end;
-
-
-  end;
-}
 
 procedure TfMain.TestAniingicatorClick(Sender: TObject);
 begin
@@ -2410,9 +2118,9 @@ begin
 
   // данные о видео запросить
   OAuth2 := TOAuth.Create;
-  OAuth2.ClientID :=
-    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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';
+//  OAuth2.ClientID :=
+//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceInfoVideo := OAuth2.videoInfo(vVdId);
@@ -2781,9 +2489,9 @@ begin
     begin
       // пока тут, но вообще вытащить куда в другой объект эти переводыж
       OAuth2 := TOAuth.Create;
-      OAuth2.ClientID :=
-        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-      OAuth2.ClientSecret := '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';
+//      OAuth2.ClientID :=
+//        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//      OAuth2.ClientSecret := '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';
       // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
@@ -2916,234 +2624,140 @@ begin
     FrameInfo(Sender, 'Выберите языки для перевода');
 end;
 
+
 // создаем переводов наименований и описаний
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
 var
-  // есть ли выбранные языки для перевода
-  vLength: integer;
-  vPosBegin, vPosEnd: integer;
-  vTransCount: integer;
-
-  // подключение к YT3
-  Access_token: string; // токен выполнения операций
-  refresh_token: string; // токен получения следующего токена на выполнение
+  vTransCount, vTransCountMax, vTransCountTmp, i: Integer;
+  vTitle, vDescription: string;
+  vJSON, vJSON_tmp, vTranslatedTitle, vTranslatedDesc, vCutTitleList: string;
   OAuth2: TOAuth;
-  vResponceSubtitleList: string;
-
-  // получаем список титров
-  vObjSubtitles: TObjSubtitleList;
-  vIndexMainLanguage, i: integer;
-  vSubtitles: array [1 .. 300] of TSubtitle;
-  vSCount: integer; // количество уже существующих субтитров.
-
   vResponceInsTitle: string;
-  vJSON: string;
-  vJSON_tmp: string;
-
-  vTitle: string;
-  vDescription: string;
-
-  vTranslateTitle: string;
-  vTranslateDescription: string;
-  vTransCountMax: integer;
-
-  vTransCountTmp: integer;
-
-  vObjTitle: Ttitle; // Tchannel;
-
-  vСutTitle: string;
-
-  OAuth3: TOAuth;
-  vResponce3: string;
 begin
+  // Получаем исходные значения заголовка и описания видео
+  vTitle := FrameVideos.MemoTitle.Text;
+  vDescription := FrameVideos.MemoDescription.Text;
 
-  vTitle := FrameVideos.MemoTitle.text;
-  vDescription := FrameVideos.MemoDescription.text;
-
-  vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
-  if vLength > 2 then
+  // Проверяем, выбраны ли языки для перевода
+  if Length(fMain.FrameLanguages.LabelLanguages.Text) <= 2 then
   begin
-    if FrameAsk(Sender, 'Начать перевод Названий и описаний?') = 1 then
-    begin
-      // пока тут, но вообще вытащить куда в другой объект эти переводыж
-      OAuth2 := TOAuth.Create;
-      OAuth2.ClientID :=
-        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-      OAuth2.ClientSecret := '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';
-      // крайне важно
-      OAuth2.refresh_token := FrameMainChannel.Label4.text;
-      // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
-      // vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-      // showmessage('Перевели ' + vResponceInsTitle);
-
-      vIndexMainLanguage := 0; // пока нет субтитров главных заданных
-      vSCount := 0; // кол-во уже существующих субтитров
-      { vObjSubtitles := TObjSubtitleList.Create;
-        // в мемо должен быть уже строка с канала
-        vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>
-        (vResponceSubtitleList);
-        for i := 0 to Length(vObjSubtitles.Items) - 1 do
-        begin
-        inc(vSCount);
-        vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
-        vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
-        if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-        then
-        vIndexMainLanguage := vSCount; // задан субтитр основного языка
-        end;
-      }
-      // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
-      vTransCount := 0;
-      for i := 1 to 300 do
-      begin
-        if PanLanguages[i] = nil then
-          break;
-        if (PanLanguages[i].ChImage.Visible = true) and
-          (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
-        then
-          inc(vTransCount);
-      end;
-
-      if vTransCount = 0 then // if vIndexMainLanguage = 0 then
-      begin
-        FrameInfo(Sender, 'Нет выбранных языков!');
-      end
-      else if TestScore(Sender, vTransCount) = 0 then
-      begin
-        vTransCountMax := vTransCount;
-        vTransCountTmp := 0;
-        // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
-        // vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, 'ru');
-        { vFullNameFile := vPath + '/' + 'subload';
-          vFileText := TStringList.Create;
-          vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
-          vFileText.SaveToFile(vFullNameFile); }
-
-        // начинаем удаление -- не знаю нужно ли это, но возможно для тех языков которые не меняем это важно
-
-        // for i := 1 to vSCount do
-        // begin
-        // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
-        // if vSCount <> vIndexMainLanguage then
-        // begin
-        { vResponceDelSubtitle := OAuth2.SubtitleDelete(FrameVideos.LabelVideoId.Text);
-          vFullNameFile := vPath + '/' + 'subDel';
-          vFileText := TStringList.Create;
-          vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceDelSubtitle);
-          vFileText.SaveToFile(vFullNameFile); }
-        // end;
-        // end;
-        // FrameInfo(Sender, 'Удалили языков ' + IntToStr(vSCount));
-
-        // начинаем разбор языков
-        // StartProgressBar(sender);
-
-        // showmessage('startBar 2');
-        // AniIndicator1.Visible := true;
-        // AniIndicator1.Enabled := true;
-        FrameProgressBar.Visible := true;
-        // FrameProgressBar.Visible := true;
-        Application.ProcessMessages;
-        // vTransCount := 0; // количество переведенных языков
-
-        // будем собирать один JSON для всех языков  для видео YOUR_VIDEO_ID
-        vJSON := '{"id":"' + FrameVideos.LabelVideoId.text +
-          '",  "localizations": {';
-        // showmessage('startBar 3');
-        vTransCount := 0;
-        vСutTitle := '';
-        for i := 1 to 300 do
-        begin
-          // сейчас просто, но можно делить
-          Application.ProcessMessages;
-          // showmessage('startBar 00' + inttostr(i));
-          if PanLanguages[i] = nil then
-            break;
-          if (PanLanguages[i].ChImage.Visible = true) and
-            (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
-          then
-          begin
-            FrameProgressBar.SetProgress
-              (TRUNC(((vTransCountTmp) * 100 / vTransCountMax)),
-              vTransCountTmp + 1);
-            inc(vTransCountTmp);
-            // showmessage('переводим с ' + FrameVideos.LanguageVideoLabel.text
-            // + ' на ' + PanLanguages[i].ChLang.text);
-            vTranslateTitle := GoogleTranslate(vTitle,
-              FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
-            // showmessage('Было ' + vTitle
-            // + ' , стало ' + vTranslateTitle +
-            // ' , стало2 ' + copy( vTranslateTitle, 1, 100));
-            if vTranslateTitle.Length > 100 then
-            begin
-              vTranslateTitle := Copy(vTranslateTitle, 1, 100);
-              vСutTitle := vСutTitle + ' , ' + PanLanguages[i].ChLang.text;
-            end;
-
-            // если сократили то нужно такие языки запоминать!!!
-
-            vTranslateDescription := GoogleTranslate(vDescription,
-              FrameVideos.LanguageVideoLabel.text, PanLanguages[i].ChLang.text);
-
-            // showmessage('Было ' + vDescription
-            // + ' , стало ' + vTranslateDescription);
-
-            // наполняем языком JSON
-            if vTransCount > 0 then // разделяем, если это уже список
-              vJSON := vJSON + ',';
-            vObjTitle := Ttitle.Create;
-            vObjTitle.title := vTranslateTitle;
-            vObjTitle.description := vTranslateDescription;
-            vJSON_tmp := TJson.ObjectToJsonString(vObjTitle);
-            // showmessage(vJSON_tmp);
-            vObjTitle.Free;
-            vJSON := vJSON + '"' + PanLanguages[i].ChLang.text + '" :' +
-              vJSON_tmp;
-            // как он выглядит в объекте!!!
-            // {"title":"' + vTranslateTitle // название
-            // + '","description": "' + vTranslateDescription + '"}';
-            inc(vTransCount);
-          end;
-        end;
-        vJSON := vJSON + '}}';
-        // showmessage( vJSON);
-
-        // showmessage('startBar 5 уходим в обновление!');
-        if vTransCount > 0 then
-        begin
-          vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-          // сделать если есть ошибку то вывести мне для отладки
-          // showmessage(vJSON + #13 + #10 + vResponceInsTitle + ' ' + #13 + #10
-          // + vTranslateDescription);
-          Memo1.text := vResponceInsTitle;
-        end;
-        // showmessage('startBar 6 а вот и финиш на носу!');
-        // AniIndicator1.Visible := false;
-        // AniIndicator1.Enabled := false;
-        // FinishProgressBar(sender);
-        FrameProgressBar.Visible := false;
-        iScore := iScore - vTransCount;
-        LabelScore.text := IntToStr(iScore);
-
-        // сохранение затрат
-        OAuth3 := TOAuth.Create;
-        vResponce3 := OAuth2.Clicks(IntToStr(vClientId), '0',
-          IntToStr(vTransCount), '1');
-
-        // FrameInfo(Sender, 'Попытались перевести на ' +
-        // IntToStr(vTransCount), 1);
-        FrameInfo(Sender, 'Описание перевели на' + IntToStr(vTransCount) +
-          ' языков.');
-      end;
-      OAuth2.Free;
-    end
-    else
-    begin // 'На нет и суда нет'
-      FrameInfo(Sender, 'На нет и суда нет');
-    end;
-  end
-  else
     FrameInfo(Sender, 'Выберите языки для перевода!');
+    Exit;
+  end;
+
+  // Запрашиваем подтверждение пользователя на перевод
+  if FrameAsk(Sender, 'Начать перевод Названий и описаний?') <> 1 then
+  begin
+    FrameInfo(Sender, 'На нет и суда нет');
+    Exit;
+  end;
+
+  // Создаём объект авторизации для работы с YouTube API
+  OAuth2 := TOAuth.Create;
+  try
+    // Реальные значения client_id и client_secret — НЕ РЕКОМЕНДУЕТСЯ для боевого кода!
+//    OAuth2.ClientID := '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//    OAuth2.ClientSecret := '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';
+    OAuth2.refresh_token := FrameMainChannel.Label4.Text;
+
+    // Подсчитываем сколько языков выбрано для перевода (обрабатываем только отмеченные)
+    vTransCount := 0;
+    for i := 1 to 300 do
+      if (PanLanguages[i] <> nil)
+        and (PanLanguages[i].ChImage.Visible)
+        and (PanLanguages[i].ChLang.Text <> FrameVideos.LanguageVideoLabel.Text)
+        then Inc(vTransCount);
+
+    // Если языки для перевода не выбраны
+    if vTransCount = 0 then
+    begin
+      FrameInfo(Sender, 'Нет выбранных языков!');
+      Exit;
+    end;
+
+    // Проверка внутреннего "баланса" очков (лимит возможных переводов)
+    if TestScore(Sender, vTransCount) <> 0 then
+      Exit;
+
+    vTransCountMax := vTransCount; // всего языков для перевода
+    vTransCountTmp := 0;           // сколько уже обработано
+
+    // Показываем прогресс-bar на форме
+    FrameProgressBar.Visible := True;
+    Application.ProcessMessages;
+
+    // Начинаем формировать JSON для метода VideoUpdate YouTube
+    vJSON := '{"id":"' + FrameVideos.LabelVideoId.Text + '", "localizations": {';
+    vTransCount := 0;
+    vCutTitleList := ''; // Для записи языков, где обрезался заголовок
+
+    // Главный цикл по всем языкам
+    for i := 1 to 300 do
+    begin
+      Application.ProcessMessages; // Позволяет не "замораживать" интерфейс
+
+      // Проверяем есть ли в текущем слоте язык
+      if (PanLanguages[i] = nil) then Break;
+
+      // Если отмечен и не совпадает с исходным языком видео
+      if (PanLanguages[i].ChImage.Visible)
+         and (PanLanguages[i].ChLang.Text <> FrameVideos.LanguageVideoLabel.Text)
+      then
+      begin
+        // Обновляем прогресс-бар
+        FrameProgressBar.SetProgress(Trunc((vTransCountTmp * 100) / vTransCountMax), vTransCountTmp + 1);
+        Inc(vTransCountTmp);
+
+        try
+          // Выполняем перевод заголовка
+          vTranslatedTitle := GoogleTranslate(vTitle, FrameVideos.LanguageVideoLabel.Text, PanLanguages[i].ChLang.Text);
+
+          // Если переведённый заголовок длиннее 100 символов — обрезаем согласно требованиям YouTube
+          if vTranslatedTitle.Length > 100 then
+          begin
+            vTranslatedTitle := Copy(vTranslatedTitle, 1, 100);
+            vCutTitleList := vCutTitleList + ', ' + PanLanguages[i].ChLang.Text;
+          end;
+
+          // Переводим описание
+          vTranslatedDesc := GoogleTranslate(vDescription, FrameVideos.LanguageVideoLabel.Text, PanLanguages[i].ChLang.Text);
+
+          // Собираем строку JSON для одной локали
+          if vTransCount > 0 then
+            vJSON := vJSON + ',';
+          vJSON_tmp := Format('{"title":"%s","description":"%s"}', [vTranslatedTitle, vTranslatedDesc]);
+          vJSON := vJSON + '"' + PanLanguages[i].ChLang.Text + '":' + vJSON_tmp;
+          Inc(vTransCount);
+
+        except
+          on E: Exception do // В случае ошибок перевода информируем пользователя
+            FrameInfo(Sender, 'Ошибка перевода на ' + PanLanguages[i].ChLang.Text + ': ' + E.Message);
+        end;
+      end;
+    end;
+
+    vJSON := vJSON + '}}'; // Заканчиваем JSON объект
+
+    // Если переводы были — отправляем обновление на сервер YouTube
+    if vTransCount > 0 then
+    begin
+      vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+      Memo1.Text := vResponceInsTitle; // Сохраняем/показываем ответ API для диагностики
+
+      // Если были случаи обрезки заголовка — отдельно сообщаем
+      if vCutTitleList <> '' then
+        FrameInfo(Sender, 'Для языков' + vCutTitleList + ' заголовок был обрезан до 100 символов');
+      FrameInfo(Sender, Format('Описание перевели на %d языков.', [vTransCount]));
+    end;
+
+    // Скрываем прогресс-бар и уменьшаем счёт пользователя
+    FrameProgressBar.Visible := False;
+    iScore := iScore - vTransCount;
+    LabelScore.Text := IntToStr(iScore);
+
+  finally
+    OAuth2.Free;
+  end;
 end;
 
 // запрос для следующего токена (части) по видео
@@ -3174,9 +2788,9 @@ begin
   // грузим следующую партию
   vCountVideoCreate := vNowCountVideo;
   OAuth2 := TOAuth.Create;
-  OAuth2.ClientID :=
-    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-  OAuth2.ClientSecret := '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';
+//  OAuth2.ClientID :=
+//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
+//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text,
