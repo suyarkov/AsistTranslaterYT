@@ -245,6 +245,7 @@ begin
   // Возвращаем nil или пустой результат в случае ошибки
   Result := nil;
 end;
+
 {ДО ИИ
 function TSQLiteModule.SelRefreshToken(): tDataSet;
 var
@@ -411,18 +412,6 @@ begin
       showmessage('Пусто');
     end;
 
-    try
-      // jpegimg := TJPEGImage.Create;
-      // jpegimg.LoadFromStream(AResponce.ContentStream);
-      // jpegimg.SaveToStream(Ss);
-      // Result.Assign(jpegimg);
-      // Image2.Picture.Assign(jpegimg);
-      // Result.Assign(jpegimg);
-      // Ss := TStringStream.Create(st);
-      // Image1.Picture.Bitmap.SaveToStream(   (Ss);
-    except
-      // showmessage('Не Пусто1');
-    end;
   end;
   Result := AResponce.ContentStream; // SS
 end;

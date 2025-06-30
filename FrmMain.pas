@@ -267,7 +267,7 @@ begin
       ' Пополните баланс!');
   end;
 
-  Result := 0; // res;
+  Result :=  res; // если снять контроль = 0
 end;
 
 procedure TfMain.DinPanelMouseMove(Sender: TObject; Shift: TShiftState;
@@ -553,9 +553,6 @@ begin
   begin
     OAuth2 := TOAuth.Create;
     try
-//      OAuth2.ClientID :=
-//        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//      OAuth2.ClientSecret := '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';
       OAuth2.ResponseCode := EdAccessCode; // Edit1.Text;//
       // Edit1.text := EdAccessCode;
 
@@ -619,9 +616,6 @@ var
   vString: string;
 begin
   OAuth2 := TOAuth.Create;
-//  OAuth2.ClientID :=
-//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text);
@@ -1216,9 +1210,6 @@ var
   vString: string;
 begin
   OAuth2 := TOAuth.Create;
-//  OAuth2.ClientID :=
-//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceInfoVideo := OAuth2.videoInfo(FrameMainChannel.Label5.text);
@@ -2118,9 +2109,6 @@ begin
 
   // данные о видео запросить
   OAuth2 := TOAuth.Create;
-//  OAuth2.ClientID :=
-//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceInfoVideo := OAuth2.videoInfo(vVdId);
@@ -2489,9 +2477,6 @@ begin
     begin
       // пока тут, но вообще вытащить куда в другой объект эти переводыж
       OAuth2 := TOAuth.Create;
-//      OAuth2.ClientID :=
-//        '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//      OAuth2.ClientSecret := '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';
       // крайне важно
       OAuth2.refresh_token := FrameMainChannel.Label4.text;
       // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
@@ -2625,7 +2610,7 @@ begin
 end;
 
 
-// создаем переводов наименований и описаний
+// создаем переводы наименований и описаний
 procedure TfMain.FrameLanguagesButtonTitleClick(Sender: TObject);
 var
   vTransCount, vTransCountMax, vTransCountTmp, i: Integer;
@@ -2633,6 +2618,7 @@ var
   vJSON, vJSON_tmp, vTranslatedTitle, vTranslatedDesc, vCutTitleList: string;
   OAuth2: TOAuth;
   vResponceInsTitle: string;
+  vVideoUpdateSuccess : Boolean;
 begin
   // Получаем исходные значения заголовка и описания видео
   vTitle := FrameVideos.MemoTitle.Text;
@@ -2656,8 +2642,6 @@ begin
   OAuth2 := TOAuth.Create;
   try
     // Реальные значения client_id и client_secret — НЕ РЕКОМЕНДУЕТСЯ для боевого кода!
-//    OAuth2.ClientID := '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//    OAuth2.ClientSecret := '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';
     OAuth2.refresh_token := FrameMainChannel.Label4.Text;
 
     // Подсчитываем сколько языков выбрано для перевода (обрабатываем только отмеченные)
@@ -2738,17 +2722,31 @@ begin
 
     vJSON := vJSON + '}}'; // Заканчиваем JSON объект
 
-    // Если переводы были — отправляем обновление на сервер YouTube
+    // Отправляем изменения (если есть переводы)
+    vVideoUpdateSuccess := False;
     if vTransCount > 0 then
     begin
-      vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
-      Memo1.Text := vResponceInsTitle; // Сохраняем/показываем ответ API для диагностики
+      try
+        vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
+        Memo1.Text := vResponceInsTitle;
+        vVideoUpdateSuccess := True;
+      except
+        on E: Exception do
+        begin
+          FrameInfo(Sender, 'Ошибка отправки переводов: ' + E.Message);
+        end;
+      end;
 
-      // Если были случаи обрезки заголовка — отдельно сообщаем
-      if vCutTitleList <> '' then
-        FrameInfo(Sender, 'Для языков' + vCutTitleList + ' заголовок был обрезан до 100 символов');
-      FrameInfo(Sender, Format('Описание перевели на %d языков.', [vTransCount]));
+      // Фиксируем удачный запрос только если VideoUpdate прошло без исключений
+      if vVideoUpdateSuccess then
+      begin
+        OAuth2.Clicks(IntToStr(vClientId),'0',IntToStr(vTransCount),'1');
+        if vCutTitleList <> '' then
+          FrameInfo(Sender, 'Для языков' + vCutTitleList + ' заголовок был обрезан до 100 символов');
+        FrameInfo(Sender, Format('Описание перевели на %d языков.', [vTransCount]));
+      end;
     end;
+
 
     // Скрываем прогресс-бар и уменьшаем счёт пользователя
     FrameProgressBar.Visible := False;
@@ -2788,9 +2786,6 @@ begin
   // грузим следующую партию
   vCountVideoCreate := vNowCountVideo;
   OAuth2 := TOAuth.Create;
-//  OAuth2.ClientID :=
-//    '701561007019-tm4gfmequr8ihqbpqeui28rp343lpo8b.apps.googleusercontent.com';
-//  OAuth2.ClientSecret := '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';
   // крайне важно
   OAuth2.refresh_token := FrameMainChannel.Label4.text;
   vResponceVideo := OAuth2.MyVideos(FrameMainChannel.Label5.text,
