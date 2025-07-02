@@ -1320,7 +1320,8 @@ begin
     vidCl := 0;
     if (pos(';', vResponce) > 0) then
     begin
-      vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
+//      vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
+      vRes := StrToInt(UTF8ToString(Copy(vResponce, 1, pos(';', vResponce) - 1))); // Для старых вер
       vTmp := Copy(vResponce, pos(';', vResponce) + 1, 1000);
       if (pos(';', vTmp) > 0) then
       begin

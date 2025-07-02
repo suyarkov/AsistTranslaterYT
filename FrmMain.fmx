@@ -134,7 +134,7 @@
     end
     inherited LabelPas: TLabel
       inherited LabelError: TLabel
-        TabOrder = 3
+        TabOrder = 2
       end
     end
     inherited EditName: TEdit
@@ -150,9 +150,6 @@
     end
     inherited ButtonLog: TButton
       OnClick = FrameFirstButtonLogClick
-      inherited ShowPassword: TButton
-        TabOrder = 4
-      end
     end
     inherited Image0: TImage
       OnClick = FrameFirstImage0Click
@@ -263,16 +260,19 @@
     Size.PlatformDefault = False
     inherited LabelVideos: TLabel
       TextSettings.Font.StyleExt = {00070000000000000004000000}
+      inherited LabelVideoId: TLabel
+        TabOrder = 2
+      end
     end
     inherited MemoTitle: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 44.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 48.000000000000000000
     end
     inherited MemoDescription: TMemo
       TextSettings.Font.StyleExt = {00070000000000000004000000}
-      Viewport.Width = 499.000000000000000000
-      Viewport.Height = 351.000000000000000000
+      Viewport.Width = 503.000000000000000000
+      Viewport.Height = 355.000000000000000000
     end
     inherited LanguageCheckBox: TCheckBox
       TextSettings.Font.StyleExt = {00070000000000000004000000}
@@ -331,7 +331,7 @@
         Position.Y = -29.000000000000000000
         Size.Width = 169.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 3
+        TabOrder = 2
         Text = #1042#1099#1073#1088#1072#1090#1100' '#1074#1089#1077' '#1103#1079#1099#1082#1080
         OnClick = FrameLanguagesButtonAddAllLanguagesClick
       end

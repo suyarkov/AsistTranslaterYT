@@ -11,7 +11,8 @@ uses
   Rest.Types,
   Generics.Collections,
   FMX.Dialogs,
-  uWinHardwareInfo
+  uWinHardwareInfo,
+  System.NetEncoding
   ;
 
 const
@@ -704,18 +705,19 @@ end;
 
 
 
+
 // Подключение пользователя
-// function TOAuth.UserGet(ACollection: string, ACollection2: string): string;
 function TOAuth.UserGet(ACollection, ACollection2: string): string;
 const
-  URL = 'http://assistiq.suyarkov.com/user_connect.php?';//?name=vava&age=27
+  URL = 'http://assistiq.suyarkov.com/user_connect.php?';
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
   JSON: string;
+  URL_Params: string;
 begin
-  FireBaseAuth();
 
+  {
   Params := TDictionary<String, String>.Create;
   Params.Add('name', ACollection);
   Params.Add('age', ACollection2);
@@ -728,6 +730,25 @@ begin
   StringReplace(JSON, '\', '', [rfReplaceAll]);
 
   Result := SendRequest(URL + ACollection, Params, Headers, JSON, rmGet); //rmPost  + 'что?'
+  }
+//  FireBaseAuth();
+  Params := TDictionary<String, String>.Create;
+  Headers := TDictionary<String, String>.Create;
+  try
+    // Для GET-запроса параметры должны быть в URL, а не в теле
+    URL_Params :=  URL + 'name=' + TNetEncoding.URL.Encode(ACollection) +
+      '&age=' + TNetEncoding.URL.Encode(ACollection2);
+    Result := SendRequest(
+      URL_Params,
+      nil,  // Params не передаём
+      Headers,
+      '',   // Тело пустое
+      rmGet
+    );
+  finally
+    Params.Free;
+    Headers.Free;
+  end;
 end;
 
 
