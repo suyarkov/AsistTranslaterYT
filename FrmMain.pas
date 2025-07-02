@@ -27,7 +27,7 @@ uses
   FmAsk, FmInfo, FmAddUser, FmTextInput, FMX.Colors,
   FmHelp, FmAddMoney, System.ImageList, FMX.ImgList,
   // IdSocketHandle,
-  IdGlobal;
+  IdGlobal, uWinHardwareInfo;
 
 type
   TfMain = class(TForm)
@@ -2706,6 +2706,13 @@ begin
           // Переводим описание
           vTranslatedDesc := GoogleTranslate(vDescription, FrameVideos.LanguageVideoLabel.Text, PanLanguages[i].ChLang.Text);
 
+          // сокращаем описание до 5000 символов
+          if vTranslatedDesc.Length > 5000 then
+          begin
+            vTranslatedDesc := Copy(vTranslatedDesc, 1, 5000);
+            vCutTitleList := vCutTitleList + ', ' + PanLanguages[i].ChLang.Text; // тут нужно заменить что это именно описание, но и так ок
+          end;
+
           // Собираем строку JSON для одной локали
           if vTransCount > 0 then
             vJSON := vJSON + ',';
@@ -2730,6 +2737,8 @@ begin
         vResponceInsTitle := OAuth2.VideoUpdate(vJSON);
         Memo1.Text := vResponceInsTitle;
         vVideoUpdateSuccess := True;
+        iScore := iScore - vTransCount;
+        LabelScore.Text := IntToStr(iScore);
       except
         on E: Exception do
         begin
@@ -2750,8 +2759,6 @@ begin
 
     // Скрываем прогресс-бар и уменьшаем счёт пользователя
     FrameProgressBar.Visible := False;
-    iScore := iScore - vTransCount;
-    LabelScore.Text := IntToStr(iScore);
 
   finally
     OAuth2.Free;

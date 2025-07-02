@@ -329,6 +329,7 @@
         <DCCReference Include="Classes.snippet.pas"/>
         <DCCReference Include="Classes.snippetInsert.pas"/>
         <DCCReference Include="System.Net.Mime.pas"/>
+        <DCCReference Include="uWinHardwareInfo.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -24,10 +24,14 @@ type
     TitleLengthLabel: TLabel;
     BTranslater: TButton;
     LabelVideoId: TLabel;
+    DescriptionLengthLabel: TLabel;
     procedure BTranslaterClick(Sender: TObject);
     procedure MemoTitleChange(Sender: TObject);
     procedure MemoTitleKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
+    procedure MemoDescriptionChange(Sender: TObject);
+    procedure MemoDescriptionKeyUp(Sender: TObject; var Key: Word;
+      var KeyChar: Char; Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -38,6 +42,23 @@ type
 implementation
 
 {$R *.fmx}
+
+procedure TFrameVideos.MemoDescriptionChange(Sender: TObject);
+begin
+if length(MemoDescription.Text)> 5000 then
+begin
+  MemoDescription.Text := copy(MemoDescription.Text,1,5000);
+  MemoDescription.SelStart := 5000;
+end;
+
+DescriptionLengthLabel.Text := IntToStr(length(MemoDescription.Text)) +'/5000';
+end;
+
+procedure TFrameVideos.MemoDescriptionKeyUp(Sender: TObject; var Key: Word;
+  var KeyChar: Char; Shift: TShiftState);
+begin
+   MemoDescriptionChange(Sender);
+end;
 
 procedure TFrameVideos.MemoTitleChange(Sender: TObject);
 begin

@@ -51,7 +51,8 @@ uses
   Classes.title in 'Classes.title.pas',
   Classes.snippet in 'Classes.snippet.pas',
   Classes.snippetInsert in 'Classes.snippetInsert.pas',
-  System.Net.Mime in 'System.Net.Mime.pas';
+  System.Net.Mime in 'System.Net.Mime.pas',
+  uWinHardwareInfo in 'uWinHardwareInfo.pas';
 
 {$R *.res}
 

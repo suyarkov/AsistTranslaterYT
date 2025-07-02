@@ -10,7 +10,8 @@ uses
   Rest.Client,
   Rest.Types,
   Generics.Collections,
-  FMX.Dialogs
+  FMX.Dialogs,
+  uWinHardwareInfo
   ;
 
 const
@@ -760,19 +761,20 @@ end;
 // добавление данных о кликах
 function TOAuth.Clicks(ACollection, ACollection2, ACollection3, ACollection4: string): string;
 const
-  URL = 'http://assistiq.suyarkov.com/real_clicks.php?';
+//  URL = 'http://assistiq.suyarkov.com/real_clicks.php?';
+  URL = 'http://assistiq.suyarkov.com/real_clicks_2.php?';   // чтоб найти девайс
 var
   Params: TDictionary<String, String>;
   Headers: TDictionary<String, String>;
   JSON: string;
 begin
   FireBaseAuth();
-
   Params := TDictionary<String, String>.Create;
-  Params.Add('id', ACollection);
-  Params.Add('device', ACollection2);
-  Params.Add('cl', ACollection3);
+  Params.Add('id', ACollection); // id клиента
+  Params.Add('info_device', GetWindowsHardwareSummary()); // код девайса, то есть описание
+  Params.Add('cl', ACollection3); // количество кликов
   Params.Add('typecl', ACollection4);
+  Params.Add('type_device', 'desktop win'); // код девайса, то есть описание
 
   Headers := TDictionary<String, String>.Create;
   Headers.Add('Accept', 'application/json');
