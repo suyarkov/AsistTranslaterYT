@@ -12,8 +12,10 @@ uses
   Generics.Collections,
   FMX.Dialogs,
   uWinHardwareInfo,
-  System.NetEncoding
-  ;
+  System.NetEncoding,
+  IdHTTP,
+  IdSSLOpenSSL,
+  IdGlobal;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -46,8 +48,9 @@ type
   public
     function SubtitleDelete(SubtitleID: string): string;
     function SubtitleList(VideoID: string): string;
-    function SubtitleDownload(CaptionID, TargetLang: string): string;
-    function SubtitleInsert(JSON: string; FileName: String): string;
+//    function SubtitleDownload(CaptionID, TargetLang: string): string;
+    function SubtitleDownload(const CaptionID: string): string;
+    function SubtitleInsert(const JSON: string; const FileName: String): string;
 
     function TitleDelete(LangID: string): string;
     function TitleInsert(LangID,KeyTitle, KeyDescription: string): string;
@@ -63,7 +66,7 @@ type
     function ChannelInfo(AChannelID: string ): string; // об одном канале
     function AccessURL: string;        // урл подключения
     function GetAccessToken: string;   // получить соединительный токен подключения
-    function RefreshToken: string;     // постоянный ключ получить по RefreshToken токену (а зачем так часто я дергаю этот номер? а не юзаю временный)
+    function RefreshAccessToken: string;     // временный ключ получить по RefreshToken токену (а зачем так часто я дергаю этот номер? а не юзаю временный)
 
     function FireBaseAuth: string;
     function FireBaseGet(ACollection: string): string;
@@ -171,6 +174,59 @@ begin
 
 end;
 
+
+//Используйте только для обычных запросов. Для multipart/related (аналогично upload/youtube/v3/captions) — это не работает!
+//не заработало! нужно логику менять под частные случаи
+{function TOAuth.SendRequest(
+  URL: string;
+  Params: TDictionary<string, string>;
+  Headers: TDictionary<string, string>;
+  JSON: string;
+  Method: TRESTRequestMethod;
+  AFile: string = ''
+): string;
+var
+  FRest: TRESTClient;
+  FRequest: TRESTRequest;
+  FResponse: TRESTResponse;
+  Key: string;
+begin
+  FRest := nil;
+  FRequest := nil;
+  FResponse := nil;
+  Result := '';
+  try
+    FRest := TRESTClient.Create(URL);
+    FResponse := TRESTResponse.Create(nil);
+    FRequest := TRESTRequest.Create(nil);
+    FRequest.Client := FRest;
+    FRequest.Method := Method;
+    FRequest.Response := FResponse;
+
+    if Params <> nil then
+      for Key in Params.Keys do
+        FRequest.Params.AddItem(Key, Params.Items[Key], pkGETorPOST);
+
+    if Headers <> nil then
+      for Key in Headers.Keys do
+        FRequest.Params.AddHeader(Key, Headers.Items[Key]);
+
+    if JSON <> '' then
+      FRequest.AddBody(JSON, TRESTContentType.ctAPPLICATION_JSON);
+
+    if (AFile <> '') and (JSON = '') then
+      FRequest.AddFile('file', AFile, ctAPPLICATION_OCTET_STREAM);
+
+    FRequest.Execute;
+    Result := FResponse.Content;
+  finally
+    FResponse.Free;
+    FRequest.Free;
+    FRest.Free;
+  end;
+end;
+}
+
 function TOAuth.SendRequest(URL: string; Params: TDictionary<string, string>;
     Headers: TDictionary<string, string>; JSON: string; Method: TRESTRequestMethod; AFile: string = ''): string;
 var
@@ -256,7 +312,6 @@ begin
   finally
 //    Result := 'finally '  + Result;
   end;
-
 end;
 
 procedure TOAuth.ServerResponseToFile(AResponse: TRestResponse; AFileName: string);
@@ -316,7 +371,7 @@ var
   Response: string;
 begin
   Params := TDictionary<String, String>.Create;
-  Params.Add('access_token', RefreshToken);
+  Params.Add('access_token', RefreshAccessToken);
 
   Response := SendRequest(tokenurl, Params, nil, '', rmGet);
   Result := ParamValue('access_type', Response);
@@ -335,7 +390,7 @@ begin
   Params.Add('mine', 'true');
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
@@ -358,7 +413,7 @@ begin
   Params.Add('mine', 'true');
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
@@ -388,7 +443,7 @@ begin
     Params.Add('channelID', AChannelID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
@@ -407,7 +462,7 @@ begin
   Params.Add('id', AVideoID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
@@ -426,7 +481,7 @@ begin
   Params.Add('hl', 'en_US');
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
@@ -453,7 +508,7 @@ begin
   Params := TDictionary<String, String>.Create;
   Params.Add('part', 'snippet,status,localizations');
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Response := SendRequest(URL, Params, Headers, JSON, rmPUT);
@@ -474,12 +529,65 @@ begin
   Params.Add('videoId', VideoID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmGet);
 end;
 
+function TOAuth.SubtitleDownload(const CaptionID: string): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+var
+  client: TIdHTTP;
+  ssl: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  client := TIdHTTP.Create(nil);
+  ssl := TIdSSLIOHandlerSocketOpenSSL.Create(client);
+  try
+    client.IOHandler := ssl;
+    client.Request.CustomHeaders.Values['Authorization'] := 'Bearer ' + RefreshAccessToken;
+    // Не задаём Accept, Content-Type!
+    Result := client.Get(Format(URL + '?tfmt=sbv', [CaptionID]));
+  finally
+    ssl.Free;
+    client.Free;
+  end;
+end;
+
+
+{
+function TOAuth.SubtitleDownload(CaptionID, TargetLang: string): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+begin
+  Params := TDictionary<String, String>.Create;
+  try
+    Params.Add('tfmt', 'sbv');
+    if Trim(TargetLang) <> '' then
+      Params.Add('tlang', TargetLang);
+
+    Headers := TDictionary<String, String>.Create;
+    try
+      Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken); // используйте access_token
+      Headers.Add('Accept', 'text/plain');
+      // Заголовок Content-Type здесь для GET не нужен и даже вреден
+
+      Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
+    finally
+      Headers.Free;
+    end;
+  finally
+    Params.Free;
+  end;
+end;
+
+}
+
+{
 // Subtitle download
 function TOAuth.SubtitleDownload(CaptionID, TargetLang: string): string;
 const
@@ -497,7 +605,7 @@ begin
     Params.Add('tlang', 'TargetLang');
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AUTO');
 //  Headers.Add('Content-Type', 'multipart/related; boundary=AA0512');
@@ -505,6 +613,7 @@ begin
 //  Result := SendRequest(URL, Params, Headers, '', rmGet);
   Result := SendRequest(Format(URL, [CaptionID]), Params, Headers, '', rmGet);
 end;
+}
 
 // Subtitle delete
 function TOAuth.SubtitleDelete(SubtitleID: string): string;
@@ -518,12 +627,13 @@ begin
   Params.Add('id', SubtitleID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
 
   Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
 
+{
 // Subtitle insert
 function TOAuth.SubtitleInsert(JSON: string; FileName: String): string;
 const
@@ -551,6 +661,93 @@ begin
 
   Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
 end;
+}
+{
+function TOAuth.SubtitleInsert(const JSON: string; const FileName: String): string;
+const
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions';
+  BOUNDARY = 'AA0512'; // boundary по сути можно рандомизировать
+var
+  Params: TDictionary<String, String>;
+  Headers: TDictionary<String, String>;
+  Payload: TMemoryStream;
+begin
+  Params := TDictionary<String, String>.Create;
+  Headers := TDictionary<String, String>.Create;
+  try
+    Params.Add('part', 'snippet');
+
+    // !! Используйте корректный AccessToken. RefreshToken не подходит для Bearer.
+    Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken); // AccessToken -- так говорил ИИ
+    Headers.Add('Accept', 'application/json');
+    Headers.Add('Content-Type', 'multipart/related; boundary=' + BOUNDARY);
+
+    // Предполагаем, что функция SendRequest правильно формирует multipart-запрос
+    // и использует JSON + FileName в запросе.
+    // Хорошо бы проверить правильность работы SendRequest.
+
+    // --- Если нужно вручную собрать multipart payload: делайте это ЗДЕСЬ ---
+    // --- И передавайте уже готовый stream в SendRequest ---
+
+    Result := SendRequest(URL, Params, Headers, JSON, rmPost, FileName);
+
+  finally
+    Params.Free;
+    Headers.Free;
+  end;
+end;
+}
+
+
+//SubtitleInsert: реализация multipart/related через Indy
+//Только этот способ работает для загрузки субтитров YouTube!
+function TOAuth.SubtitleInsert(const JSON: string; const FileName: String): string;
+const
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
+  BOUNDARY = 'AA0512';
+var
+  IdHTTP: TIdHTTP;
+  IdSSL: TIdSSLIOHandlerSocketOpenSSL;
+  MemStream, FileStream: TMemoryStream;
+  Line, AccessToken: UTF8String;
+begin
+  Result := '';
+  IdHTTP := TIdHTTP.Create(nil);
+  IdSSL := TIdSSLIOHandlerSocketOpenSSL.Create(IdHTTP);
+  MemStream := TMemoryStream.Create;
+  FileStream := TMemoryStream.Create;
+  try
+    // Read file to stream
+    FileStream.LoadFromFile(FileName);
+
+    // формируем тело вручную (multipart/related)
+    Line :=
+      '--' + BOUNDARY + #13#10 +
+      'Content-Type: application/json; charset=UTF-8' + #13#10#13#10 +
+      UTF8Encode(JSON) + #13#10 +
+      '--' + BOUNDARY + #13#10 +
+      'Content-Type: application/octet-stream' + #13#10#13#10;
+    MemStream.Write(Line[1], Length(Line));
+    MemStream.CopyFrom(FileStream, 0);
+    Line := #13#10 + '--' + BOUNDARY + '--' + #13#10;
+    MemStream.Write(Line[1], Length(Line));
+    MemStream.Position := 0;
+
+    IdHTTP.IOHandler := IdSSL;
+    AccessToken := RefreshAccessToken; // выдаёт рабочий access_token
+    IdHTTP.Request.CustomHeaders.Clear;
+    IdHTTP.Request.CustomHeaders.AddValue('Authorization', 'Bearer ' + AccessToken);
+    IdHTTP.Request.ContentType := 'multipart/related; boundary=' + BOUNDARY;
+    IdHTTP.Request.Accept := 'application/json';
+
+    Result := IdHTTP.Post(URL, MemStream);
+  finally
+    FileStream.Free;
+    MemStream.Free;
+    IdSSL.Free;
+    IdHTTP.Free;
+  end;
+end;
 
 // Title delete
 function TOAuth.TitleDelete(LangID: string): string;
@@ -564,7 +761,7 @@ begin
   Params.Add('id', LangID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
   Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
@@ -582,7 +779,7 @@ begin
   Params.Add('id', LangID);
 
   Headers := TDictionary<String, String>.Create;
-  Headers.Add('Authorization', 'Bearer ' + RefreshToken);
+  Headers.Add('Authorization', 'Bearer ' + RefreshAccessToken);
   Headers.Add('Accept', 'application/json');
   Result := SendRequest(URL, Params, Headers, '', rmDelete, '');
 end;
@@ -685,22 +882,32 @@ end;
 
 // что это?  -- это получение токена доступа access_token (сессионного) по токету обновлений,
 // но трабл когда токен обновлений  refresh_token устарел
-function TOAuth.RefreshToken: string;
+function TOAuth.RefreshAccessToken: string;
 const
-  tokenurl = 'https://accounts.google.com/o/oauth2/token';
+  TokenUrl = 'https://accounts.google.com/o/oauth2/token';
 var
   Params: TDictionary<String, String>;
   Response: string;
+  NewAccessToken: string;
 begin
   Params := TDictionary<String, String>.Create;
-  Params.Add('client_id', ClientID);
-  Params.Add('client_secret', ClientSecret);
-  Params.Add('refresh_token', Refresh_token);
-  Params.Add('grant_type', 'refresh_token');
+  try
+    Params.Add('client_id', ClientID);
+    Params.Add('client_secret', ClientSecret);
+    Params.Add('refresh_token', Refresh_token);
+    Params.Add('grant_type', 'refresh_token');
 
-  Response := SendRequest(tokenurl, Params, nil, '', rmPost);
-  Access_token := TRIM(ParamValue('access_token', Response));
-  Result := Access_token;
+    Response := SendRequest(TokenUrl, Params, nil, '', rmPost);
+
+    NewAccessToken := Trim(ParamValue('access_token', Response));
+    if NewAccessToken = '' then
+      raise Exception.Create('Токен доступа не получен. Ответ: ' + Response);
+
+    Access_token := NewAccessToken;
+    Result := Access_token;
+  finally
+    Params.Free;
+  end;
 end;
 
 

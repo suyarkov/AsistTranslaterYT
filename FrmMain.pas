@@ -416,6 +416,11 @@ begin
     // 8. Загрузка списка всех поддерживаемых языков перевода (из БД/файла)
     vGlobalList := SQLiteModule.LoadLanguage();
 
+    // перевести название языков на язык интерфейсов
+    // Если такого нет то перевести, а если есть то не трогать а из базы, куда сохранили при зачитке
+    // TranslateListLanguages(vInterfaceLanguage,vGlobalList);
+
+
     // 9. Получаем пользовательские баллы (очки за переводы) и выводим на форму
     iScore := SQLiteModule.GetScore();
     LabelScore.Text := IntToStr(iScore);
@@ -2428,187 +2433,268 @@ begin
     .chId.text, vSelLanguages);
 end;
 
-// грузим субтитры пока
+
+
 procedure TfMain.FrameLanguagesButtonSubtitlesClick(Sender: TObject);
 var
-  // есть ли выбранные языки для перевода
+  vLength: integer;
+  vIndexMainLanguage, i, vSCount, vDeleteTranslate, vTransCount: integer;
+  vFullNameFile: string;
+  vFileText: TStringList;
+  OAuth2: TOAuth;
+  vResponceSubtitleList: string;
+  vObjSubtitles: TObjSubtitleList;
+  vSubtitles: array [1 .. 300] of TSubtitle;
+  vResponceLoadSubtitle, vResponceInsSubtitle: string;
+  vObj: Tsnippet;
+  vAddCaptionJSON: string;
+  vMainSubtitleText, vTranslatedSubtitleText: string;
+begin
+  vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
+  if vLength > 2 then
+  begin
+    if FrameAsk(Sender, 'Начать перевод Субтитров?') = 1 then
+    begin
+      OAuth2 := TOAuth.Create;
+      try
+        OAuth2.refresh_token := FrameMainChannel.Label4.Text;
+        { получаем список всех субтитров }
+        vResponceSubtitleList := OAuth2.subtitlelist(FrameVideos.LabelVideoId.text);
+        vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>(vResponceSubtitleList);
+
+        vIndexMainLanguage := 0;
+        vSCount := 0;
+        for i := 0 to Length(vObjSubtitles.Items) - 1 do
+        begin
+          Inc(vSCount);
+          vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
+          vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
+          FrameInfo(Sender, 'язык = ' + vSubtitles[vSCount].language);
+          if vSubtitles[vSCount].language = Copy(FrameVideos.LanguageVideoLabel.text, 1, 2) then
+            vIndexMainLanguage := vSCount;
+        end;
+
+        if vIndexMainLanguage = 0 then
+        begin
+          FrameInfo(Sender, 'Нет основного языка, переводить не с чего!');
+        end
+        else
+        begin
+          FrameInfo(Sender, 'Субтитр основной = ' + FrameVideos.LanguageVideoLabel.text);
+          FrameInfo(Sender, 'Субтитры нужно скачать = ' + vSubtitles[vIndexMainLanguage].subtitleId);
+          { качаем текст субтитров основного языка }
+//          vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, '');
+          vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId);
+          FrameInfo(Sender, 'Субтитры скачали = ' + vResponceLoadSubtitle);
+
+          // Проверяем, что получили не пусто
+          if Trim(vResponceLoadSubtitle) = '' then
+          begin
+            FrameInfo(Sender, 'Пустой текст субтитра! Загрузка исходных субтитров не удалась.');
+            Exit;
+          end;
+
+          // сохраняем в файл (например, main_sbv.sbv)
+          vFullNameFile := IncludeTrailingPathDelimiter(GetCurrentDir) + 'main_sbv.sbv';
+          vFileText := TStringList.Create;
+          try
+            vFileText.Text := vResponceLoadSubtitle;
+            vFileText.SaveToFile(vFullNameFile);
+            vMainSubtitleText := vFileText.Text;
+          finally
+            vFileText.Free;
+          end;
+
+          vDeleteTranslate := 0;
+          for i := 1 to vSCount do
+          begin
+            if i <> vIndexMainLanguage then
+            begin
+              Inc(vDeleteTranslate);
+              // vResponceDelSubtitle := OAuth2.SubtitleDelete(vSubtitles[i].subtitleId);
+            end;
+          end;
+          //FrameInfo(Sender, 'Удалили языков ' + IntToStr(vDeleteTranslate));
+
+          vTransCount := 0;
+          for i := 1 to 300 do
+          begin
+            if (PanLanguages[i] = nil) then break;
+            if (PanLanguages[i].ChImage.Visible = true)
+              and (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text) then
+            begin
+              try
+                // Переводим файл субтитров (или весь текст залпом, ИЛИ каждую строку - тут можно улучшить!)
+                vTranslatedSubtitleText := GoogleTranslate(vMainSubtitleText, FrameVideos.LanguageVideoLabel.Text, PanLanguages[i].ChLang.Text);
+                // сохраняем в файл
+                vFullNameFile := IncludeTrailingPathDelimiter(GetCurrentDir) + 'translated_' + PanLanguages[i].ChLang.Text+'.sbv';
+                vFileText := TStringList.Create;
+                try
+                  vFileText.Text := vTranslatedSubtitleText;
+                  vFileText.SaveToFile(vFullNameFile);
+                finally
+                  vFileText.Free;
+                end;
+
+                vObj := Tsnippet.Create;
+                try
+                  vObj.videoId := FrameVideos.LabelVideoId.text;
+                  vObj.language := PanLanguages[i].ChLang.text;
+                  vObj.Name := PanLanguages[i].ChName.text;
+                  vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
+                  showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
+
+                  vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, vFullNameFile);
+                  FrameInfo(Sender, 'Ответ от перевода: ' + vResponceInsSubtitle);
+                  Memo1.text := vResponceInsSubtitle;
+                  Inc(vTransCount);
+                finally
+                  vObj.Free;
+                end;
+              except
+                on E: Exception do
+                  FrameInfo(Sender, 'Ошибка перевода на ' + PanLanguages[i].ChLang.Text + ': ' + E.Message);
+              end;
+            end;
+          end;
+          FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+        end;
+      finally
+        OAuth2.Free;
+      end;
+    end
+    else
+      FrameInfo(Sender, 'На нет и суда нет');
+  end
+  else
+    FrameInfo(Sender, 'Выберите языки для перевода');
+end;
+
+{procedure TfMain.FrameLanguagesButtonSubtitlesClick(Sender: TObject);
+var
   vLength: integer;
   vPosBegin, vPosEnd: integer;
   vTransCount: integer;
-  // для сохранения в файл
   vPath: string;
   vFullNameFile: string;
-  vFileText: TStringList;
-
-  // подключение к YT3
-  Access_token: string; // токен выполнения операций
-  refresh_token: string; // токен получения следующего токена на выполнение
+  vFileText, vFileText2: TStringList;
+  Access_token, refresh_token: string;
   OAuth2: TOAuth;
   vResponceSubtitleList: string;
-
-  // получаем список титров
   vObjSubtitles: TObjSubtitleList;
-  vIndexMainLanguage, i: integer;
+  vIndexMainLanguage, i, vSCount, vDeleteTranslate: integer;
   vSubtitles: array [1 .. 300] of TSubtitle;
-  vSCount: integer; // количество уже существующих субтитров.
-  vDeleteTranslate: integer; // количество уже существующих субтитров.
-
-  // удаление
-  vResponceDelSubtitle: string;
-  // перевод
-  vResponceLoadSubtitle: string;
-  vResponceInsSubtitle: string;
-
-  // vObj: TsnippetInsert;
+  vResponceDelSubtitle, vResponceLoadSubtitle, vResponceInsSubtitle: string;
   vObj: Tsnippet;
   vAddCaptionJSON: string;
-
-  vFileText2: TStringList;
 begin
-
   vFileText2 := TStringList.Create;
-  vFileText2.Add('что? DD');
-  // сохраняем
-  vFileText2.SaveToFile('d:/tesf2.txt');
+  try
+    vFileText2.Add('что? DD');
+    vFileText2.SaveToFile('d:\tesf2.txt');
+  finally
+    vFileText2.Free;
+  end;
 
   vLength := Length(fMain.FrameLanguages.LabelLanguages.text);
   if vLength > 2 then
   begin
     if FrameAsk(Sender, 'Начать перевод Субтитров?') = 1 then
     begin
-      // пока тут, но вообще вытащить куда в другой объект эти переводыж
       OAuth2 := TOAuth.Create;
-      // крайне важно
-      OAuth2.refresh_token := FrameMainChannel.Label4.text;
-      // vString := OAuth2.SubtitleDownload(CaptionID, 'en');
-      // получаем список субтитров
-      vResponceSubtitleList := OAuth2.subtitlelist
-        (FrameVideos.LabelVideoId.text);
+      try
+        OAuth2.refresh_token := FrameMainChannel.Label4.Text;
+        vResponceSubtitleList := OAuth2.subtitlelist(FrameVideos.LabelVideoId.text);
 
-      // сохраним в файл
-      vPath := GetCurrentDir();
-      vFullNameFile := vPath + '/' + 'sub.txt';
-      // showmessage('vFullNameFile = ' + vFullNameFile);
-      vFileText := TStringList.Create;
-      vFileText.Add(vResponceSubtitleList);
-      vFileText.SaveToFile(vFullNameFile);
-      // showmessage('Перевели');
-
-      vIndexMainLanguage := 0; // пока нет субтитров главных заданных
-      vSCount := 0; // кол-во уже существующих субтитров
-      vObjSubtitles := TObjSubtitleList.Create;
-      // в мемо должен быть уже строка с канала
-      vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>
-        (vResponceSubtitleList);
-      for i := 0 to Length(vObjSubtitles.Items) - 1 do
-      begin
-        inc(vSCount);
-        vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
-        vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
-        // showmessage('язык ' + vSubtitles[vSCount].language);
-        // if vSubtitles[vSCount].language = FrameVideos.LanguageVideoLabel.text
-        if vSubtitles[vSCount].language = Copy
-          (FrameVideos.LanguageVideoLabel.text, 1, 2) then
-          vIndexMainLanguage := vSCount; // задан субтитр основного языка
-      end;
-
-      // если нет основного языка то расстраиваемся и сообщаем клиенту, чтоб задал
-      if vIndexMainLanguage = 0 then
-      begin
-        FrameInfo(Sender, 'Нет основного языка, переводить не с чего!');
-      end
-      else
-      begin
-        // FrameInfo(Sender, 'ID дорожки с которой будем преводить = ' + vSubtitles[vIndexMainLanguage].subtitleId);
-        // грузим в требуемом переводе -- сохраняться в файл default.sbv в корень диска
-        vResponceLoadSubtitle := OAuth2.SubtitleDownload
-          (vSubtitles[vIndexMainLanguage].subtitleId, '');
-        // пока только в языке оригинала и грузит
-        // (vSubtitles[vIndexMainLanguage].subtitleId, 'ru'); //почему то не подгрузил
-        // ('ru', ''); //почему то не подгрузил
-        { vFullNameFile := vPath + '/' + 'subload';
-          vFileText := TStringList.Create;
-          vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + vResponceLoadSubtitle);
-          vFileText.SaveToFile(vFullNameFile); }
-
-        // начинаем удаление
-        vDeleteTranslate := 0;
-        for i := 1 to vSCount do
-        begin
-          // if vSubtitles[i].language <> FrameVideos.LanguageVideoLabel.text then
-          if i <> vIndexMainLanguage then
-          begin
-            inc(vDeleteTranslate);
-            // showmessage('удаляем язык ' + vSubtitles[i].subtitleId);
-            { vResponceDelSubtitle := OAuth2.SubtitleDelete (vSubtitles[i].subtitleId);
-              vFullNameFile := vPath + '/' + 'subDel.txt';
-              vFileText := TStringList.Create;
-              vFileText.Add(vSubtitles[vIndexMainLanguage].subtitleId + ' и ответ ='+
-              vResponceDelSubtitle);
-              vFileText.SaveToFile(vFullNameFile);
-            }
-          end;
+        vPath := GetCurrentDir();
+        vFullNameFile := IncludeTrailingPathDelimiter(vPath) + 'sub.txt';
+        vFileText := TStringList.Create;
+        try
+          vFileText.Add(vResponceSubtitleList);
+          vFileText.SaveToFile(vFullNameFile);
+        finally
+          vFileText.Free;
         end;
-        FrameInfo(Sender, 'Удалили языков ' + IntToStr(vDeleteTranslate));
-        // начинаем разбор языков
-        vTransCount := 0; // количество переведенных языков
-        for i := 1 to 300 do
-        begin
-          if PanLanguages[i] = nil then
-            break;
-          if (PanLanguages[i].ChImage.Visible = true) and
-            (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text)
-          then
-          begin
-            inc(vTransCount);
-            showmessage('добавляем язык ' + FrameVideos.LanguageVideoLabel.text
-              + ' на ' + PanLanguages[i].ChLang.text);
-            // vString := OAuth2.SubtitleDownload(PanLanguages[i].ChLang.text, 'en');
-            // загружаем в этом языке субтитры
-            // vResponceLoadSubtitle := OAuth2.SubtitleDownload(FrameVideos.LabelVideoId.Text, PanLanguages[i].ChLang.Text);
-            // сохраняем результат в субтитры новые
-            // JSON: string; FileName: String
-            // vObj := TsnippetInsert.Create;
-            vObj := Tsnippet.Create;
-            vObj.videoId := FrameVideos.LabelVideoId.text;
-            vObj.language := PanLanguages[i].ChLang.text; // 'en';
-            vObj.Name := PanLanguages[i].ChName.text; // '';//
-            { vObj.snippet := Tsnippet.Create;
-              vObj.snippet.videoId := FrameVideos.LabelVideoId.text;
-              vObj.snippet.language := PanLanguages[i].ChLang.text; //'en';
-              vObj.snippet.name := PanLanguages[i].ChName.text; // '';// }
-            vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
-            // vAddCaptionJSON := '{"kra":"dva"}';
-            // vAddCaptionJSON :=  '{"snippet":'+ vAddCaptionJSON + '}';
-            showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
-            // vAddCaptionJSON := '{language:es,name:465,videoId:' + FrameVideos.LabelVideoId.text + '}';
-            // vAddCaptionJSON :=  '{snippet:{ language:es, name:Spanish captions, videoId:' +
-            // FrameVideos.LabelVideoId.text + ',isDraft:true}}';
-            // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, '');
-            // vResponceInsSubtitle := OAuth2.SubtitleV2Insert(vAddCaptionJSON,
-            // 'default2.sbv', FrameVideos.LabelVideoId.text);
-            vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
-              'default2.sbv');
 
-            // vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON,
-            // '');
-            FrameInfo(Sender, 'Ответ от перевода ' + vResponceInsSubtitle);
-            Memo1.text := vResponceInsSubtitle;
-            vObj.Free;
-          end;
+        vIndexMainLanguage := 0;
+        vSCount := 0;
+        vObjSubtitles := TJson.JsonToObject<TObjSubtitleList>(vResponceSubtitleList);
+
+        for i := 0 to Length(vObjSubtitles.Items) - 1 do
+        begin
+          Inc(vSCount);
+          vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
+          vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
+          if vSubtitles[vSCount].language = Copy(FrameVideos.LanguageVideoLabel.text, 1, 2) then
+            vIndexMainLanguage := vSCount;
         end;
-        FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+
+        if vIndexMainLanguage = 0 then
+        begin
+          FrameInfo(Sender, 'Нет основного языка, переводить не с чего!');
+        end
+        else
+        begin
+          vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, '');
+          vDeleteTranslate := 0;
+          for i := 1 to vSCount do
+          begin
+            if i <> vIndexMainLanguage then
+            begin
+              Inc(vDeleteTranslate);
+              // Здесь должно быть удаление субтитров, раскомментируйте если работает
+              // vResponceDelSubtitle := OAuth2.SubtitleDelete(vSubtitles[i].subtitleId);
+            end;
+          end;
+          FrameInfo(Sender, 'Удалили языков ' + IntToStr(vDeleteTranslate));
+
+          vTransCount := 0;
+          for i := 1 to 300 do
+          begin
+            if (PanLanguages[i] = nil) then break;
+            if (PanLanguages[i].ChImage.Visible = true)
+            and (PanLanguages[i].ChLang.text <> FrameVideos.LanguageVideoLabel.text) then
+            begin
+
+              try
+                // Переводим субтитры
+                vTranslatedTitle := GoogleTranslate(vTitle, FrameVideos.LanguageVideoLabel.Text, PanLanguages[i].ChLang.Text);
+                Inc(vTransCount);
+              except
+                on E: Exception do // В случае ошибок перевода информируем пользователя
+                  FrameInfo(Sender, 'Ошибка перевода на ' + PanLanguages[i].ChLang.Text + ': ' + E.Message);
+              end;
+
+              vObj := Tsnippet.Create;
+              try
+                vObj.videoId := FrameVideos.LabelVideoId.text;
+                vObj.language := PanLanguages[i].ChLang.text;
+                vObj.Name := PanLanguages[i].ChName.text;
+                vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
+                showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
+                vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, 'default2.sbv');
+                FrameInfo(Sender, 'Ответ от перевода ' + vResponceInsSubtitle);
+                Memo1.text := vResponceInsSubtitle;
+              finally
+                vObj.Free;
+              end;
+            end;
+          end;
+          FrameInfo(Sender, 'Перевели на ' + IntToStr(vTransCount));
+        end;
+      finally
+        OAuth2.Free;
       end;
-      OAuth2.Free;
     end
     else
-    begin // 'На нет и суда нет'
+    begin
       FrameInfo(Sender, 'На нет и суда нет');
     end;
   end
   else
     FrameInfo(Sender, 'Выберите языки для перевода');
 end;
+}
 
 
 // создаем переводы наименований и описаний
