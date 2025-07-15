@@ -15,7 +15,8 @@ uses
   System.NetEncoding,
   IdHTTP,
   IdSSLOpenSSL,
-  IdGlobal;
+  IdGlobal,
+  IdURI, IdException;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -535,6 +536,7 @@ begin
   Result := SendRequest(URL, Params, Headers, '', rmGet);
 end;
 
+{
 function TOAuth.SubtitleDownload(const CaptionID: string): string;
 const
   URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
@@ -552,6 +554,52 @@ begin
   finally
     ssl.Free;
     client.Free;
+  end;
+end;
+}
+
+function TOAuth.SubtitleDownload(const CaptionID: string): string;
+const
+  CAPTIONS_API_URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+var
+  httpClient: TIdHTTP;
+  sslHandler: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  httpClient := TIdHTTP.Create(nil);
+  sslHandler := TIdSSLIOHandlerSocketOpenSSL.Create(httpClient);
+  try
+    // Настройка SSL
+    sslHandler.SSLOptions.Method := sslvTLSv1_2;
+    sslHandler.SSLOptions.SSLVersions := [sslvTLSv1_2];
+    sslHandler.SSLOptions.Mode := sslmClient;
+
+    httpClient.IOHandler := sslHandler;
+    httpClient.Request.CustomHeaders.Values['Authorization'] := 'Bearer ' + RefreshAccessToken;
+    httpClient.Request.Accept := 'text/plain'; // Для субтитров обычно используется text/plain
+
+    // Установка таймаутов
+    httpClient.ConnectTimeout := 5000; // 5 секунд на соединение
+    httpClient.ReadTimeout := 15000;   // 15 секунд на чтение данных
+
+    try
+      Result := httpClient.Get(Format(CAPTIONS_API_URL + '?tfmt=sbv', [TIdURI.ParamsEncode(CaptionID)]));
+
+      if httpClient.ResponseCode <> 200 then
+        raise Exception.CreateFmt('Ошибка загрузки субтитров. Код ответа: %d: %s',
+          [httpClient.ResponseCode, httpClient.ResponseText]);
+
+    except
+      on E: EIdHTTPProtocolException do
+        raise Exception.CreateFmt('Ошибка протокола HTTP %d: %s', [E.ErrorCode, E.Message]);
+//      on E: EIdSocketError do
+//        raise Exception.Create('Ошибка сетевого соединения: ' + E.Message);
+      on E: Exception do
+        raise Exception.Create('Ошибка при загрузке субтитров: ' + E.Message);
+    end;
+
+  finally
+    sslHandler.Free;
+    httpClient.Free;
   end;
 end;
 
@@ -584,9 +632,47 @@ begin
     Params.Free;
   end;
 end;
-
 }
+{
+function TOAuth.SubtitleDownload(const CaptionID: string): string;
+const
+  URL = 'https://youtube.googleapis.com/youtube/v3/captions/%s';
+var
+  client: TIdHTTP;
+  ssl: TIdSSLIOHandlerSocketOpenSSL;
+begin
+  client := TIdHTTP.Create(nil);
+  ssl := TIdSSLIOHandlerSocketOpenSSL.Create(client);
+  try
+    // Настройка SSL
+    ssl.SSLOptions.Method := sslvTLSv1_2;
+    ssl.SSLOptions.SSLVersions := [sslvTLSv1_2];
+    ssl.SSLOptions.Mode := sslmClient;
 
+    client.IOHandler := ssl;
+    client.Request.CustomHeaders.Values['Authorization'] := 'Bearer ' + RefreshAccessToken;
+    client.Request.Accept := 'application/json'; // или 'text/xml', 'text/plain' в зависимости от формата
+
+    try
+      Result := client.Get(Format(URL + '?tfmt=sbv', [TIdURI.ParamsEncode(CaptionID)]));
+
+      // Проверка кода ответа
+      if client.ResponseCode <> 200 then
+        raise Exception.CreateFmt('HTTP error %d: %s', [client.ResponseCode, client.ResponseText]);
+
+    except
+      on E: EIdHTTPProtocolException do
+        raise Exception.CreateFmt('HTTP error %d: %s', [E.ErrorCode, E.Message]);
+      on E: Exception do
+        raise;
+    end;
+
+  finally
+    ssl.Free;
+    client.Free;
+  end;
+end;
+}
 {
 // Subtitle download
 function TOAuth.SubtitleDownload(CaptionID, TargetLang: string): string;
@@ -701,6 +787,146 @@ end;
 
 //SubtitleInsert: реализация multipart/related через Indy
 //Только этот способ работает для загрузки субтитров YouTube!
+
+function TOAuth.SubtitleInsert(const JSON: string; const FileName: String): string;
+const
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
+//  BOUNDARY = 'AA0512';
+var
+  IdHTTP: TIdHTTP;
+  IdSSL: TIdSSLIOHandlerSocketOpenSSL;
+  PostStream: TMemoryStream;
+  Line, AccessToken: UTF8String;
+  FileStream: TFileStream;
+  BOUNDARY: string;
+begin
+  BOUNDARY := 'Boundary_' + IntToHex(Random(MaxInt), 8); // Случайный boundary
+  Result := '';
+  if not FileExists(FileName) then
+    raise Exception.Create('File not found: ' + FileName);
+
+  IdHTTP := TIdHTTP.Create(nil);
+  try
+    IdSSL := TIdSSLIOHandlerSocketOpenSSL.Create(IdHTTP);
+    try
+      IdHTTP.IOHandler := IdSSL;
+      IdHTTP.ConnectTimeout := 30000; // 30 sec
+      IdHTTP.ReadTimeout := 60000;    // 60 sec
+
+      PostStream := TMemoryStream.Create;
+      try
+        FileStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+        try
+          Line :=
+            '--' + BOUNDARY + #13#10 +
+            'Content-Type: application/json; charset=UTF-8' + #13#10#13#10 +
+            UTF8String(JSON) + #13#10 +
+            '--' + BOUNDARY + #13#10 +
+            'Content-Type: application/octet-stream' + #13#10#13#10;
+          PostStream.WriteBuffer(Line[1], Length(Line));
+          PostStream.CopyFrom(FileStream, 0);
+          Line := #13#10 + '--' + BOUNDARY + '--' + #13#10;
+          PostStream.WriteBuffer(Line[1], Length(Line));
+          PostStream.Position := 0;
+
+          AccessToken := RefreshAccessToken;
+          IdHTTP.Request.CustomHeaders.Clear;
+          IdHTTP.Request.CustomHeaders.AddValue('Authorization', 'Bearer ' + AccessToken);
+          IdHTTP.Request.ContentType := 'multipart/related; boundary=' + BOUNDARY;
+          IdHTTP.Request.Accept := 'application/json';
+
+          try
+            Result := IdHTTP.Post(URL, PostStream);
+          except
+            on E: EIdHTTPProtocolException do
+              raise Exception.Create('HTTP Error: ' + E.ErrorMessage + ' | Response: ' + E.Message);
+//            on E: EIdSocketError do
+//              raise Exception.Create('Socket Error: ' + E.Message);
+            on E: Exception do
+              raise;
+          end;
+        finally
+          FileStream.Free;
+        end;
+      finally
+        PostStream.Free;
+      end;
+    finally
+      IdSSL.Free;
+    end;
+  finally
+    IdHTTP.Free;
+  end;
+end;
+
+{
+function TOAuth.SubtitleInsert(const JSON: string; const FileName: String): string;
+const
+  URL = 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
+  BOUNDARY = 'AA0512';
+var
+  IdHTTP: TIdHTTP;
+  IdSSL: TIdSSLIOHandlerSocketOpenSSL;
+  PostStream: TMemoryStream;
+  Line, AccessToken: UTF8String;
+  FileStream: TFileStream;
+begin
+  Result := '';
+  if not FileExists(FileName) then
+    raise Exception.Create('File not found: ' + FileName);
+
+  IdHTTP := TIdHTTP.Create(nil);
+  try
+    IdSSL := TIdSSLIOHandlerSocketOpenSSL.Create(IdHTTP);
+    try
+      IdHTTP.IOHandler := IdSSL;
+      PostStream := TMemoryStream.Create;
+      try
+        // Read file to stream
+        FileStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+        try
+          // формируем тело вручную (multipart/related)
+          Line :=
+            '--' + BOUNDARY + #13#10 +
+            'Content-Type: application/json; charset=UTF-8' + #13#10#13#10 +
+            UTF8String(JSON) + #13#10 +  // Используем прямое приведение к UTF8String
+            '--' + BOUNDARY + #13#10 +
+            'Content-Type: application/octet-stream' + #13#10#13#10;
+          PostStream.WriteBuffer(Line[1], Length(Line));
+          PostStream.CopyFrom(FileStream, 0);
+          Line := #13#10 + '--' + BOUNDARY + '--' + #13#10;
+          PostStream.WriteBuffer(Line[1], Length(Line));
+          PostStream.Position := 0;
+
+          AccessToken := RefreshAccessToken;
+          IdHTTP.Request.CustomHeaders.Clear;
+          IdHTTP.Request.CustomHeaders.AddValue('Authorization', 'Bearer ' + AccessToken);
+          IdHTTP.Request.ContentType := 'multipart/related; boundary=' + BOUNDARY;
+          IdHTTP.Request.Accept := 'application/json';
+
+          try
+            Result := IdHTTP.Post(URL, PostStream);
+          except
+            on E: EIdHTTPProtocolException do
+              raise Exception.Create('HTTP error: ' + E.ErrorMessage);
+            on E: Exception do
+              raise;
+          end;
+        finally
+          FileStream.Free;
+        end;
+      finally
+        PostStream.Free;
+      end;
+    finally
+      IdSSL.Free;
+    end;
+  finally
+    IdHTTP.Free;
+  end;
+end;
+}
+{
 function TOAuth.SubtitleInsert(const JSON: string; const FileName: String): string;
 const
   URL = 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
@@ -748,6 +974,7 @@ begin
     IdHTTP.Free;
   end;
 end;
+}
 
 // Title delete
 function TOAuth.TitleDelete(LangID: string): string;

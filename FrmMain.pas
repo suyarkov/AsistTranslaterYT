@@ -179,6 +179,73 @@ implementation
 
 {$R *.fmx}
 
+{$R *.fmx}
+
+// ========================================================
+// Экранирует строку для корректного использования в JSON
+// ========================================================
+function EscapeForJson(const Str: string): string;
+begin
+  Result := Str;
+
+  // Экранирование обратной косой черты должно быть первым
+  Result := StringReplace(Result, '\', '\\', [rfReplaceAll]);
+
+  // Экранирование двойных кавычек
+  Result := StringReplace(Result, '"', '\"', [rfReplaceAll]);
+
+  // Экранирование управляющих символов
+  Result := StringReplace(Result, #8, '\b', [rfReplaceAll]);   // Backspace
+  Result := StringReplace(Result, #9, '\t', [rfReplaceAll]);   // Horizontal tab
+  Result := StringReplace(Result, #10, '\n', [rfReplaceAll]);  // Line feed
+  Result := StringReplace(Result, #12, '\f', [rfReplaceAll]);  // Form feed
+  Result := StringReplace(Result, #13, '\r', [rfReplaceAll]);  // Carriage return
+
+  // Экранирование символа косой черты (не обязательно, но рекомендуется)
+  Result := StringReplace(Result, '/', '\/', [rfReplaceAll]);
+
+  // Замена управляющих символов (0..31) на Unicode-экранирование
+  for var i := 0 to 31 do
+    if (i <> 8) and (i <> 9) and (i <> 10) and (i <> 12) and (i <> 13) then
+      Result := StringReplace(Result, Chr(i), '\u' + IntToHex(i, 4), [rfReplaceAll]);
+end;
+
+// ========================================================
+// Восстанавливает экранированные JSON-символы в обычные
+// ========================================================
+function UnescapeJson(const JsonStr: string): string;
+var
+  CharCode: Integer; // Объявляем переменную заранее
+begin
+  Result := JsonStr;
+
+  // Сначала обрабатываем Unicode-последовательности (\uXXXX)
+  var i := 1;
+  while i <= Length(Result) do
+  begin
+    if (Result[i] = '\') and (i + 4 <= Length(Result)) and (Result[i + 1] = 'u') then
+    begin
+      var HexCode := Copy(Result, i + 2, 4);
+      if TryStrToInt('$' + HexCode, CharCode) then
+      begin
+        Delete(Result, i, 6); // Удаляем \uXXXX
+        Insert(Chr(CharCode), Result, i); // Вставляем символ
+      end;
+    end;
+    Inc(i);
+  end;
+
+  // Обрабатываем стандартные экранированные последовательности
+  Result := StringReplace(Result, '\/', '/', [rfReplaceAll]);
+  Result := StringReplace(Result, '\r', #13, [rfReplaceAll]);  // Carriage return
+  Result := StringReplace(Result, '\f', #12, [rfReplaceAll]); // Form feed
+  Result := StringReplace(Result, '\n', #10, [rfReplaceAll]);  // Line feed
+  Result := StringReplace(Result, '\t', #9,  [rfReplaceAll]);  // Horizontal tab
+  Result := StringReplace(Result, '\b', #8,  [rfReplaceAll]);  // Backspace
+  Result := StringReplace(Result, '\"', '"', [rfReplaceAll]);  // Double quote
+  Result := StringReplace(Result, '\\', '\', [rfReplaceAll]); // Backslash
+end;
+
 // Завершение работы прогресс-бара и потока  ИИ
 procedure TfMain.FinishProgressBar(Sender: TObject);
 begin
@@ -1326,7 +1393,7 @@ begin
     if (pos(';', vResponce) > 0) then
     begin
 //      vRes := StrToInt(Copy(vResponce, 1, pos(';', vResponce) - 1));
-      vRes := StrToInt(UTF8ToString(Copy(vResponce, 1, pos(';', vResponce) - 1))); // Для старых вер
+      vRes := StrToInt(UTF8ToString(Copy(vResponce, 1, pos(';', vResponce) - 1))); // Для старых вер, возможно это ломает
       vTmp := Copy(vResponce, pos(';', vResponce) + 1, 1000);
       if (pos(';', vTmp) > 0) then
       begin
@@ -2706,6 +2773,7 @@ var
   OAuth2: TOAuth;
   vResponceInsTitle: string;
   vVideoUpdateSuccess : Boolean;
+
 begin
   // Получаем исходные значения заголовка и описания видео
   vTitle := FrameVideos.MemoTitle.Text;
@@ -2803,7 +2871,7 @@ begin
           // Собираем строку JSON для одной локали
           if vTransCount > 0 then
             vJSON := vJSON + ',';
-          vJSON_tmp := Format('{"title":"%s","description":"%s"}', [vTranslatedTitle, vTranslatedDesc]);
+          vJSON_tmp := Format('{"title":"%s","description":"%s"}', [EscapeForJson(vTranslatedTitle), EscapeForJson(vTranslatedDesc)]);
           vJSON := vJSON + '"' + PanLanguages[i].ChLang.Text + '":' + vJSON_tmp;
           Inc(vTransCount);
 
