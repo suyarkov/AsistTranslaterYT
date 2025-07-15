@@ -804,25 +804,34 @@ begin
   if not FileExists(FileName) then
     raise Exception.Create('Subtitle file not found: ' + FileName);
 
+  // Проверка обязательных параметров
+  if VideoID.IsEmpty then
+    raise Exception.Create('VideoID cannot be empty');
+  if Language.IsEmpty then
+    raise Exception.Create('Language cannot be empty');
+  if SubtitleName.IsEmpty then
+    raise Exception.Create('SubtitleName cannot be empty');
+
   HTTPClient := THTTPClient.Create;
   try
     HTTPClient.ContentType := 'multipart/form-data';
     HTTPClient.CustomHeaders['Authorization'] := 'Bearer ' + AccessToken;
 
-    // Создаем JSON для метаданных
+    // Формируем JSON для метаданных
     SnippetJSON := TJSONObject.Create;
     try
       SnippetJSON.AddPair('language', Language);
       SnippetJSON.AddPair('name', SubtitleName);
       SnippetJSON.AddPair('videoId', VideoID);
       SnippetJSON.AddPair('isDraft', TJSONBool.Create(IsDraft));
-      showmessage('Отправляемый JSON: ' + SnippetJSON.ToJSON);
+      showmessage('Metadata JSON: '+ SnippetJSON.ToJSON);
       Params := TMultipartFormData.Create;
       try
         // Добавляем метаданные как часть form-data
         Params.AddField('metadata', SnippetJSON.ToJSON, 'application/json; charset=UTF-8');
+
         // Добавляем файл субтитров
-        Params.AddFile('file', FileName);
+        Params.AddFile('file', FileName, 'application/octet-stream');
 
         URL := 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
         Response := HTTPClient.Post(URL, Params);
