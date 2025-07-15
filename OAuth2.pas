@@ -16,7 +16,9 @@ uses
   IdHTTP,
   IdSSLOpenSSL,
   IdGlobal,
-  IdURI, IdException;
+  IdURI, IdException,
+  System.Net.HttpClient, System.Net.Mime, System.Net.URLClient
+  ;
 
 const
   redirect_uri = 'http://127.0.0.1:1904';
@@ -51,6 +53,8 @@ type
     function SubtitleList(VideoID: string): string;
 //    function SubtitleDownload(CaptionID, TargetLang: string): string;
     function SubtitleDownload(const CaptionID: string): string;
+    function SubtitleInsert3(const FileName,VideoID, Language, SubtitleName: String; IsDraft: Boolean = False): Boolean;
+    function SubtitleInsert2(const FileName: String): Boolean;
     function SubtitleInsert(const JSON: string; const FileName: String): string;
 
     function TitleDelete(LangID: string): string;
@@ -783,6 +787,123 @@ begin
   end;
 end;
 }
+
+
+function TOAuth.SubtitleInsert3(const FileName, VideoID, Language, SubtitleName: String; IsDraft: Boolean = False): Boolean;
+var
+  HTTPClient: THTTPClient;
+  Params: TMultipartFormData;
+  Response: IHTTPResponse;
+  URL: String;
+  SnippetJSON: TJSONObject;
+  JSONBody: TStringStream;
+  AccessToken: UTF8String;
+begin
+  AccessToken := RefreshAccessToken;
+  Result := False;
+  if not FileExists(FileName) then
+    raise Exception.Create('Subtitle file not found: ' + FileName);
+
+  HTTPClient := THTTPClient.Create;
+  try
+    HTTPClient.ContentType := 'multipart/form-data';
+    HTTPClient.CustomHeaders['Authorization'] := 'Bearer ' + AccessToken;
+
+    // Создаем JSON для метаданных
+    SnippetJSON := TJSONObject.Create;
+    try
+      SnippetJSON.AddPair('language', Language);
+      SnippetJSON.AddPair('name', SubtitleName);
+      SnippetJSON.AddPair('videoId', VideoID);
+      SnippetJSON.AddPair('isDraft', TJSONBool.Create(IsDraft));
+      showmessage('Отправляемый JSON: ' + SnippetJSON.ToJSON);
+      Params := TMultipartFormData.Create;
+      try
+        // Добавляем метаданные как часть form-data
+        Params.AddField('metadata', SnippetJSON.ToJSON, 'application/json; charset=UTF-8');
+        // Добавляем файл субтитров
+        Params.AddFile('file', FileName);
+
+        URL := 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
+        Response := HTTPClient.Post(URL, Params);
+
+        if Response.StatusCode = 200 then
+          Result := True
+        else
+          raise Exception.CreateFmt('YouTube API Error: %d. Response: %s',
+            [Response.StatusCode, Response.ContentAsString]);
+      finally
+        Params.Free;
+      end;
+    finally
+      SnippetJSON.Free;
+    end;
+  finally
+    HTTPClient.Free;
+  end;
+end;
+
+function TOAuth.SubtitleInsert2(const FileName: String): Boolean;
+var
+  HTTPClient: THTTPClient;
+  RequestStream: TStream;
+  Response: IHTTPResponse;
+  URL: String;
+  Params: TMultipartFormData;
+  JSONResponse: TJSONObject;
+  AccessToken: UTF8String;
+begin
+  AccessToken := RefreshAccessToken;
+  Result := False;
+  if not FileExists(FileName) then
+    raise Exception.Create('Subtitle file not found: ' + FileName);
+
+  HTTPClient := THTTPClient.Create;
+  try
+    try
+      // Устанавливаем заголовки
+      HTTPClient.ContentType := 'application/json';
+      HTTPClient.CustomHeaders['Authorization'] := 'Bearer ' + AccessToken;
+
+      // Создаем multipart/form-data запрос
+      Params := TMultipartFormData.Create;
+      try
+        // Добавляем файл с субтитрами
+        Params.AddFile('file', FileName);
+
+        // Формируем URL для загрузки
+        URL := 'https://www.googleapis.com/upload/youtube/v3/captions?part=snippet';
+
+        // Отправляем запрос
+        Response := HTTPClient.Post(URL, Params);
+
+        // Проверяем ответ
+        if Response.StatusCode = 200 then
+        begin
+          JSONResponse := TJSONObject.ParseJSONValue(Response.ContentAsString) as TJSONObject;
+          try
+            if Assigned(JSONResponse) then
+              Result := JSONResponse.GetValue('id') <> nil;
+          finally
+            JSONResponse.Free;
+          end;
+        end
+        else
+        begin
+          raise Exception.CreateFmt('uploading. St: %d, Resp: %s',
+            [Response.StatusCode, Response.ContentAsString]);
+        end;
+      finally
+        Params.Free;
+      end;
+    except
+      on E: Exception do
+        raise Exception.Create('Subtitle upload: ' + E.Message);
+    end;
+  finally
+    HTTPClient.Free;
+  end;
+end;
 
 
 //SubtitleInsert: реализация multipart/related через Indy

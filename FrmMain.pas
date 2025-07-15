@@ -2536,7 +2536,7 @@ begin
           Inc(vSCount);
           vSubtitles[vSCount].subtitleId := vObjSubtitles.Items[i].id;
           vSubtitles[vSCount].language := vObjSubtitles.Items[i].snippet.language;
-          FrameInfo(Sender, 'язык = ' + vSubtitles[vSCount].language);
+//          FrameInfo(Sender, 'язык = ' + vSubtitles[vSCount].language);
           if vSubtitles[vSCount].language = Copy(FrameVideos.LanguageVideoLabel.text, 1, 2) then
             vIndexMainLanguage := vSCount;
         end;
@@ -2547,12 +2547,12 @@ begin
         end
         else
         begin
-          FrameInfo(Sender, 'Субтитр основной = ' + FrameVideos.LanguageVideoLabel.text);
-          FrameInfo(Sender, 'Субтитры нужно скачать = ' + vSubtitles[vIndexMainLanguage].subtitleId);
+//          FrameInfo(Sender, 'Субтитр основной = ' + FrameVideos.LanguageVideoLabel.text);
+//          FrameInfo(Sender, 'Субтитры нужно скачать = ' + vSubtitles[vIndexMainLanguage].subtitleId);
           { качаем текст субтитров основного языка }
 //          vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId, '');
           vResponceLoadSubtitle := OAuth2.SubtitleDownload(vSubtitles[vIndexMainLanguage].subtitleId);
-          FrameInfo(Sender, 'Субтитры скачали = ' + vResponceLoadSubtitle);
+//          FrameInfo(Sender, 'Субтитры скачали = ' + vResponceLoadSubtitle);
 
           // Проверяем, что получили не пусто
           if Trim(vResponceLoadSubtitle) = '' then
@@ -2611,8 +2611,21 @@ begin
                   vAddCaptionJSON := TJson.ObjectToJsonString(vObj);
                   showmessage('vAddCaptionJSON = ' + vAddCaptionJSON);
 
-                  vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, vFullNameFile);
-                  FrameInfo(Sender, 'Ответ от перевода: ' + vResponceInsSubtitle);
+                  //vResponceInsSubtitle := OAuth2.SubtitleInsert(vAddCaptionJSON, vFullNameFile);
+
+//                  if OAuth2.SubtitleInsert2(vFullNameFile) then
+                    if OAuth2.SubtitleInsert3(
+                          vFullNameFile,         // Путь к файлу субтитров
+                          vObj.videoId,             // ID видео (например, из URL: https://youtu.be/abc123xyz456)
+                          vObj.language,                       // Язык субтитров (код ISO 639-1)
+                          vObj.Name,                    // Название субтитров
+                          False                       // Не черновик (публичные субтитры)
+                        ) then
+                    ShowMessage('Субтитры успешно загружены!')
+                  else
+                    ShowMessage('Ошибка загрузки субтитров');
+
+                  //FrameInfo(Sender, 'Ответ от перевода: ' + vResponceInsSubtitle);
                   Memo1.text := vResponceInsSubtitle;
                   Inc(vTransCount);
                 finally
@@ -2620,7 +2633,9 @@ begin
                 end;
               except
                 on E: Exception do
-                  FrameInfo(Sender, 'Ошибка перевода на ' + PanLanguages[i].ChLang.Text + ': ' + E.Message);
+//                  FrameInfo(Sender, 'Ошибка перевода на ' + PanLanguages[i].ChLang.Text + ': ' + E.Message);
+                  ShowMessage (E.Message);
+//                  FrameInfo(Sender, 'Error: ' + E.Message);
               end;
             end;
           end;
